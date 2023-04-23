@@ -876,7 +876,7 @@ local AWFWeaponRE4 = {
 								local ShellSG_CenterUserData = Shell_UserData:get_field("_CenterShellInfoUserData")
 								local ShellSG_AroundUserData = Shell_UserData:get_field("_AroundShellInfoUserData")
 								local ShellSG_AroundSettings = Shell_UserData:get_field("_AroundShellSetting")
-								
+
 								if (self.WPtype == "SG") or (self.WPtype == "SG_PUMP") then
 									if ShellSG_CenterUserData then
 										local ShellSG_CenterUserData_Life = ShellSG_CenterUserData:get_field("_LifeInfo")
@@ -1101,7 +1101,6 @@ local AWFWeaponRE4 = {
 		end
 
 		if d.Changed then
-			log.info(self.WP_ID .. " was changed")
 			d.Changed = false
 		end
 	end,
