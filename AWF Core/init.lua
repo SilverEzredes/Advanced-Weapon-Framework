@@ -2,9 +2,9 @@
 -- Advanced Weapon Framework Core
 
 -- Authors: SilverEzredes; alphaZomega
--- Updated: 04/23/2023
+-- Updated: 04/21/2023
 -- Version: v2.1.1
--- Special Thanks to: praydog; MrBoobieBuyer; Lotiuss
+-- Special Thanks to: praydog; MrBoobieBuyer
 
 --/////////////////////////////////////--
 local scene_manager = sdk.get_native_singleton("via.SceneManager")
@@ -400,7 +400,7 @@ local AWFWeaponRE4 = {
 		local d = self.data
 		
 		--Setup Catalog part:
-		if not self.setPlayerCatalog then
+		if not self.setPlayerCatalog or d.Changed then
 			log.info("AWF Catalog")
 			for i, ItemID in ipairs(WeaponStages) do
 				local WeaponID = ItemID:call("get_WeaponID")
@@ -851,7 +851,7 @@ local AWFWeaponRE4 = {
 		end
 		
 		--Setup GameObject part:
-		if not self.setGun then
+		if not self.setGun or d.Changed then
 			if not self.Gun or not sdk.is_managed_object(self.Gun) or not self.Gun:get_Valid() then
 				log.info("AWF GameObject")
 
@@ -1072,7 +1072,7 @@ local AWFWeaponRE4 = {
 		end
 	
 		--Setup Inventory part:
-		if not self.setPlayerItems and PlayerItems[1] then
+		if (not self.setPlayerItems and PlayerItems[1]) or d.Changed then
 			log.info("AWF Inventory")
 			for i, ItemID in ipairs(PlayerItems) do
 				local WeaponID = ItemID:call("get_WeaponId")
@@ -1098,6 +1098,10 @@ local AWFWeaponRE4 = {
 				end
 			end
 			self.setPlayerItems = true
+		end
+
+		if d.Changed then
+			d.Changed = false
 		end
 	end,
 
