@@ -2,9 +2,9 @@
 -- Advanced Weapon Framework Core
 
 -- Authors: SilverEzredes; alphaZomega
--- Updated: 04/21/2023
--- Version: v2.1.1
--- Special Thanks to: praydog; MrBoobieBuyer
+-- Updated: 04/24/2023
+-- Version: v2.1.2
+-- Special Thanks to: praydog; MrBoobieBuyer; Lotiuss
 
 --/////////////////////////////////////--
 local scene_manager = sdk.get_native_singleton("via.SceneManager")
