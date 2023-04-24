@@ -852,7 +852,7 @@ local AWFWeaponRE4 = {
 		
 		--Setup GameObject part:
 		if not self.setGun or d.Changed then
-			if not self.Gun or not sdk.is_managed_object(self.Gun) or not self.Gun:get_Valid() then
+			if (not self.Gun or not sdk.is_managed_object(self.Gun) or not self.Gun:get_Valid()) or d.Changed then
 				log.info("AWF GameObject")
 
 				self.setPlayerItems = false
