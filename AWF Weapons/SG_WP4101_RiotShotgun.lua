@@ -109,9 +109,9 @@ local BM4 = {
     Recoil_PitchMin = 6.0,              --(6.0) Up/Down
     Recoil_PitchMax = 2.0,              --(2.0) Up/Down
 
-    HandShake_Time = 5.0,               --Experimental
-    HandShake_Offset = 0.5,             --Experimental
-
+    HandShake_Time = 5.0,               --(5.0)
+    HandShake_Offset = 0.5,             --(0.5)
+    
     BaseAmmoNum = 7,				    --(7) Base Ammo count
     BaseAmmoCost = 1,				    --(1) Amount of ammo used per shot
     DurDEF_Max = 1000,				    --(1000) Max Item durability

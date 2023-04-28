@@ -2,8 +2,8 @@
 -- Advanced Weapon Framework - HNDC Stats
 
 -- Author: SilverEzredes
--- Updated: 04/18/2023
--- Version: v2.0.3
+-- Updated: 04/28/2023
+-- Version: v2.0.4
 -- Special Thanks to: praydog, alphaZomega, MrBoobieBuyer
 
 --/////////////////////////////////////--
@@ -42,7 +42,7 @@ local HNDC = {
     -- RPG Types =              900/901/902
     -- Unknown =                700/701/800/801/802/803/804/1000/1001/9000
     
-    ReticleType = 501,                    --(501) --Experimental
+    ReticleType = 501,                    --(501)
                                 
         --//////HNDC Base Stats//////--
 
@@ -83,8 +83,8 @@ local HNDC = {
     Recoil_PitchMin = 7.0,              --(7.0) Up/Down
     Recoil_PitchMax = 2.0,              --(2.0) Up/Down
 
-    HandShake_Time = 10.0,               --Experimental
-    HandShake_Offset = 0.5,             --Experimental
+    HandShake_Time = 10.0,              --(10.0)
+    HandShake_Offset = 0.5,             --(0.5)
 
     BaseAmmoNum = 5,				    --(5) Base Ammo count
     BaseAmmoCost = 1,				    --(1) Amount of ammo used per shot

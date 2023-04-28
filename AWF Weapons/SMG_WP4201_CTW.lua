@@ -1,12 +1,10 @@
 --/////////////////////////////////////--
 -- Advanced Weapon Framework - CTW Stats
 
--- Authors: SilverEzredes, alphaZomega
--- Updated: 04/17/2023
--- Version: v2.0.3
--- Special Thanks to: praydog
-
---Note: I don't have the Chicago Typewriter unlocked. That's why some of the stats are commented out.
+-- Author: SilverEzredes
+-- Updated: 04/28/2023
+-- Version: v2.0.4
+-- Special Thanks to: praydog, alphaZomega, MrBoobieBuyer
 
 --/////////////////////////////////////--
 
@@ -44,7 +42,7 @@ local CTW = {
     -- RPG Types =              900/901/902
     -- Unknown =                700/701/800/801/802/803/804/1000/1001/9000
     
-    ReticleType = 201,                    --(201) --Experimental
+    ReticleType = 201,                    --(201)
                                 
         --//////CTW Base Stats//////--
 
@@ -85,8 +83,8 @@ local CTW = {
     Recoil_PitchMin = -0.6,             --(-0.6) Up/Down
     Recoil_PitchMax = 1.8,              --(1.8) Up/Down
 
-    HandShake_Time = 8.0,               --Experimental
-    HandShake_Offset = 0.5,             --Experimental
+    HandShake_Time = 8.0,               --(8.0)
+    HandShake_Offset = 0.5,             --(0.5)
 
     BaseAmmoNum = 50,				    --(50) Base Ammo count
     BaseAmmoCost = 1,				    --(1) Amount of ammo used per shot

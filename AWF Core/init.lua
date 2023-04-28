@@ -2,8 +2,8 @@
 -- Advanced Weapon Framework Core
 
 -- Authors: SilverEzredes; alphaZomega
--- Updated: 04/24/2023
--- Version: v2.1.2
+-- Updated: 04/27/2023
+-- Version: v2.1.3
 -- Special Thanks to: praydog; MrBoobieBuyer; Lotiuss
 
 --/////////////////////////////////////--

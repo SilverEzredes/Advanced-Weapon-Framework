@@ -1,10 +1,10 @@
 --/////////////////////////////////////--
 -- Advanced Weapon Framework - PUN Stats
 
--- Authors: SilverEzredes, alphaZomega
--- Updated: 04/17/2023
--- Version: v2.0.3
--- Special Thanks to: praydog
+-- Author: SilverEzredes
+-- Updated: 04/28/2023
+-- Version: v2.0.4
+-- Special Thanks to: praydog, alphaZomega, MrBoobieBuyer
 
 --/////////////////////////////////////--
 
@@ -42,7 +42,7 @@ local PUN = {
     -- RPG Types =              900/901/902
     -- Unknown =                700/701/800/801/802/803/804/1000/1001/9000
     
-    ReticleType = 4,                    --(4) --Experimental
+    ReticleType = 4,                    --(4)
                                 
         --//////PUN Base Stats//////--
 
@@ -83,10 +83,10 @@ local PUN = {
     Recoil_PitchMin = 2.0,              --(2.0) Up/Down
     Recoil_PitchMax = 0.5,              --(0.5) Up/Down
 
-    HandShake_Time = 6.0,               --Experimental
-    HandShake_Offset = 0.5,             --Experimental
+    HandShake_Time = 6.0,               --(6.0)
+    HandShake_Offset = 0.5,             --(0.5)
 
-    BaseAmmoNum = 1,				    --(12) Base Ammo count
+    BaseAmmoNum = 12,				    --(12) Base Ammo count
     BaseAmmoCost = 1,				    --(1) Amount of ammo used per shot
     DurDEF_Max = 1000,				    --(1000) Max Item durability
     DurSLD_Max = 2000,				    --(2000) Not really sure something slider max durability?

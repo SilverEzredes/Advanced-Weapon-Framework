@@ -2,9 +2,9 @@
 -- Advanced Weapon Framework - KIL7 Stats
 
 -- Author: SilverEzredes
--- Updated: 04/17/2023
--- Version: v2.0.3
--- Special Thanks to: praydog, alphaZomega
+-- Updated: 04/28/2023
+-- Version: v2.0.4
+-- Special Thanks to: praydog, alphaZomega, MrBoobieBuyer
 
 --/////////////////////////////////////--
 
@@ -42,7 +42,7 @@ local KIL7 = {
     -- RPG Types =              900/901/902
     -- Unknown =                700/701/800/801/802/803/804/1000/1001/9000
     
-    ReticleType = 500,                    --(500) --Experimental
+    ReticleType = 500,                    --(500)
                                 
         --//////KIL7 Base Stats//////--
 
@@ -83,8 +83,8 @@ local KIL7 = {
     Recoil_PitchMin = 6.0,              --(6.0) Up/Down
     Recoil_PitchMax = 2.0,              --(2.0) Up/Down
 
-    HandShake_Time = 8.0,               --Experimental
-    HandShake_Offset = 0.5,             --Experimental
+    HandShake_Time = 8.0,               --(8.0)
+    HandShake_Offset = 0.5,             --(0.5)
 
     BaseAmmoNum = 7,				    --(7) Base Ammo count
     BaseAmmoCost = 1,				    --(1) Amount of ammo used per shot

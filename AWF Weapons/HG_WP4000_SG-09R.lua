@@ -2,9 +2,9 @@
 -- Advanced Weapon Framework - SG09R Stats
 
 -- Author: SilverEzredes
--- Updated: 04/17/2023
--- Version: v2.0.3
--- Special Thanks to: praydog, alphaZomega
+-- Updated: 04/28/2023
+-- Version: v2.0.4
+-- Special Thanks to: praydog, alphaZomega, MrBoobieBuyer
 
 --/////////////////////////////////////--
 
@@ -42,7 +42,7 @@ local SG09R = {
     -- RPG Types =              900/901/902
     -- Unknown =                700/701/800/801/802/803/804/1000/1001/9000
     
-    ReticleType = 4,                    --(4) --Experimental
+    ReticleType = 4,                    --(4)
                                 
         --//////SG09R Base Stats//////--
 
@@ -70,7 +70,7 @@ local SG09R = {
     FireRateFrame = 0.21,			    --(0.21) Not sure, something with the frames between shots.
     PumpActionFireRate = 1.0, 		    --(1.0) Pump speed for shotguns.
 
-    ThinkRange = 15.0,					    --(15.0) Probably not the effective range. 
+    ThinkRange = 15.0,					--(15.0) Probably not the effective range. 
     
     Focus_HoldAdd = 120.0,			    --(120.0)
     Focus_MoveSub = 1000.0,			    --(1000.0)
@@ -83,8 +83,8 @@ local SG09R = {
     Recoil_PitchMin = 3.2,              --(3.2) Up/Down
     Recoil_PitchMax = 0.6,              --(0.6) Up/Down
 
-    HandShake_Time = 6.0,               --Experimental
-    HandShake_Offset = 0.5,             --Experimental
+    HandShake_Time = 6.0,               --(6.0)
+    HandShake_Offset = 0.5,             --(0.5)
 
     BaseAmmoNum = 10,				    --(10) Base Ammo count
     BaseAmmoCost = 1,				    --(1) Amount of ammo used per shot

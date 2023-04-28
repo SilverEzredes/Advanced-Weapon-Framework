@@ -2,9 +2,9 @@
 -- Advanced Weapon Framework - M870 Stats
 
 -- Author: SilverEzredes
--- Updated: 04/21/2023
+-- Updated: 04/28/2023
 -- Version: v2.0.4
--- Special Thanks to: praydog; alphaZomega; MrBoobieBuyer
+-- Special Thanks to: praydog, alphaZomega, MrBoobieBuyer
 
 --/////////////////////////////////////--
 
