@@ -2,8 +2,8 @@
 -- Advanced Weapon Framework - RE4R
 
 -- Author: SilverEzredes
--- Updated: 04/21/2023
--- Version: v2.0.4
+-- Updated: 04/28/2023
+-- Version: v2.0.5
 -- Special Thanks to: praydog; alphaZomega
 
 --/////////////////////////////////////--
@@ -12,13 +12,6 @@ local scene_manager = AWF.scene_manager
 local scene = AWF.scene
 local create_resource = AWF.create_resource
 local meshType = sdk.typeof("via.render.Mesh")
-local triggered = false
-local WasTriggered = false
-local last_time = 0.0
-local tick_interval = 1.0 / 30.0
-
--- AWF_Experimental = false
--- AWF_Experimental = json.load_file("SILVER\\AWF_Experimental.json") or { }
 
 AWF_Control_Settings = {
 	UI_NightSight_Alt = false,
@@ -59,6 +52,43 @@ local function toggle_night_sight(mesh, ns_on, ns_off)
     end
 end
 
+local function setup_RE4R_NightSightWeapons()
+	SG09R = AWF.getGameObject(scene, AWF.WeaponIDs.SG09R_id)
+	SG09R_Mesh = get_WeaponMeshComponent(SG09R, meshType)
+	PUN = AWF.getGameObject(scene, AWF.WeaponIDs.PUN_id)
+	PUN_Mesh = get_WeaponMeshComponent(PUN, meshType)
+	Red9 = AWF.getGameObject(scene, AWF.WeaponIDs.RED9_id)
+	Red9_Mesh = get_WeaponMeshComponent(Red9, meshType)
+	BT = AWF.getGameObject(scene, AWF.WeaponIDs.BT_id)
+	BT_Mesh = get_WeaponMeshComponent(BT, meshType)
+	VP70 = AWF.getGameObject(scene, AWF.WeaponIDs.VP70_id)
+	VP70_Mesh = get_WeaponMeshComponent(VP70, meshType)
+	SEN9 = AWF.getGameObject(scene, AWF.WeaponIDs.SEN9_id)
+	SEN9_Mesh = get_WeaponMeshComponent(SEN9, meshType)
+	TMP = AWF.getGameObject(scene, AWF.WeaponIDs.TMP_id)
+	TMP_Mesh = get_WeaponMeshComponent(TMP, meshType)
+	M870 = AWF.getGameObject(scene, AWF.WeaponIDs.M870_id)
+	M870_Mesh = get_WeaponMeshComponent(M870, meshType)
+	BM4 = AWF.getGameObject(scene, AWF.WeaponIDs.BM4_id)
+	BM4_Mesh = get_WeaponMeshComponent(BM4, meshType)
+
+	if Change_NightSights then
+		AWF_Control_Settings.night_sight_toggled = not AWF_Control_Settings.night_sight_toggled
+		toggle_night_sight(SG09R_Mesh, SG09R_NS_on, SG09R_NS_off)
+		toggle_night_sight(TMP_Mesh, TMP_NS_on, TMP_NS_off)
+		toggle_night_sight(M870_Mesh, M870_NS_on, M870_NS_off)
+		toggle_night_sight(PUN_Mesh, PUN_NS_on, PUN_NS_off)
+		toggle_night_sight(Red9_Mesh, Red9_NS_on, Red9_NS_off)
+		toggle_night_sight(BT_Mesh, BT_NS_on, BT_NS_off)
+		toggle_night_sight(VP70_Mesh, VP70_NS_on, VP70_NS_off)
+		toggle_night_sight(SEN9_Mesh, SEN9_NS_on, SEN9_NS_off)
+		toggle_night_sight(BM4_Mesh, BM4_NS_on, BM4_NS_off)
+	end
+
+	json.dump_file("SILVER\\AWF_Control_Settings.json", AWF_Control_Settings)
+end
+
+
 re.on_frame(function()
 	
 	if scene_manager then 
@@ -76,61 +106,12 @@ re.on_frame(function()
 	local is_x_key_released = AWF.kb_state.released[via.hid.KeyboardKey.X]
 	local is_mouseL_button_down = AWF.mouse_state.down[via.hid.MouseButton.L]
 	local is_mouseR_button_down = AWF.mouse_state.down[via.hid.MouseButton.R]
-	
-	if os.clock() - last_time < tick_interval then return end
-		--//////WEAPONS//////--
-		local SG09R = AWF.getGameObject(scene, AWF.WeaponIDs.SG09R_id)
-		local SG09R_Mesh = get_WeaponMeshComponent(SG09R, meshType)
-		local PUN = AWF.getGameObject(scene, AWF.WeaponIDs.PUN_id)
-		local PUN_Mesh = get_WeaponMeshComponent(PUN, meshType)
-		local Red9 = AWF.getGameObject(scene, AWF.WeaponIDs.RED9_id)
-		local Red9_Mesh = get_WeaponMeshComponent(Red9, meshType)
-		local BT = AWF.getGameObject(scene, AWF.WeaponIDs.BT_id)
-		local BT_Mesh = get_WeaponMeshComponent(BT, meshType)
-		local VP70 = AWF.getGameObject(scene, AWF.WeaponIDs.VP70_id)
-		local VP70_Mesh = get_WeaponMeshComponent(VP70, meshType)
-		local SEN9 = AWF.getGameObject(scene, AWF.WeaponIDs.SEN9_id)
-		local SEN9_Mesh = get_WeaponMeshComponent(SEN9, meshType)
-		local TMP = AWF.getGameObject(scene, AWF.WeaponIDs.TMP_id)
-		local TMP_Mesh = get_WeaponMeshComponent(TMP, meshType)
-		local M870 = AWF.getGameObject(scene, AWF.WeaponIDs.M870_id)
-		local M870_Mesh = get_WeaponMeshComponent(M870, meshType)
-		local BM4 = AWF.getGameObject(scene, AWF.WeaponIDs.BM4_id)
-		local BM4_Mesh = get_WeaponMeshComponent(BM4, meshType)
-	last_time = os.clock()
 
-		--//////CONTROLS//////--
 	if (is_L2_button_down and is_A_button_released) or (((AWF_Control_Settings.UI_NightSight_Alt and is_mouseL_button_down) or (not AWF_Control_Settings.UI_NightSight_Alt and is_mouseR_button_down)) and is_x_key_released) then
-		AWF_Control_Settings.night_sight_toggled = not AWF_Control_Settings.night_sight_toggled
-		triggered = true
-		toggle_night_sight(SG09R_Mesh, SG09R_NS_on, SG09R_NS_off)
-		toggle_night_sight(TMP_Mesh, TMP_NS_on, TMP_NS_off)
-		toggle_night_sight(M870_Mesh, M870_NS_on, M870_NS_off)
-		toggle_night_sight(PUN_Mesh, PUN_NS_on, PUN_NS_off)
-		toggle_night_sight(Red9_Mesh, Red9_NS_on, Red9_NS_off)
-		toggle_night_sight(BT_Mesh, BT_NS_on, BT_NS_off)
-		toggle_night_sight(VP70_Mesh, VP70_NS_on, VP70_NS_off)
-		toggle_night_sight(SEN9_Mesh, SEN9_NS_on, SEN9_NS_off)
-		toggle_night_sight(BM4_Mesh, BM4_NS_on, BM4_NS_off)
-		if triggered ~= WasTriggered then
-			json.dump_file("SILVER\\AWF_Control_Settings.json", AWF_Control_Settings)
-		end
+		Change_NightSights = true
+		setup_RE4R_NightSightWeapons()
 	end
-	
-	if not triggered and not AWF_Control_Settings.night_sight_toggled then
-		toggle_night_sight(SG09R_Mesh, SG09R_NS_on, SG09R_NS_off)
-		toggle_night_sight(TMP_Mesh, TMP_NS_on, TMP_NS_off)
-		toggle_night_sight(M870_Mesh, M870_NS_on, M870_NS_off)
-		toggle_night_sight(PUN_Mesh, PUN_NS_on, PUN_NS_off)
-		toggle_night_sight(Red9_Mesh, Red9_NS_on, Red9_NS_off)
-		toggle_night_sight(BT_Mesh, BT_NS_on, BT_NS_off)
-		toggle_night_sight(VP70_Mesh, VP70_NS_on, VP70_NS_off)
-		toggle_night_sight(SEN9_Mesh, SEN9_NS_on, SEN9_NS_off)
-		toggle_night_sight(BM4_Mesh, BM4_NS_on, BM4_NS_off)
-	end
-end)
 
-re.on_frame(function ()
 	if reframework:is_drawing_ui() and AWF_window then
 		show_AWF_window()
 	end
@@ -188,22 +169,10 @@ function show_AWF_window()
 			end
 			imgui.tree_pop()
 		end
-
-		-- if imgui.tree_node("Experimental") then
-		-- 	imgui.text("Enable or disable experimental features.")
-		-- 	imgui.text("These features might not work properly or only support a select few weapons.")
-		-- 	--imgui.text("Current untested features: Hand Shake Params/ Reticle Types")
-
-		-- 	changed, AWF_Experimental = imgui.checkbox("Enable Experimental Features", AWF_Experimental)
-		-- 	was_changed = changed or was_changed
-		-- 	imgui.tree_pop()
-		-- end
-		
     end
 	
 	if was_changed then
 		json.dump_file("SILVER\\AWF_Control_Settings.json", AWF_Control_Settings)
-		--json.dump_file("SILVER\\AWF_Experimental.json", AWF_Experimental)
 	end
 	
 	imgui.end_window()

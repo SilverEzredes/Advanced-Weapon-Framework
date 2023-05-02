@@ -198,7 +198,7 @@ local HNDC = {
             
         --//////HNDC Limit Break Stats//////--
             
-    EX_OK = true,						--(true) Crit Rate multiplier.
+    EX_OK = true,						--(true) Unlimited Ammo.
     EX_COST = 10000,				    --(10000)
 
 }

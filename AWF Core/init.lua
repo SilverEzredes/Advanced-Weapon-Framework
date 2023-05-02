@@ -2,7 +2,7 @@
 -- Advanced Weapon Framework Core
 
 -- Authors: SilverEzredes; alphaZomega
--- Updated: 04/27/2023
+-- Updated: 05/02/2023
 -- Version: v2.1.3
 -- Special Thanks to: praydog; MrBoobieBuyer; Lotiuss
 
@@ -783,29 +783,29 @@ local AWFWeaponRE4 = {
 							end
 						end
 						
-						-- if Custom_AttachmentCustoms then
-						-- 	for i, AttachmentCategories in ipairs(Custom_AttachmentCustoms) do
-						-- 		local Custom_CategoryID = AttachmentCategories:call("get_AttachmentParams")
-						-- 		local Custom_Category_Name = AttachmentCategory_enums[Custom_CategoryID]
-						-- 		re.msg("Got Custom_AttachmentCustoms")--This returns so TODO from here
+						if Custom_AttachmentCustoms then
+							for i, AttachmentCategories in ipairs(Custom_AttachmentCustoms) do
+								local Custom_CategoryID = AttachmentCategories:call("get_AttachmentParams")
+								local Custom_Category_Name = AttachmentCategory_enums[Custom_CategoryID]
+								-- re.msg("Got Custom_AttachmentCustoms")--This returns so TODO from here
 
-						-- 		if Custom_Category_Name and Custom_Category_Name:find("MeshPartsNums") then
-						-- 			local Custom_ATT_MeshPartsNums = AttachmentCategories:get_field("_MeshPartsNums")
+								-- if Custom_Category_Name and Custom_Category_Name:find("MeshPartsNums") then
+								-- 	local Custom_ATT_MeshPartsNums = AttachmentCategories:get_field("_MeshPartsNums")
 									
-						-- 			if Custom_ATT_MeshPartsNums then
-						-- 				re.msg("Got ATT MeshPartsNums")
-						-- 				Custom_ATT_MeshPartsNums._Items[0] = d.ATT_MeshPart
-						-- 				Custom_ATT_MeshPartsNums._Items[1] = d.ATT_MeshPart_EX
-						-- 			end
-						-- 		end
+								-- 	if Custom_ATT_MeshPartsNums then
+								-- 		re.msg("Got ATT MeshPartsNums")
+								-- 		Custom_ATT_MeshPartsNums._Items[0] = d.ATT_MeshPart
+								-- 		Custom_ATT_MeshPartsNums._Items[1] = d.ATT_MeshPart_EX
+								-- 	end
+								-- end
 
-						-- 		if Custom_Category_Name and Custom_Category_Name:find("RandomRadius_Fit") then
-						-- 			re.msg("Got ATT RandomRadius_Fit")
-						-- 			AttachmentCategories._RandomRadius_Normal = d.ATT_RandomRadius
-						-- 			AttachmentCategories._RandomRadius_Fit = d.ATT_RandomRadius_Fit
-						-- 		end
-						-- 	end
-						-- end
+								-- if Custom_Category_Name and Custom_Category_Name:find("RandomRadius_Fit") then
+								-- 	re.msg("Got ATT RandomRadius_Fit")
+								-- 	AttachmentCategories._RandomRadius_Normal = d.ATT_RandomRadius
+								-- 	AttachmentCategories._RandomRadius_Fit = d.ATT_RandomRadius_Fit
+								-- end
+							end
+						end
 					end
 					break
 				end
@@ -868,9 +868,7 @@ local AWFWeaponRE4 = {
 					
 						if Shell then
 							local Shell_UserData = Shell:get_field("_UserData")
-							-- Shell.AroundShellBufCapa = d.SG_AroundShellBufCapa
-							-- Shell.AroundShellBufCount = d.SG_AroundShellBufCount
-						
+													
 							if Shell_UserData then
 								local Shell_HG_SMG_SR_MAG = Shell_UserData:get_field("_ShellInfoUserData")
 								local ShellSG_CenterUserData = Shell_UserData:get_field("_CenterShellInfoUserData")
@@ -1244,6 +1242,13 @@ re.on_frame(function()
 		return nil
 	end
 	
+	for WP_ID, AWFWeapon in pairs(AWFWeapons) do
+		if AWFWeapon.data.Changed then
+			PlayerItems = {}
+			break
+		end
+	end
+
 	find_weapons_lists()
 	
 	for WP_ID, AWFWeapon in pairs(AWFWeapons) do
