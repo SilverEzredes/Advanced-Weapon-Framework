@@ -2,8 +2,8 @@
 -- Advanced Weapon Framework Core
 
 -- Author: SilverEzredes
--- Updated: 12/20/2023
--- Version: v1.3.0
+-- Updated: 12/25/2023
+-- Version: v1.3.1
 -- Special Thanks to: praydog; alphaZomega; MrBoobieBuyer; Lotiuss
 
 --/////////////////////////////////////--
@@ -52,6 +52,7 @@ local AWFWeapons = {
         wp1010_Handgun_Item = {
             Weapon_Profiles = {},
             current_param_indx = 1,
+            LoadNum = 7,
             MaxLoadNum = 7,
             IsLoadNumInfinity = false,
             IsBulletStackNumInfinity = false,
@@ -394,7 +395,7 @@ local function cache_weapon_gameobjects_RE7(weaponData)
     for _, weapon in pairs(weaponData) do
         local Weapon_GameObject_RE7 = scene:call("findGameObject(System.String)", weapon.ID)
        
-        if weapon.Type ~= "Ammo" then
+        if weapon.Type ~= "Ammo" or weapon.Type ~= "KNF" then
             if Weapon_GameObject_RE7 then
                 cached_weapon_GameObjects_RE7[weapon.ID] = Weapon_GameObject_RE7
                 log.info("Cached " .. weapon.Name .. " Game Object")
@@ -414,21 +415,20 @@ local function cache_weapon_gameobjects_RE7(weaponData)
 
                     if weaponParams then
                         for paramName, paramValue in pairs(weaponParams) do
-                            if paramName ~= "Weapon_Profiles" and paramName ~= "current_param_indx" then
+                            --Here we exclude the params that are not under WeaponGunParameter. 
+                            if paramName ~= "Weapon_Profiles" and paramName ~= "current_param_indx" and paramName ~= "LoadNum" then
                                 local Weapon_Params_RE7 = Weapon_Stats_RE7:get_field("WeaponGunParameter")
-                                local Weapon_CurrentBulletInfo_RE7 = Weapon_Stats_RE7:get_field("CurrentBulletInfo")
                                 
                                 if Weapon_Params_RE7 then
                                     Weapon_Params_RE7[paramName] = paramValue
                                 end
+                            end
 
-                                if Weapon_CurrentBulletInfo_RE7 then
-                                    local loadNum = Weapon_CurrentBulletInfo_RE7:call("get_loadNum")
-                                    weaponParams.LoadNum = loadNum
+                            if paramName == "LoadNum" then
+                                local Weapon_BulletParams_RE7 = Weapon_Stats_RE7:get_field("CurrentBulletInfo")
 
-                                    -- if weaponParams.LoadNum then
-                                    --     Weapon_CurrentBulletInfo_RE7:call("set_loadNum",  weaponParams.LoadNum)
-                                    -- end
+                                if Weapon_BulletParams_RE7 then
+                                    Weapon_BulletParams_RE7[paramName] = paramValue
                                 end
                             end
                         end
@@ -531,9 +531,6 @@ local function draw_AWF_editor_GUI(weaponOrder)
                 cache_json_files_RE7(AWF_settings.RE7_Weapons)
             end
             func.tooltip("Reset the parameters of " .. weaponData.Name)
-            
-            imgui.same_line()
-            func.colored_TextSwitch("Current Ammo Count:", AWF_settings.RE7_Weapon_Params[weaponData.ID].LoadNum, AWF_settings.RE7_Weapon_Params[weaponData.ID].LoadNum, 0xFF00FF00, AWF_settings.RE7_Weapon_Params[weaponData.ID].LoadNum, 0xFF0000FF)
 
             imgui.same_line()
             changed, AWF_settings.RE7_Weapon_Params[weaponData.ID].IsLoadNumInfinity = imgui.checkbox("Unlimited Capacity", AWF_settings.RE7_Weapon_Params[weaponData.ID].IsLoadNumInfinity); wc = wc or changed
@@ -597,20 +594,6 @@ local function draw_AWF_editor_GUI(weaponOrder)
 
             changed, AWF_settings.RE7_Weapon_Params[weaponData.ID].RecoilXAngle = imgui.drag_float("Recoil X", AWF_settings.RE7_Weapon_Params[weaponData.ID].RecoilXAngle, 0.01, 0.0, 1000.0); wc = wc or changed
             func.tooltip("The amount the weapon recoils on the X axis. Lower is better.")
-            
-            -- imgui.spacing()
-            -- imgui.input_text("hi i'm a text box [DEBUG]", AWF_settings.SaveFileName)
-            -- if imgui.button("Save") then
-            --     local fileName = AWF_settings.SaveFileName
-            --     if fileName ~= "" then
-            --         local selectedWeaponName = weaponData.Name -- Get the selected weapon name
-            --         local jsonFilePath = "AWF/AWF_Weapons/" .. selectedWeaponName .. "/" .. fileName .. ".json"
-            --         json.dump_file(jsonFilePath, AWF_settings.RE7_Weapon_Params[weaponData.ID])
-            --         log.info("Saved JSON file: " .. jsonFilePath)
-            --     else
-            --         log.info("Please enter a valid file name.")
-            --     end
-            -- end
 
             imgui.tree_pop()
         end
@@ -654,7 +637,7 @@ re.on_draw_ui(function()
             json.dump_file("AWF/AWF_Settings.json", AWF_settings)
         end
 
-        imgui.text("				    v1.3.0 by SilverEzredes")
+        imgui.text("				    v1.3.1 by SilverEzredes")
         imgui.end_rect(2)
         imgui.tree_pop()
     end

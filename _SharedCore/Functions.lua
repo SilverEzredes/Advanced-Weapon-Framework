@@ -2,7 +2,7 @@
 -- Functions LUA
 
 -- Author: SilverEzredes
--- Updated: 12/20/2023
+-- Updated: 12/25/2023
 -- Version: v1.0.5
 -- Special Thanks to: praydog; alphaZomega
 

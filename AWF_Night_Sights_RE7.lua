@@ -179,7 +179,7 @@ re.on_draw_ui(function()
                 imgui.tree_pop()
             end
         end
-        imgui.text("				    v1.2.0 by SilverEzredes")
+        imgui.text("				    v1.3.0 by SilverEzredes")
         imgui.end_rect(1)
         
         if changed or wc then
