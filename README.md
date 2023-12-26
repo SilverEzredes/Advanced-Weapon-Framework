@@ -16,3 +16,6 @@ This is a repository of all Advanced Weapon Framework lua scripts, for use with 
 Resident Evil 7 RT:
 - [Script Core](https://www.nexusmods.com/residentevil7/mods/108)
 - [Advanced Weapon Framework - RE7](https://www.nexusmods.com/residentevil7/mods/116)
+
+### Support:
+If you have issues with the mod, create an issue here or join [Modding Haven](https://discord.gg/9Vr2SJ3) and message me on Discord
