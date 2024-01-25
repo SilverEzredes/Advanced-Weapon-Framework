@@ -2,11 +2,12 @@
 -- Functions LUA
 
 -- Author: SilverEzredes
--- Updated: 12/25/2023
--- Version: v1.0.5
+-- Updated: 01/07/2024
+-- Version: v1.0.7
 -- Special Thanks to: praydog; alphaZomega
 
 --/////////////////////////////////////--
+
 
 local function check_GameName(GameName)
     if reframework.get_game_name() ~= GameName then
@@ -151,7 +152,6 @@ local function colored_TextSwitch(SampleText, StateSwitchName, State_01, Color_0
     end
 end
 
-
 local function create_resource(resource_path, resource_type)
     local new_resource = sdk.create_resource(resource_type, resource_path)
     if new_resource then 
@@ -163,6 +163,107 @@ local function create_resource(resource_path, resource_type)
             holder:add_ref()
             return holder
         end
+    end
+end
+
+local function isBKF(var)
+    if var then
+        return "<" .. var .. ">k__BackingField"
+    end
+end
+
+REMgdObj = {
+    o,
+    new = function(self, obj, o)
+        o = o or {}
+        self.__index = self
+        o._ = {}
+        o._.obj = obj
+        if not obj or type(obj) == "number" or not obj.get_type_definition then return end
+        o._.type = obj:get_type_definition()
+        o._.name = o._.type:get_name()
+        o._.Name = o._.type:get_full_name()
+        o._.fields = {}
+        for i, field in ipairs(o._.type:get_fields()) do 
+            local field_name = field:get_name()
+            local try, value = pcall(field.get_data, field, obj)
+            o._.fields[field_name] = field
+            o[field_name] = value
+        end
+        o._.methods = {}
+        for i, method in ipairs(o._.type:get_methods()) do 
+            local method_name = method:get_name()
+            o._.methods[method_name] = method
+            o[method_name] = function(self, args)
+                if args then 
+                    return self._.obj:call(method_name, table.unpack(args))
+                end
+                return self._.obj:call(method_name)
+            end
+        end
+        return setmetatable(o, self)
+    end,
+    update = function(self)
+        if sdk.is_managed_object(obj) then--is_valid_obj(self._.obj) then 
+            for field_name, field in pairs(self._.fields) do 
+                self[field_name] = field:get_data(self._.obj)
+            end
+        else
+            self = nil
+        end
+    end,
+}
+metadata = {}
+
+
+local function generate_statics(typename)
+    local t = sdk.find_type_definition(typename)
+    if not t then return {} end
+
+    local fields = t:get_fields()
+    local enum = {}
+    local enum_string = "\ncase \"" .. typename .. "\":" .. "\n    enum {"
+    
+    for i, field in ipairs(fields) do
+        if field:is_static() then
+            local name = field:get_name()
+            local raw_value = field:get_data(nil)
+            enum_string = enum_string .. "\n        " .. name .. " = " .. tostring(raw_value) .. ","
+            enum[name] = raw_value
+        end
+    end
+    
+    --log.info(enum_string .. "\n    }" .. typename:gsub("%.", "_") .. ";\n    break;\n") --enums for RSZ template
+
+    return enum
+end
+
+local function generate_statics_global(typename)
+    local parts = {}
+    for part in typename:gmatch("[^%.]+") do
+        table.insert(parts, part)
+    end
+    local global = _G
+    for i, part in ipairs(parts) do
+        if not global[part] then
+            global[part] = {}
+        end
+        global = global[part]
+    end
+    if global ~= _G then
+        local static_class = generate_statics(typename)
+
+        for k, v in pairs(static_class) do
+            global[k] = v
+            global[v] = k
+        end
+    end
+    return global
+end
+
+local function write_valuetype(parent_obj, offset, value)
+    for i = 0, value.type:get_valuetype_size()-1 do
+        parent_obj:write_byte(offset+i, value:read_byte(i))
     end
 end
 
@@ -187,6 +288,11 @@ func = {
     colored_TextSwitch = colored_TextSwitch,
     create_resource = create_resource,
     table_contains = table_contains,
+    generate_statics_global = generate_statics_global,
+    generate_statics = generate_statics,
+    isBKF = isBKF,
+    REMgdObj = REMgdObj,
+    write_valuetype = write_valuetype,
 }
 
 return func
