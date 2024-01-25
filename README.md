@@ -3,6 +3,7 @@ This is a repository of all Advanced Weapon Framework lua scripts, for use with 
 
 ### Supported Games:
 - Resident Evil 7 RT
+- Resident Evil 2 Remake 
 
 ### Requirements:
 - [REFramework](https://github.com/praydog/REFramework-nightly/releases)
