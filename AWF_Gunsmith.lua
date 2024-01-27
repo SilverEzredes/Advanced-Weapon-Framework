@@ -2,8 +2,8 @@
 -- Advanced Weapon Framework - Gunsmith
 
 -- Author: SilverEzredes
--- Updated: 01/25/2024
--- Version: v1.4.45
+-- Updated: 01/27/2024
+-- Version: v1.4.50
 -- Special Thanks to: praydog; alphaZomega
 
 --/////////////////////////////////////--
@@ -294,8 +294,25 @@ local function weapon_parts_Manager_RE7(weaponData, WPM_table)
                                 
                                 if EnabledMat then
                                     --log.info("-------" .. EnabledMat .. " is Enabled")
-                                    for k, _ in ipairs(WPM_table[weapon.ID].Parts) do
-                                        WPM_table[weapon.ID].Enabled[k] = true
+                                    --Here we check if current_preset_indx is 1 or nil if either then we just enable all materials for that weapon.
+                                    if WPM_table[weapon.ID].current_preset_indx == 1 or nil then
+                                        for k, _ in ipairs(WPM_table[weapon.ID].Parts) do
+                                            WPM_table[weapon.ID].Enabled[k] = true
+                                        end
+                                        --If current_preset_indx is greater than 1 then we load the selected preset.
+                                    elseif  WPM_table[weapon.ID].current_preset_indx > 1 then
+                                        --We get the selected preset by matching the current_preset_indx with the Presets table.
+                                        local selected_preset = AWF_settings.RE7_Gunsmith[weapon.ID].Presets[AWF_settings.RE7_Gunsmith[weapon.ID].current_preset_indx]
+                                        local json_filepath = [[AWF\\AWF_Gunsmith\\]] .. weapon.Name .. [[\\]] .. selected_preset .. [[.json]]
+                                        local temp_parts = json.load_file(json_filepath)
+                                        
+                                        temp_parts.Presets = nil
+                                        temp_parts.current_preset_indx = nil
+
+                                        for key, value in pairs(temp_parts) do
+                                            --log.info("------------------------------------Set " .. weapon.Name .. " Custom Preset")
+                                            AWF_settings.RE7_Gunsmith[weapon.ID][key] = value
+                                        end
                                     end
                                 end
                             end
@@ -332,8 +349,21 @@ local function weapon_parts_Manager_RE2(weaponData, WPM_table)
                                 end
                                 
                                 if EnabledMat then
-                                    for k, _ in ipairs(WPM_table[weapon.ID].Parts) do
-                                        WPM_table[weapon.ID].Enabled[k] = true
+                                    if WPM_table[weapon.ID].current_preset_indx == 1 or nil then
+                                        for k, _ in ipairs(WPM_table[weapon.ID].Parts) do
+                                            WPM_table[weapon.ID].Enabled[k] = true
+                                        end
+                                    elseif  WPM_table[weapon.ID].current_preset_indx > 1 then
+                                        local selected_preset = AWF_settings.RE2_Gunsmith[weapon.ID].Presets[AWF_settings.RE2_Gunsmith[weapon.ID].current_preset_indx]
+                                        local json_filepath = [[AWF\\AWF_Gunsmith\\]] .. weapon.Name .. [[\\]] .. selected_preset .. [[.json]]
+                                        local temp_parts = json.load_file(json_filepath)
+                                        
+                                        temp_parts.Presets = nil
+                                        temp_parts.current_preset_indx = nil
+
+                                        for key, value in pairs(temp_parts) do
+                                            AWF_settings.RE2_Gunsmith[weapon.ID][key] = value
+                                        end
                                     end
                                 end
                             end
@@ -386,6 +416,7 @@ local function update_weapon_parts_Manager_RE2(weaponData, WPM_table)
     for _, weapon in pairs(weaponData) do
         if WPM_table[weapon.ID] then
             local Weapon_GameObject_RE2 = scene:call("findGameObject(System.String)", weapon.ID)
+            local Weapon_Inventory_GameObject_RE2 = scene:call("findGameObject(System.String)", string.upper(weapon.ID))
 
             if Weapon_GameObject_RE2 then
                 local render_mesh = Weapon_GameObject_RE2:call("getComponent(System.Type)", sdk.typeof("via.render.Mesh"))
@@ -400,6 +431,29 @@ local function update_weapon_parts_Manager_RE2(weaponData, WPM_table)
                             if EnabledMat then
                                 for j = 0, EnabledMat do
                                     render_mesh:call("setMaterialsEnable", j, WPM_table[weapon.ID].Enabled[j + 1])
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+            if Weapon_Inventory_GameObject_RE2 then
+                local set_item = Weapon_Inventory_GameObject_RE2:call("getComponent(System.Type)", sdk.typeof("app.ropeway.gimmick.action.SetItem"))
+
+                if set_item then
+                    local render_mesh = set_item:call("get_MeshComponent")
+
+                    if render_mesh then
+                        local MatCount = render_mesh:call("get_MaterialNum")
+                    
+                        if MatCount then
+                            for i = 0, MatCount - 1 do
+                                local EnabledMat = render_mesh:call("getMaterialsEnableIndices", i)
+                                
+                                if EnabledMat then
+                                    for j = 0, EnabledMat do
+                                        render_mesh:call("setMaterialsEnable", j, WPM_table[weapon.ID].Enabled[j + 1])
+                                    end
                                 end
                             end
                         end
@@ -519,6 +573,7 @@ re.on_frame(function()
             changed = false
             wc = false
             AWF_Weapons_Found = false
+            dump_weapon_parts_json_RE2(AWF.AWF_settings.RE2_Weapons)
             update_weapon_parts_Manager_RE2(AWF.AWF_settings.RE2_Weapons, AWF_settings.RE2_Gunsmith)
             log.info("--------------------- AWF Gunsmith Data Updated!")
         end
@@ -597,7 +652,32 @@ local function draw_AWF_Gunsmith_GUI_RE2(weaponOrder)
                     wc = true
                     cache_WPM_json_files_RE2(AWF.AWF_settings.RE2_Weapons)
                 end
+
+                imgui.same_line()
+                imgui.button(" | ")
+
+                imgui.same_line()
+                if imgui.button("Update Weapon Parts List") then
+                    wc = true
+                    weapon_parts_Manager_RE2(AWF.AWF_settings.RE2_Weapons, AWF_settings.RE2_Gunsmith)
+                    update_weapon_parts_Manager_RE7(AWF.AWF_settings.RE2_Weapons, AWF_settings.RE2_Gunsmith)
+                end
+
+                imgui.same_line()
+                imgui.button(" | ")
+
                 
+
+                imgui.same_line()
+                func.colored_TextSwitch("Total Parts Count:", #AWF_settings.RE2_Gunsmith[weaponData.ID].Parts, #AWF_settings.RE2_Gunsmith[weaponData.ID].Parts, 0xFF00FF00, #AWF_settings.RE2_Gunsmith[weaponData.ID].Parts, 0xFF0000FF)
+                                
+                if imgui.button("Save Preset") then
+                    json.dump_file("AWF/AWF_Gunsmith/".. weaponData.Name .. "/" .. weaponData.Name .. " NEW".. ".json", AWF_settings.RE2_Gunsmith[weaponData.ID])
+                    log.info("AWF Custom " .. weaponData.Name ..  " Params Saved")
+                end
+                func.tooltip("Save the current preset of the " .. weaponData.Name .. " to a .json file found in [RESIDENT EVIL 2  BIOHAZARD RE2/reframework/data/AWF/AWF_Gunsmith/".. weaponData.Name .. "]")
+
+                imgui.same_line()
                 changed, AWF_settings.RE2_Gunsmith[weaponData.ID].current_preset_indx = imgui.combo("Preset", AWF_settings.RE2_Gunsmith[weaponData.ID].current_preset_indx or 1, AWF_settings.RE2_Gunsmith[weaponData.ID].Presets); wc = wc or changed
                 func.tooltip("Select a file from the dropdown menu to load the weapon variant from that file.")
                 if changed then
@@ -612,17 +692,8 @@ local function draw_AWF_Gunsmith_GUI_RE2(weaponOrder)
                         AWF_settings.RE2_Gunsmith[weaponData.ID][key] = value
                     end
                 end
-
-                imgui.spacing()
                 
-                if imgui.button("Update Weapon Parts List") then
-                    wc = true
-                    weapon_parts_Manager_RE2(AWF.AWF_settings.RE2_Weapons, AWF_settings.RE2_Gunsmith)
-                    update_weapon_parts_Manager_RE7(AWF.AWF_settings.RE2_Weapons, AWF_settings.RE2_Gunsmith)
-                end
-
-                imgui.same_line()
-                func.colored_TextSwitch("Total Parts Count:", #AWF_settings.RE2_Gunsmith[weaponData.ID].Parts, #AWF_settings.RE2_Gunsmith[weaponData.ID].Parts, 0xFF00FF00, #AWF_settings.RE2_Gunsmith[weaponData.ID].Parts, 0xFF0000FF)
+                imgui.spacing()
 
                 for i, partName in ipairs(AWF_settings.RE2_Gunsmith[weaponData.ID].Parts) do
                     changed, AWF_settings.RE2_Gunsmith[weaponData.ID].Enabled[i] = imgui.checkbox(partName, AWF_settings.RE2_Gunsmith[weaponData.ID].Enabled[i]); wc = wc or changed
@@ -699,7 +770,7 @@ re.on_draw_ui(function()
                 json.dump_file("AWF/AWF_Gunsmith/AWF_Gunsmith_Settings.json", AWF_settings)
             end
 
-            ui.button_n_colored_txt("Current Version:", "v1.4.45 | 01/25/2024", 0xFF00FF00)
+            ui.button_n_colored_txt("Current Version:", "v1.4.50 | 01/27/2024", 0xFF00FF00)
             imgui.same_line()
             imgui.text("| by SilverEzredes")
 
@@ -720,5 +791,4 @@ AWFGS = {
     cache_WPM_json_files_RE2 = cache_WPM_json_files_RE2,
     update_weapon_parts_Manager_RE2 = update_weapon_parts_Manager_RE2,
 }
-
 return AWFGS

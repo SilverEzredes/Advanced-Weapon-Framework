@@ -2,8 +2,8 @@
 -- Advanced Weapon Framework Core
 
 -- Author: SilverEzredes
--- Updated: 01/24/2024
--- Version: v1.4.45
+-- Updated: 01/27/2024
+-- Version: v1.4.50
 -- Special Thanks to: praydog; alphaZomega; MrBoobieBuyer; Lotiuss
 
 --/////////////////////////////////////--
@@ -4999,7 +4999,7 @@ re.on_draw_ui(function()
                 json.dump_file("AWF/AWF_Settings.json", AWF_settings)
             end
 
-            ui.button_n_colored_txt("Current Version:", "v1.4.45 | 01/24/2024", 0xFF00FF00)
+            ui.button_n_colored_txt("Current Version:", "v1.4.50 | 01/27/2024", 0xFF00FF00)
             imgui.same_line()
             imgui.text("| by SilverEzredes")
             imgui.end_rect(2)
@@ -5028,7 +5028,7 @@ re.on_draw_ui(function()
                 json.dump_file("AWF/AWF_Settings.json", AWF_settings)
             end
             
-            ui.button_n_colored_txt("Current Version:", "v1.4.43 | 01/24/2024", 0xFF00FF00)
+            ui.button_n_colored_txt("Current Version:", "v1.4.50 | 01/27/2024", 0xFF00FF00)
             imgui.same_line()
             imgui.text("| by SilverEzredes")
             

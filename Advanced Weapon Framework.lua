@@ -2,8 +2,8 @@
 -- Advanced Weapon Framework
 
 -- Author: SilverEzredes
--- Updated: 01/25/2024
--- Version: v1.4.45
+-- Updated: 01/27/2024
+-- Version: v1.4.50
 -- Special Thanks to: praydog; alphaZomega; MrBoobieBuyer; Lotiuss
 
 --/////////////////////////////////////--
@@ -45,7 +45,7 @@ local function check_for_loading_tip_RE7()
                         AWFGS.AWFGS_Settings.RE7_Gunsmith[weapon.ID].isUpdated = true
                         AWFGS.dump_weapon_parts_json_RE7(AWF.AWF_settings.RE7_Weapons)
                     end
-                    AWFGS.weapon_parts_Manager_RE7(AWF.AWF_settings.RE7_Weapons, AWFGS.AWFGS_Settings.RE7_Gunsmith)
+                    AWFGS.weapon_parts_Manager_RE7(AWF.AWF_settings.RE7_Weapons,  AWFGS.AWFGS_Settings.RE7_Gunsmith)
                     AWFGS.update_weapon_parts_Manager_RE7(AWF.AWF_settings.RE7_Weapons, AWFGS.AWFGS_Settings.RE7_Gunsmith)
                 end
             end
@@ -89,7 +89,7 @@ local function check_for_loading_screen_RE2()
                         AWFGS.AWFGS_Settings.RE2_Gunsmith[weapon.ID].isUpdated = true
                         AWFGS.dump_weapon_parts_json_RE2(AWF.AWF_settings.RE2_Weapons)
                     end
-                    AWFGS.weapon_parts_Manager_RE2(AWF.AWF_settings.RE2_Weapons, AWFGS.AWFGS_Settings.RE2_Gunsmith)
+                    AWFGS.weapon_parts_Manager_RE2(AWF.AWF_settings.RE2_Weapons,  AWFGS.AWFGS_Settings.RE2_Gunsmith)
                     AWFGS.update_weapon_parts_Manager_RE2(AWF.AWF_settings.RE2_Weapons, AWFGS.AWFGS_Settings.RE2_Gunsmith)
                 end
             end

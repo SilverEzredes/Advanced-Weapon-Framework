@@ -2,8 +2,8 @@
 -- Advanced Weapon Framework - Night Sights
 
 -- Author: SilverEzredes
--- Updated: 01/25/2024
--- Version: v1.4.45
+-- Updated: 01/26/2024
+-- Version: v1.4.48
 -- Special Thanks to: praydog; alphaZomega
 
 --/////////////////////////////////////--
@@ -415,7 +415,7 @@ local function toggle_night_sights_RE7(weaponData, NS_table)
                             local MatName = render_mesh:call("getMaterialName", i)
                             local MatParam = render_mesh:call("getMaterialVariableNum", i)
                             
-                            if MatName == "%NightSight" or "%NS" or "%NSight" then
+                            if MatName:match("%NightSight$") or MatName:match("%NSight$") or MatName:match("%NS$") then
                                 --log.info("---------------------------Got " .. MatName)
 
                                 if MatParam then
@@ -465,7 +465,8 @@ local function toggle_night_sights_RE2(weaponData, NS_table)
                         local MatName = render_mesh:call("getMaterialName", i)
                         local MatParam = render_mesh:call("getMaterialVariableNum", i)
                         
-                        if MatName == "%NightSight" or "%NS" or "%NSight" then
+                        if MatName:match("%NightSight$") or MatName:match("%NSight$") or MatName:match("%NS$") then
+                            --log.info("---------------------------Got " .. MatName)
                             if MatParam then
                                 for j = 0, MatParam - 1 do
                                     local MatParamNames = render_mesh:call("getMaterialVariableName", i, j)
