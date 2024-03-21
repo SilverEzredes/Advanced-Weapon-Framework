@@ -25,7 +25,7 @@ Resident Evil 3 Remake:
 - [Script Core](https://www.nexusmods.com/residentevil32020/mods/904)
 - [Advanced Weapon Framework - RE3R](https://www.nexusmods.com/residentevil32020/mods/905)
   
-- Resident Evil 4 Remake:
+Resident Evil 4 Remake:
 - [Script Core](https://www.nexusmods.com/residentevil42023/mods/2484)
 - [Advanced Weapon Framework - RE4R](https://www.nexusmods.com/residentevil42023/mods/42)
   
