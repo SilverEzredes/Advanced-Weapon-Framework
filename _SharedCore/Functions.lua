@@ -2,12 +2,11 @@
 -- Functions LUA
 
 -- Author: SilverEzredes
--- Updated: 01/07/2024
--- Version: v1.0.7
+-- Updated: 01/28/2024
+-- Version: v1.0.8
 -- Special Thanks to: praydog; alphaZomega
 
 --/////////////////////////////////////--
-
 
 local function check_GameName(GameName)
     if reframework.get_game_name() ~= GameName then
@@ -119,21 +118,6 @@ local function table_contains(table, element)
         end
     end
     return false
-end
-
-local function recurse_def_settings(tbl, defaults_tbl)
-	for key, value in pairs(defaults_tbl) do
-		if type(tbl[key]) ~= type(value) then
-			if type(value) == "table" then
-				tbl[key] = recurse_def_settings({}, value)
-			else
-				tbl[key] = value
-			end
-		elseif type(value) == "table" then
-			tbl[key] = recurse_def_settings(tbl[key], value)
-		end
-	end
-	return tbl
 end
 
 local function tooltip(text, do_force)
@@ -283,7 +267,6 @@ func = {
     convert_vector3f_to_rgb = convert_vector3f_to_rgb,
     convert_rgba_to_vector4f = convert_rgba_to_vector4f,
     convert_vector4f_to_rgba = convert_vector4f_to_rgba,
-    recurse_def_settings = recurse_def_settings,
     tooltip = tooltip,
     colored_TextSwitch = colored_TextSwitch,
     create_resource = create_resource,
@@ -294,5 +277,4 @@ func = {
     REMgdObj = REMgdObj,
     write_valuetype = write_valuetype,
 }
-
 return func

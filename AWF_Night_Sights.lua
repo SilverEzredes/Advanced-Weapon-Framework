@@ -2,13 +2,13 @@
 -- Advanced Weapon Framework - Night Sights
 
 -- Author: SilverEzredes
--- Updated: 01/26/2024
--- Version: v1.4.48
+-- Updated: 03/21/2024
+-- Version: v3.0.0
 -- Special Thanks to: praydog; alphaZomega
 
 --/////////////////////////////////////--
 local AWF = require("AWFCore")
-local hk = require("_SharedCore/Hotkeys")
+local hk = require("Hotkeys/Hotkeys")
 local func = require("_SharedCore/Functions")
 
 local show_AWFNS_editor = false
@@ -19,167 +19,33 @@ local wc = false
 local AWF_NS_default_settings = {
     input_mode_idx =  1,
     option_mode_idx = 1,
+    fl_input_mode_idx =  1,
+    fl_option_mode_idx = 1,
     use_modifier = true,
     use_pad_modifier = true,
+    fl_use_modifier = true,
+    fl_use_pad_modifier = true,
     -------------------------
 	hotkeys = {
-		["Modifier"] = "R Mouse",
+		["Night Sight Modifier"] = "R Mouse",
 		["Night Sight Switch"] = "E",
-		["Pad Modifier"] = "LT (L2)",
+		["Pad Night Sight Modifier"] = "LT (L2)",
 		["Pad Night Sight Switch"] = "A (X)",
+
+        ["Gun Light Modifier"] = "R Mouse",
+		["Gun Light Switch"] = "T",
+		["Pad Gun Light Modifier"] = "LT (L2)",
+		["Pad Gun Light Switch"] = "B (Circle)",
 	},
 }
 
-local AWFWeapons = {
-    RE7_Night_Sights = {
-        wp1010_Handgun_Item = {
-            night_sight_toggled = false,
-            material_params = {
-                EmissiveColor = {
-                    R = 0,
-                    G = 255,
-                    B = 0,
-                    A = 255,
-                },
-                EmissiveIntensity = 150.0,
-                EmissiveRate = 0.0,
-            },
-        },
-        wp1030_Shotgun_Item = {
-            night_sight_toggled = false,
-            material_params = {
-                EmissiveColor = {
-                    R = 0,
-                    G = 255,
-                    B = 0,
-                    A = 255,
-                },
-                EmissiveIntensity = 150.0,
-                EmissiveRate = 0.0,
-            },
-        },
-        wp1033_Shotgun_Item = {
-            night_sight_toggled = false,
-            material_params = {
-                EmissiveColor = {
-                    R = 0,
-                    G = 255,
-                    B = 0,
-                    A = 255,
-                },
-                EmissiveIntensity = 150.0,
-                EmissiveRate = 0.0,
-            },
-        },
-        wp1140_Magnum_Item = {
-            night_sight_toggled = false,
-            material_params = {
-                EmissiveColor = {
-                    R = 0,
-                    G = 255,
-                    B = 0,
-                    A = 255,
-                },
-                EmissiveIntensity = 150.0,
-                EmissiveRate = 0.0,
-            },
-        },
-        wp1160_MachineGun_Item = {
-            night_sight_toggled = false,
-            material_params = {
-                EmissiveColor = {
-                    R = 0,
-                    G = 255,
-                    B = 0,
-                    A = 255,
-                },
-                EmissiveIntensity = 150.0,
-                EmissiveRate = 0.0,
-            },
-        },
-        wp1210_Handgun_Item = {
-            night_sight_toggled = false,
-            material_params = {
-                EmissiveColor = {
-                    R = 0,
-                    G = 255,
-                    B = 0,
-                    A = 255,
-                },
-                EmissiveIntensity = 150.0,
-                EmissiveRate = 0.0,
-            },
-        },
-        wp1230_PumpShotgun_Item = {
-            night_sight_toggled = false,
-            material_params = {
-                EmissiveColor = {
-                    R = 0,
-                    G = 255,
-                    B = 0,
-                    A = 255,
-                },
-                EmissiveIntensity = 150.0,
-                EmissiveRate = 0.0,
-            },
-        },
-        wp1240_MiaHandgun_Item = {
-            night_sight_toggled = false,
-            material_params = {
-                EmissiveColor = {
-                    R = 0,
-                    G = 255,
-                    B = 0,
-                    A = 255,
-                },
-                EmissiveIntensity = 150.0,
-                EmissiveRate = 0.0,
-            },
-        },
-        wp1330_ChrisShotgun_Item = {
-            night_sight_toggled = false,
-            material_params = {
-                EmissiveColor = {
-                    R = 0,
-                    G = 255,
-                    B = 0,
-                    A = 255,
-                },
-                EmissiveIntensity = 150.0,
-                EmissiveRate = 0.0,
-            },
-        },
-        wp1340_ChrisHandgun_Item = {
-            night_sight_toggled = false,
-            material_params = {
-                EmissiveColor = {
-                    R = 0,
-                    G = 255,
-                    B = 0,
-                    A = 255,
-                },
-                EmissiveIntensity = 150.0,
-                EmissiveRate = 0.0,
-            },
-        },
-        wp1340_ChrisHandgun_Reward_Item = {
-            night_sight_toggled = false,
-            material_params = {
-                EmissiveColor = {
-                    R = 0,
-                    G = 255,
-                    B = 0,
-                    A = 255,
-                },
-                EmissiveIntensity = 150.0,
-                EmissiveRate = 0.0,
-            },
-        },
-    },
+local AWFWeapons = {  
     RE2_Night_Sights = {
         wp0000 = {
             night_sight_toggled = false,
-            material_params = {
+            flashlight_toggled = false,
+            dotsight_toggled = false,
+            ns_material_params = {
                 EmissiveColor = {
                     R = 0,
                     G = 255,
@@ -189,155 +55,32 @@ local AWFWeapons = {
                 EmissiveIntensity = 150.0,
                 EmissiveRate = 0.0,
             },
-        },
-        wp0100 = {
-            night_sight_toggled = false,
-            material_params = {
-                EmissiveColor = {
-                    R = 0,
-                    G = 255,
-                    B = 0,
-                    A = 255,
-                },
-                EmissiveIntensity = 150.0,
-                EmissiveRate = 0.0,
-            },
-        },
-        wp0200 = {
-            night_sight_toggled = false,
-            material_params = {
-                EmissiveColor = {
-                    R = 0,
-                    G = 255,
-                    B = 0,
-                    A = 255,
-                },
-                EmissiveIntensity = 150.0,
-                EmissiveRate = 0.0,
-            },
-        },
-        wp0300 = {
-            night_sight_toggled = false,
-            material_params = {
-                EmissiveColor = {
-                    R = 0,
-                    G = 255,
-                    B = 0,
-                    A = 255,
-                },
-                EmissiveIntensity = 150.0,
-                EmissiveRate = 0.0,
-            },
-        },
-        wp0600 = {
-            night_sight_toggled = false,
-            material_params = {
-                EmissiveColor = {
-                    R = 0,
-                    G = 255,
-                    B = 0,
-                    A = 255,
-                },
-                EmissiveIntensity = 150.0,
-                EmissiveRate = 0.0,
-            },
-        },
-        wp0700 = {
-            night_sight_toggled = false,
-            material_params = {
-                EmissiveColor = {
-                    R = 0,
-                    G = 255,
-                    B = 0,
-                    A = 255,
-                },
-                EmissiveIntensity = 150.0,
-                EmissiveRate = 0.0,
-            },
-        },
-        wp0800 = {
-            night_sight_toggled = false,
-            material_params = {
+            fl_material_params = {
                 EmissiveColor = {
                     R = 255,
-                    G = 0,
-                    B = 0,
-                    A = 255,
-                },
-                EmissiveIntensity = 150.0,
-                EmissiveRate = 0.0,
-            },
-        },
-        wp1000 = {
-            night_sight_toggled = false,
-            material_params = {
-                EmissiveColor = {
-                    R = 255,
-                    G = 0,
-                    B = 0,
-                    A = 255,
-                },
-                EmissiveIntensity = 150.0,
-                EmissiveRate = 0.0,
-            },
-        },
-        wp2000 = {
-            night_sight_toggled = false,
-            material_params = {
-                EmissiveColor = {
-                    R = 0,
                     G = 255,
-                    B = 0,
-                    A = 255,
-                },
-                EmissiveIntensity = 150.0,
-                EmissiveRate = 0.0,
-            },
-        },
-        wp2200 = {
-            night_sight_toggled = false,
-            material_params = {
-                EmissiveColor = {
-                    R = 0,
-                    G = 255,
-                    B = 0,
-                    A = 255,
-                },
-                EmissiveIntensity = 150.0,
-                EmissiveRate = 0.0,
-            },
-        },
-        wp3000 = {
-            night_sight_toggled = false,
-            material_params = {
-                EmissiveColor = {
-                    R = 0,
-                    G = 255,
-                    B = 0,
-                    A = 255,
-                },
-                EmissiveIntensity = 150.0,
-                EmissiveRate = 0.0,
-            },
-        
-        },
-        wp4300 = {
-            night_sight_toggled = false,
-            material_params = {
-                EmissiveColor = {
-                    R = 0,
-                    G = 220,
                     B = 255,
                     A = 255,
                 },
                 EmissiveIntensity = 150.0,
                 EmissiveRate = 0.0,
             },
-        
+            ds_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 1500.0,
+                EmissiveRate = 0.0,
+            },
         },
-        wp7000 = {
+        wp0100 = {
             night_sight_toggled = false,
-            material_params = {
+            flashlight_toggled = false,
+            dotsight_toggled = false,
+            ns_material_params = {
                 EmissiveColor = {
                     R = 0,
                     G = 255,
@@ -345,12 +88,421 @@ local AWFWeapons = {
                     A = 255,
                 },
                 EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            fl_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 255,
+                    B = 255,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            ds_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 1500.0,
+                EmissiveRate = 0.0,
+            },
+        },
+        wp0200 = {
+            night_sight_toggled = false,
+            flashlight_toggled = false,
+            dotsight_toggled = false,
+            ns_material_params = {
+                EmissiveColor = {
+                    R = 0,
+                    G = 255,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            fl_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 255,
+                    B = 255,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            ds_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 1500.0,
+                EmissiveRate = 0.0,
+            },
+        },
+        wp0300 = {
+            night_sight_toggled = false,
+            flashlight_toggled = false,
+            dotsight_toggled = false,
+            ns_material_params = {
+                EmissiveColor = {
+                    R = 0,
+                    G = 255,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            fl_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 255,
+                    B = 255,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            ds_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 1500.0,
+                EmissiveRate = 0.0,
+            },
+        },
+        wp0600 = {
+            night_sight_toggled = false,
+            flashlight_toggled = false,
+            dotsight_toggled = false,
+            ns_material_params = {
+                EmissiveColor = {
+                    R = 0,
+                    G = 255,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            fl_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 255,
+                    B = 255,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            ds_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 1500.0,
+                EmissiveRate = 0.0,
+            },
+        },
+        wp0700 = {
+            night_sight_toggled = false,
+            flashlight_toggled = false,
+            dotsight_toggled = false,
+            ns_material_params = {
+                EmissiveColor = {
+                    R = 0,
+                    G = 255,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            fl_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 255,
+                    B = 255,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            ds_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 1500.0,
+                EmissiveRate = 0.0,
+            },
+        },
+        wp0800 = {
+            night_sight_toggled = false,
+            flashlight_toggled = false,
+            dotsight_toggled = false,
+            ns_material_params = {
+                EmissiveColor = {
+                    R = 0,
+                    G = 255,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            fl_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 255,
+                    B = 255,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            ds_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 1500.0,
+                EmissiveRate = 0.0,
+            },
+        },
+        wp1000 = {
+            night_sight_toggled = false,
+            flashlight_toggled = false,
+            dotsight_toggled = false,
+            ns_material_params = {
+                EmissiveColor = {
+                    R = 0,
+                    G = 255,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            fl_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 255,
+                    B = 255,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            ds_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 1500.0,
+                EmissiveRate = 0.0,
+            },
+        },
+        wp2000 = {
+            night_sight_toggled = false,
+            flashlight_toggled = false,
+            dotsight_toggled = false,
+            ns_material_params = {
+                EmissiveColor = {
+                    R = 0,
+                    G = 255,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            fl_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 255,
+                    B = 255,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            ds_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 1500.0,
+                EmissiveRate = 0.0,
+            },
+        },
+        wp2200 = {
+            night_sight_toggled = false,
+            flashlight_toggled = false,
+            dotsight_toggled = false,
+            ns_material_params = {
+                EmissiveColor = {
+                    R = 0,
+                    G = 255,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            fl_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 255,
+                    B = 255,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            ds_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 1500.0,
+                EmissiveRate = 0.0,
+            },
+        },
+        wp3000 = {
+            night_sight_toggled = false,
+            flashlight_toggled = false,
+            dotsight_toggled = false,
+            ns_material_params = {
+                EmissiveColor = {
+                    R = 0,
+                    G = 255,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            fl_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 255,
+                    B = 255,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            ds_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 1500.0,
+                EmissiveRate = 0.0,
+            },
+        
+        },
+        wp4300 = {
+            night_sight_toggled = false,
+            flashlight_toggled = false,
+            dotsight_toggled = false,
+            ns_material_params = {
+                EmissiveColor = {
+                    R = 0,
+                    G = 255,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            fl_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 255,
+                    B = 255,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            ds_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 1500.0,
+                EmissiveRate = 0.0,
+            },
+        
+        },
+        wp7000 = {
+            night_sight_toggled = false,
+            flashlight_toggled = false,
+            dotsight_toggled = false,
+            ns_material_params = {
+                EmissiveColor = {
+                    R = 0,
+                    G = 255,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            fl_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 255,
+                    B = 255,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            ds_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 1500.0,
                 EmissiveRate = 0.0,
             },
         },
         wp7010 = {
             night_sight_toggled = false,
-            material_params = {
+            flashlight_toggled = false,
+            dotsight_toggled = false,
+            ns_material_params = {
                 EmissiveColor = {
                     R = 0,
                     G = 255,
@@ -358,12 +510,34 @@ local AWFWeapons = {
                     A = 255,
                 },
                 EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            fl_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 255,
+                    B = 255,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            ds_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 1500.0,
                 EmissiveRate = 0.0,
             },
         },
         wp7020 = {
             night_sight_toggled = false,
-            material_params = {
+            flashlight_toggled = false,
+            dotsight_toggled = false,
+            ns_material_params = {
                 EmissiveColor = {
                     R = 0,
                     G = 255,
@@ -373,10 +547,32 @@ local AWFWeapons = {
                 EmissiveIntensity = 150.0,
                 EmissiveRate = 0.0,
             },
+            fl_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 255,
+                    B = 255,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            ds_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 1500.0,
+                EmissiveRate = 0.0,
+            },
         },
         wp7030 = {
             night_sight_toggled = false,
-            material_params = {
+            flashlight_toggled = false,
+            dotsight_toggled = false,
+            ns_material_params = {
                 EmissiveColor = {
                     R = 0,
                     G = 255,
@@ -384,16 +580,2739 @@ local AWFWeapons = {
                     A = 255,
                 },
                 EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            fl_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 255,
+                    B = 255,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            ds_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 1500.0,
+                EmissiveRate = 0.0,
+            },
+        },
+    },
+    RE3_Night_Sights = {
+        wp0000 = {
+            night_sight_toggled = false,
+            flashlight_toggled = false,
+            dotsight_toggled = false,
+            ns_material_params = {
+                EmissiveColor = {
+                    R = 0,
+                    G = 255,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            fl_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 255,
+                    B = 255,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            ds_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 1500.0,
+                EmissiveRate = 0.0,
+            },
+        },
+        wp0100 = {
+            night_sight_toggled = false,
+            flashlight_toggled = false,
+            dotsight_toggled = false,
+            ns_material_params = {
+                EmissiveColor = {
+                    R = 0,
+                    G = 255,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            fl_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 255,
+                    B = 255,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            ds_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 1500.0,
+                EmissiveRate = 0.0,
+            },
+        },
+        wp0200 = {
+            night_sight_toggled = false,
+            flashlight_toggled = false,
+            dotsight_toggled = false,
+            ns_material_params = {
+                EmissiveColor = {
+                    R = 0,
+                    G = 255,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            fl_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 255,
+                    B = 255,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            ds_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 1500.0,
+                EmissiveRate = 0.0,
+            },
+        },
+        wp0300 = {
+            night_sight_toggled = false,
+            flashlight_toggled = false,
+            dotsight_toggled = false,
+            ns_material_params = {
+                EmissiveColor = {
+                    R = 0,
+                    G = 255,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            fl_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 255,
+                    B = 255,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            ds_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 1500.0,
+                EmissiveRate = 0.0,
+            },
+        },
+        wp0600 = {
+            night_sight_toggled = false,
+            flashlight_toggled = false,
+            dotsight_toggled = false,
+            ns_material_params = {
+                EmissiveColor = {
+                    R = 0,
+                    G = 255,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            fl_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 255,
+                    B = 255,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            ds_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 1500.0,
+                EmissiveRate = 0.0,
+            },
+        },
+        wp1000 = {
+            night_sight_toggled = false,
+            flashlight_toggled = false,
+            dotsight_toggled = false,
+            ns_material_params = {
+                EmissiveColor = {
+                    R = 0,
+                    G = 255,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            fl_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 255,
+                    B = 255,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            ds_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 1500.0,
+                EmissiveRate = 0.0,
+            },
+        },
+        wp2000 = {
+            night_sight_toggled = false,
+            flashlight_toggled = false,
+            dotsight_toggled = false,
+            ns_material_params = {
+                EmissiveColor = {
+                    R = 0,
+                    G = 255,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            fl_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 255,
+                    B = 255,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            ds_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 1500.0,
+                EmissiveRate = 0.0,
+            },
+        },
+        wp2100 = {
+            night_sight_toggled = false,
+            flashlight_toggled = false,
+            dotsight_toggled = false,
+            ns_material_params = {
+                EmissiveColor = {
+                    R = 0,
+                    G = 255,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            fl_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 255,
+                    B = 255,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            ds_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 1500.0,
+                EmissiveRate = 0.0,
+            },
+        },
+        wp3000 = {
+            night_sight_toggled = false,
+            flashlight_toggled = false,
+            dotsight_toggled = false,
+            ns_material_params = {
+                EmissiveColor = {
+                    R = 0,
+                    G = 255,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            fl_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 255,
+                    B = 255,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            ds_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 1500.0,
+                EmissiveRate = 0.0,
+            },
+        },
+        wp3100 = {
+            night_sight_toggled = false,
+            flashlight_toggled = false,
+            dotsight_toggled = false,
+            ns_material_params = {
+                EmissiveColor = {
+                    R = 0,
+                    G = 255,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            fl_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 255,
+                    B = 255,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            ds_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 1500.0,
+                EmissiveRate = 0.0,
+            },
+        },
+    },
+    RE4_Night_Sights = {
+        wp4000 = {
+            night_sight_toggled = false,
+            flashlight_toggled = false,
+            dotsight_toggled = false,
+            ns_material_params = {
+                EmissiveColor = {
+                    R = 0,
+                    G = 255,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            fl_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 255,
+                    B = 255,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            ds_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 1500.0,
+                EmissiveRate = 0.0,
+            },
+        },
+        wp4001 = {
+            night_sight_toggled = false,
+            flashlight_toggled = false,
+            dotsight_toggled = false,
+            ns_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 100.0,
+                EmissiveRate = 0.0,
+            },
+            fl_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 255,
+                    B = 255,
+                    A = 255,
+                },
+                EmissiveIntensity = 100.0,
+                EmissiveRate = 0.0,
+            },
+            ds_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 1500.0,
+                EmissiveRate = 0.0,
+            },
+        },
+        wp4002 = {
+            night_sight_toggled = false,
+            flashlight_toggled = false,
+            dotsight_toggled = false,
+            ns_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 100.0,
+                EmissiveRate = 0.0,
+            },
+            fl_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 255,
+                    B = 255,
+                    A = 255,
+                },
+                EmissiveIntensity = 100.0,
+                EmissiveRate = 0.0,
+            },
+            ds_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 1500.0,
+                EmissiveRate = 0.0,
+            },
+        },
+        wp4003 = {
+            night_sight_toggled = false,
+            flashlight_toggled = false,
+            dotsight_toggled = false,
+            ns_material_params = {
+                EmissiveColor = {
+                    R = 0,
+                    G = 255,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            fl_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 255,
+                    B = 255,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            ds_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 1500.0,
+                EmissiveRate = 0.0,
+            },
+        },
+        wp4004 = {
+            night_sight_toggled = false,
+            flashlight_toggled = false,
+            dotsight_toggled = false,
+            ns_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 100.0,
+                EmissiveRate = 0.0,
+            },
+            fl_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 255,
+                    B = 255,
+                    A = 255,
+                },
+                EmissiveIntensity = 100.0,
+                EmissiveRate = 0.0,
+            },
+            ds_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 1500.0,
+                EmissiveRate = 0.0,
+            },
+        },
+        wp4100 = {
+            night_sight_toggled = false,
+            flashlight_toggled = false,
+            dotsight_toggled = false,
+            ns_material_params = {
+                EmissiveColor = {
+                    R = 0,
+                    G = 255,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            fl_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 255,
+                    B = 255,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            ds_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 1500.0,
+                EmissiveRate = 0.0,
+            },
+        },
+        wp4101 = {
+            night_sight_toggled = false,
+            flashlight_toggled = false,
+            dotsight_toggled = false,
+            ns_material_params = {
+                EmissiveColor = {
+                    R = 0,
+                    G = 255,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            fl_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 255,
+                    B = 255,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            ds_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 1500.0,
+                EmissiveRate = 0.0,
+            },
+        },
+        wp4102 = {
+            night_sight_toggled = false,
+            flashlight_toggled = false,
+            dotsight_toggled = false,
+            ns_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 100.0,
+                EmissiveRate = 0.0,
+            },
+            fl_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 255,
+                    B = 255,
+                    A = 255,
+                },
+                EmissiveIntensity = 100.0,
+                EmissiveRate = 0.0,
+            },
+            ds_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 1500.0,
+                EmissiveRate = 0.0,
+            },
+        },
+        wp4200 = {
+            night_sight_toggled = false,
+            flashlight_toggled = false,
+            dotsight_toggled = false,
+            ns_material_params = {
+                EmissiveColor = {
+                    R = 0,
+                    G = 255,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 100.0,
+                EmissiveRate = 0.0,
+            },
+            fl_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 255,
+                    B = 255,
+                    A = 255,
+                },
+                EmissiveIntensity = 100.0,
+                EmissiveRate = 0.0,
+            },
+            ds_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 1500.0,
+                EmissiveRate = 0.0,
+            },
+        },
+        wp4201 = {
+            night_sight_toggled = false,
+            flashlight_toggled = false,
+            dotsight_toggled = false,
+            ns_material_params = {
+                EmissiveColor = {
+                    R = 0,
+                    G = 255,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 100.0,
+                EmissiveRate = 0.0,
+            },
+            fl_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 255,
+                    B = 255,
+                    A = 255,
+                },
+                EmissiveIntensity = 100.0,
+                EmissiveRate = 0.0,
+            },
+            ds_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 1500.0,
+                EmissiveRate = 0.0,
+            },
+        },
+        wp4202 = {
+            night_sight_toggled = false,
+            flashlight_toggled = false,
+            dotsight_toggled = false,
+            ns_material_params = {
+                EmissiveColor = {
+                    R = 0,
+                    G = 255,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 100.0,
+                EmissiveRate = 0.0,
+            },
+            fl_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 255,
+                    B = 255,
+                    A = 255,
+                },
+                EmissiveIntensity = 100.0,
+                EmissiveRate = 0.0,
+            },
+            ds_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 1500.0,
+                EmissiveRate = 0.0,
+            },
+        },
+        wp4400 = {
+            night_sight_toggled = false,
+            flashlight_toggled = false,
+            dotsight_toggled = false,
+            ns_material_params = {
+                EmissiveColor = {
+                    R = 0,
+                    G = 255,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 100.0,
+                EmissiveRate = 0.0,
+            },
+            fl_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 255,
+                    B = 255,
+                    A = 255,
+                },
+                EmissiveIntensity = 100.0,
+                EmissiveRate = 0.0,
+            },
+            ds_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 1500.0,
+                EmissiveRate = 0.0,
+            },
+        },
+        wp4401 = {
+            night_sight_toggled = false,
+            flashlight_toggled = false,
+            dotsight_toggled = false,
+            ns_material_params = {
+                EmissiveColor = {
+                    R = 0,
+                    G = 255,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 100.0,
+                EmissiveRate = 0.0,
+            },
+            fl_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 255,
+                    B = 255,
+                    A = 255,
+                },
+                EmissiveIntensity = 100.0,
+                EmissiveRate = 0.0,
+            },
+            ds_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 1500.0,
+                EmissiveRate = 0.0,
+            },
+        },
+        wp4402 = {
+            night_sight_toggled = false,
+            flashlight_toggled = false,
+            dotsight_toggled = false,
+            ns_material_params = {
+                EmissiveColor = {
+                    R = 0,
+                    G = 255,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 100.0,
+                EmissiveRate = 0.0,
+            },
+            fl_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 255,
+                    B = 255,
+                    A = 255,
+                },
+                EmissiveIntensity = 100.0,
+                EmissiveRate = 0.0,
+            },
+            ds_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 1500.0,
+                EmissiveRate = 0.0,
+            },
+        },
+        wp4500 = {
+            night_sight_toggled = false,
+            flashlight_toggled = false,
+            dotsight_toggled = false,
+            ns_material_params = {
+                EmissiveColor = {
+                    R = 0,
+                    G = 255,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 100.0,
+                EmissiveRate = 0.0,
+            },
+            fl_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 255,
+                    B = 255,
+                    A = 255,
+                },
+                EmissiveIntensity = 100.0,
+                EmissiveRate = 0.0,
+            },
+            ds_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 1500.0,
+                EmissiveRate = 0.0,
+            },
+        },
+        wp4501 = {
+            night_sight_toggled = false,
+            flashlight_toggled = false,
+            dotsight_toggled = false,
+            ns_material_params = {
+                EmissiveColor = {
+                    R = 0,
+                    G = 255,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 100.0,
+                EmissiveRate = 0.0,
+            },
+            fl_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 255,
+                    B = 255,
+                    A = 255,
+                },
+                EmissiveIntensity = 100.0,
+                EmissiveRate = 0.0,
+            },
+            ds_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 1500.0,
+                EmissiveRate = 0.0,
+            },
+        },
+        wp4502 = {
+            night_sight_toggled = false,
+            flashlight_toggled = false,
+            dotsight_toggled = false,
+            ns_material_params = {
+                EmissiveColor = {
+                    R = 0,
+                    G = 255,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 100.0,
+                EmissiveRate = 0.0,
+            },
+            fl_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 255,
+                    B = 255,
+                    A = 255,
+                },
+                EmissiveIntensity = 100.0,
+                EmissiveRate = 0.0,
+            },
+            ds_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 1500.0,
+                EmissiveRate = 0.0,
+            },
+        },
+        wp4600 = {
+            night_sight_toggled = false,
+            flashlight_toggled = false,
+            dotsight_toggled = false,
+            ns_material_params = {
+                EmissiveColor = {
+                    R = 0,
+                    G = 255,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 100.0,
+                EmissiveRate = 0.0,
+            },
+            fl_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 255,
+                    B = 255,
+                    A = 255,
+                },
+                EmissiveIntensity = 100.0,
+                EmissiveRate = 0.0,
+            },
+            ds_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 1500.0,
+                EmissiveRate = 0.0,
+            },
+        },
+        wp6000 = {
+            night_sight_toggled = false,
+            flashlight_toggled = false,
+            dotsight_toggled = false,
+            ns_material_params = {
+                EmissiveColor = {
+                    R = 0,
+                    G = 255,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 100.0,
+                EmissiveRate = 0.0,
+            },
+            fl_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 255,
+                    B = 255,
+                    A = 255,
+                },
+                EmissiveIntensity = 100.0,
+                EmissiveRate = 0.0,
+            },
+            ds_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 1500.0,
+                EmissiveRate = 0.0,
+            },
+        },
+        wp6001 = {
+            night_sight_toggled = false,
+            flashlight_toggled = false,
+            dotsight_toggled = false,
+            ns_material_params = {
+                EmissiveColor = {
+                    R = 0,
+                    G = 255,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 100.0,
+                EmissiveRate = 0.0,
+            },
+            fl_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 255,
+                    B = 255,
+                    A = 255,
+                },
+                EmissiveIntensity = 100.0,
+                EmissiveRate = 0.0,
+            },
+            ds_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 1500.0,
+                EmissiveRate = 0.0,
+            },
+        },
+        wp6100 = {
+            night_sight_toggled = false,
+            flashlight_toggled = false,
+            dotsight_toggled = false,
+            ns_material_params = {
+                EmissiveColor = {
+                    R = 0,
+                    G = 255,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 100.0,
+                EmissiveRate = 0.0,
+            },
+            fl_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 255,
+                    B = 255,
+                    A = 255,
+                },
+                EmissiveIntensity = 100.0,
+                EmissiveRate = 0.0,
+            },
+            ds_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 1500.0,
+                EmissiveRate = 0.0,
+            },
+        },
+        wp6101 = {
+            night_sight_toggled = false,
+            flashlight_toggled = false,
+            dotsight_toggled = false,
+            ns_material_params = {
+                EmissiveColor = {
+                    R = 0,
+                    G = 255,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 100.0,
+                EmissiveRate = 0.0,
+            },
+            fl_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 255,
+                    B = 255,
+                    A = 255,
+                },
+                EmissiveIntensity = 100.0,
+                EmissiveRate = 0.0,
+            },
+            ds_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 1500.0,
+                EmissiveRate = 0.0,
+            },
+        },
+        wp6102 = {
+            night_sight_toggled = false,
+            flashlight_toggled = false,
+            dotsight_toggled = false,
+            ns_material_params = {
+                EmissiveColor = {
+                    R = 0,
+                    G = 255,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 100.0,
+                EmissiveRate = 0.0,
+            },
+            fl_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 255,
+                    B = 255,
+                    A = 255,
+                },
+                EmissiveIntensity = 100.0,
+                EmissiveRate = 0.0,
+            },
+            ds_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 1500.0,
+                EmissiveRate = 0.0,
+            },
+        },
+        wp6103 = {
+            night_sight_toggled = false,
+            flashlight_toggled = false,
+            dotsight_toggled = false,
+            ns_material_params = {
+                EmissiveColor = {
+                    R = 0,
+                    G = 255,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 100.0,
+                EmissiveRate = 0.0,
+            },
+            fl_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 255,
+                    B = 255,
+                    A = 255,
+                },
+                EmissiveIntensity = 100.0,
+                EmissiveRate = 0.0,
+            },
+            ds_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 1500.0,
+                EmissiveRate = 0.0,
+            },
+        },
+        wp6104 = {
+            night_sight_toggled = false,
+            flashlight_toggled = false,
+            dotsight_toggled = false,
+            ns_material_params = {
+                EmissiveColor = {
+                    R = 0,
+                    G = 255,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 100.0,
+                EmissiveRate = 0.0,
+            },
+            fl_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 255,
+                    B = 255,
+                    A = 255,
+                },
+                EmissiveIntensity = 100.0,
+                EmissiveRate = 0.0,
+            },
+            ds_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 1500.0,
+                EmissiveRate = 0.0,
+            },
+        },
+        wp6105 = {
+            night_sight_toggled = false,
+            flashlight_toggled = false,
+            dotsight_toggled = false,
+            ns_material_params = {
+                EmissiveColor = {
+                    R = 0,
+                    G = 255,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 100.0,
+                EmissiveRate = 0.0,
+            },
+            fl_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 255,
+                    B = 255,
+                    A = 255,
+                },
+                EmissiveIntensity = 100.0,
+                EmissiveRate = 0.0,
+            },
+            ds_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 1500.0,
+                EmissiveRate = 0.0,
+            },
+        },
+        wp6112_AO = {
+            night_sight_toggled = false,
+            flashlight_toggled = false,
+            dotsight_toggled = false,
+            ns_material_params = {
+                EmissiveColor = {
+                    R = 0,
+                    G = 255,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 100.0,
+                EmissiveRate = 0.0,
+            },
+            fl_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 255,
+                    B = 255,
+                    A = 255,
+                },
+                EmissiveIntensity = 100.0,
+                EmissiveRate = 0.0,
+            },
+            ds_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 1500.0,
+                EmissiveRate = 0.0,
+            },
+        },
+        wp6113_AO = {
+            night_sight_toggled = false,
+            flashlight_toggled = false,
+            dotsight_toggled = false,
+            ns_material_params = {
+                EmissiveColor = {
+                    R = 0,
+                    G = 255,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 100.0,
+                EmissiveRate = 0.0,
+            },
+            fl_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 255,
+                    B = 255,
+                    A = 255,
+                },
+                EmissiveIntensity = 100.0,
+                EmissiveRate = 0.0,
+            },
+            ds_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 1500.0,
+                EmissiveRate = 0.0,
+            },
+        },
+        wp6114 = {
+            night_sight_toggled = false,
+            flashlight_toggled = false,
+            dotsight_toggled = false,
+            ns_material_params = {
+                EmissiveColor = {
+                    R = 0,
+                    G = 255,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 100.0,
+                EmissiveRate = 0.0,
+            },
+            fl_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 255,
+                    B = 255,
+                    A = 255,
+                },
+                EmissiveIntensity = 100.0,
+                EmissiveRate = 0.0,
+            },
+            ds_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 1500.0,
+                EmissiveRate = 0.0,
+            },
+        },
+    },
+    RE7_Night_Sights = {
+        wp1010_Handgun_Item = {
+            night_sight_toggled = false,
+            flashlight_toggled = false,
+            dotsight_toggled = false,
+            ns_material_params = {
+                EmissiveColor = {
+                    R = 0,
+                    G = 255,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            fl_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 255,
+                    B = 255,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            ds_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 1500.0,
+                EmissiveRate = 0.0,
+            },
+        },
+        wp1030_Shotgun_Item = {
+            night_sight_toggled = false,
+            flashlight_toggled = false,
+            dotsight_toggled = false,
+            ns_material_params = {
+                EmissiveColor = {
+                    R = 0,
+                    G = 255,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            fl_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 255,
+                    B = 255,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            ds_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 1500.0,
+                EmissiveRate = 0.0,
+            },
+        },
+        wp1033_Shotgun_Item = {
+            night_sight_toggled = false,
+            flashlight_toggled = false,
+            dotsight_toggled = false,
+            ns_material_params = {
+                EmissiveColor = {
+                    R = 0,
+                    G = 255,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            fl_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 255,
+                    B = 255,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            ds_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 1500.0,
+                EmissiveRate = 0.0,
+            },
+        },
+        wp1140_Magnum_Item = {
+            night_sight_toggled = false,
+            flashlight_toggled = false,
+            dotsight_toggled = false,
+            ns_material_params = {
+                EmissiveColor = {
+                    R = 0,
+                    G = 255,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            fl_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 255,
+                    B = 255,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            ds_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 1500.0,
+                EmissiveRate = 0.0,
+            },
+        },
+        wp1160_MachineGun_Item = {
+            night_sight_toggled = false,
+            flashlight_toggled = false,
+            dotsight_toggled = false,
+            ns_material_params = {
+                EmissiveColor = {
+                    R = 0,
+                    G = 255,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            fl_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 255,
+                    B = 255,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            ds_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 1500.0,
+                EmissiveRate = 0.0,
+            },
+        },
+        wp1210_Handgun_Item = {
+            night_sight_toggled = false,
+            flashlight_toggled = false,
+            dotsight_toggled = false,
+            ns_material_params = {
+                EmissiveColor = {
+                    R = 0,
+                    G = 255,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            fl_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 255,
+                    B = 255,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            ds_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 1500.0,
+                EmissiveRate = 0.0,
+            },
+        },
+        wp1230_PumpShotgun_Item = {
+            night_sight_toggled = false,
+            flashlight_toggled = false,
+            dotsight_toggled = false,
+            ns_material_params = {
+                EmissiveColor = {
+                    R = 0,
+                    G = 255,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            fl_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 255,
+                    B = 255,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            ds_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 1500.0,
+                EmissiveRate = 0.0,
+            },
+        },
+        wp1240_MiaHandgun_Item = {
+            night_sight_toggled = false,
+            flashlight_toggled = false,
+            dotsight_toggled = false,
+            ns_material_params = {
+                EmissiveColor = {
+                    R = 0,
+                    G = 255,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            fl_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 255,
+                    B = 255,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            ds_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 1500.0,
+                EmissiveRate = 0.0,
+            },
+        },
+        wp1330_ChrisShotgun_Item = {
+            night_sight_toggled = false,
+            flashlight_toggled = false,
+            dotsight_toggled = false,
+            ns_material_params = {
+                EmissiveColor = {
+                    R = 0,
+                    G = 255,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            fl_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 255,
+                    B = 255,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            ds_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 1500.0,
+                EmissiveRate = 0.0,
+            },
+        },
+        wp1340_ChrisHandgun_Item = {
+            night_sight_toggled = false,
+            flashlight_toggled = false,
+            dotsight_toggled = false,
+            ns_material_params = {
+                EmissiveColor = {
+                    R = 0,
+                    G = 255,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            fl_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 255,
+                    B = 255,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            ds_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 1500.0,
+                EmissiveRate = 0.0,
+            },
+        },
+        wp1340_ChrisHandgun_Reward_Item = {
+            night_sight_toggled = false,
+            flashlight_toggled = false,
+            dotsight_toggled = false,
+            ns_material_params = {
+                EmissiveColor = {
+                    R = 0,
+                    G = 255,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            fl_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 255,
+                    B = 255,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            ds_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 1500.0,
+                EmissiveRate = 0.0,
+            },
+        },
+    },
+    RE8_Night_Sights = {
+        ri3008_Inventory = {
+            night_sight_toggled = false,
+            flashlight_toggled = false,
+            dotsight_toggled = false,
+            ns_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 133,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 1000.0,
+                EmissiveRate = 0.0,
+            },
+            fl_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 255,
+                    B = 255,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            ds_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 1500.0,
+                EmissiveRate = 0.0,
+            },
+        },
+        ri3021_Inventory = {
+            night_sight_toggled = false,
+            flashlight_toggled = false,
+            dotsight_toggled = false,
+            ns_material_params = {
+                EmissiveColor = {
+                    R = 0,
+                    G = 255,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            fl_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 255,
+                    B = 255,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            ds_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 1500.0,
+                EmissiveRate = 0.0,
+            },
+        },
+        ri3023_Inventory = {
+            night_sight_toggled = false,
+            flashlight_toggled = false,
+            dotsight_toggled = false,
+            ns_material_params = {
+                EmissiveColor = {
+                    R = 0,
+                    G = 255,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            fl_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 255,
+                    B = 255,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            ds_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 1500.0,
+                EmissiveRate = 0.0,
+            },
+        },
+        ri3036_Inventory = {
+            night_sight_toggled = false,
+            flashlight_toggled = false,
+            dotsight_toggled = false,
+            ns_material_params = {
+                EmissiveColor = {
+                    R = 0,
+                    G = 255,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            fl_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 255,
+                    B = 255,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            ds_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 1500.0,
+                EmissiveRate = 0.0,
+            },
+        },
+        ri3040_Inventory = {
+            night_sight_toggled = false,
+            flashlight_toggled = false,
+            dotsight_toggled = false,
+            ns_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            fl_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 255,
+                    B = 255,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            ds_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 1500.0,
+                EmissiveRate = 0.0,
+            },
+        },
+        ri3042_Inventory = {
+            night_sight_toggled = false,
+            flashlight_toggled = false,
+            dotsight_toggled = false,
+            ns_material_params = {
+                EmissiveColor = {
+                    R = 0,
+                    G = 255,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            fl_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 255,
+                    B = 255,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            ds_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 1500.0,
+                EmissiveRate = 0.0,
+            },
+        },
+        ri3046_Inventory = {
+            night_sight_toggled = false,
+            flashlight_toggled = false,
+            dotsight_toggled = false,
+            ns_material_params = {
+                EmissiveColor = {
+                    R = 0,
+                    G = 255,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            fl_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 255,
+                    B = 255,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            ds_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 1500.0,
+                EmissiveRate = 0.0,
+            },
+        },
+        ri3047_Inventory = {
+            night_sight_toggled = false,
+            flashlight_toggled = false,
+            dotsight_toggled = false,
+            ns_material_params = {
+                EmissiveColor = {
+                    R = 0,
+                    G = 255,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            fl_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 255,
+                    B = 255,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            ds_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 1500.0,
+                EmissiveRate = 0.0,
+            },
+        },
+        ri3048_Inventory = {
+            night_sight_toggled = false,
+            flashlight_toggled = false,
+            dotsight_toggled = false,
+            ns_material_params = {
+                EmissiveColor = {
+                    R = 0,
+                    G = 255,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            fl_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 255,
+                    B = 255,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            ds_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 1500.0,
+                EmissiveRate = 0.0,
+            },
+        },
+        ri3049_Inventory = {
+            night_sight_toggled = false,
+            flashlight_toggled = false,
+            dotsight_toggled = false,
+            ns_material_params = {
+                EmissiveColor = {
+                    R = 0,
+                    G = 255,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            fl_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 255,
+                    B = 255,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            ds_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 1500.0,
+                EmissiveRate = 0.0,
+            },
+        },
+        ri3050_Inventory = {
+            night_sight_toggled = false,
+            flashlight_toggled = false,
+            dotsight_toggled = false,
+            ns_material_params = {
+                EmissiveColor = {
+                    R = 0,
+                    G = 255,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            fl_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 255,
+                    B = 255,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            ds_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 1500.0,
+                EmissiveRate = 0.0,
+            },
+        },
+        ri3081_Inventory = {
+            night_sight_toggled = false,
+            flashlight_toggled = false,
+            dotsight_toggled = false,
+            ns_material_params = {
+                EmissiveColor = {
+                    R = 0,
+                    G = 255,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            fl_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 255,
+                    B = 255,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            ds_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 1500.0,
+                EmissiveRate = 0.0,
+            },
+        },
+        ri3082_Inventory = {
+            night_sight_toggled = false,
+            flashlight_toggled = false,
+            dotsight_toggled = false,
+            ns_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            fl_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 255,
+                    B = 255,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            ds_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 1500.0,
+                EmissiveRate = 0.0,
+            },
+        },
+        ri3083_Inventory = {
+            night_sight_toggled = false,
+            flashlight_toggled = false,
+            dotsight_toggled = false,
+            ns_material_params = {
+                EmissiveColor = {
+                    R = 0,
+                    G = 255,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            fl_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 255,
+                    B = 255,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            ds_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 1500.0,
+                EmissiveRate = 0.0,
+            },
+        },
+        ri3084_Inventory = {
+            night_sight_toggled = false,
+            flashlight_toggled = false,
+            dotsight_toggled = false,
+            ns_material_params = {
+                EmissiveColor = {
+                    R = 0,
+                    G = 255,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            fl_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 255,
+                    B = 255,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            ds_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 1500.0,
+                EmissiveRate = 0.0,
+            },
+        },
+        ri3085_Inventory = {
+            night_sight_toggled = false,
+            flashlight_toggled = false,
+            dotsight_toggled = false,
+            ns_material_params = {
+                EmissiveColor = {
+                    R = 0,
+                    G = 255,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            fl_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 255,
+                    B = 255,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            ds_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 1500.0,
+                EmissiveRate = 0.0,
+            },
+        },
+        ri3086_Inventory = {
+            night_sight_toggled = false,
+            flashlight_toggled = false,
+            dotsight_toggled = false,
+            ns_material_params = {
+                EmissiveColor = {
+                    R = 0,
+                    G = 255,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            fl_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 255,
+                    B = 255,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            ds_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 1500.0,
+                EmissiveRate = 0.0,
+            },
+        },
+        ri3087_Inventory = {
+            night_sight_toggled = false,
+            flashlight_toggled = false,
+            dotsight_toggled = false,
+            ns_material_params = {
+                EmissiveColor = {
+                    R = 0,
+                    G = 255,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            fl_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 255,
+                    B = 255,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            ds_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 1500.0,
+                EmissiveRate = 0.0,
+            },
+        },
+        ri3115_Inventory = {
+            night_sight_toggled = false,
+            flashlight_toggled = false,
+            dotsight_toggled = false,
+            ns_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 133,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 1000.0,
+                EmissiveRate = 0.0,
+            },
+            fl_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 255,
+                    B = 255,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            ds_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 1500.0,
+                EmissiveRate = 0.0,
+            },
+        },
+        ri3116_Inventory = {
+            night_sight_toggled = false,
+            flashlight_toggled = false,
+            dotsight_toggled = false,
+            ns_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 1000.0,
+                EmissiveRate = 0.0,
+            },
+            fl_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 255,
+                    B = 255,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            ds_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 1500.0,
+                EmissiveRate = 0.0,
+            },
+        },
+        ri3122_Inventory = {
+            night_sight_toggled = false,
+            flashlight_toggled = false,
+            dotsight_toggled = false,
+            ns_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 1000.0,
+                EmissiveRate = 0.0,
+            },
+            fl_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 255,
+                    B = 255,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            ds_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 1500.0,
+                EmissiveRate = 0.0,
+            },
+        },
+        ri3124_Inventory = {
+            night_sight_toggled = false,
+            flashlight_toggled = false,
+            dotsight_toggled = false,
+            ns_material_params = {
+                EmissiveColor = {
+                    R = 0,
+                    G = 255,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 1000.0,
+                EmissiveRate = 0.0,
+            },
+            fl_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 255,
+                    B = 255,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            ds_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 1500.0,
+                EmissiveRate = 0.0,
+            },
+        },
+        ri3125_Inventory = {
+            night_sight_toggled = false,
+            flashlight_toggled = false,
+            dotsight_toggled = false,
+            ns_material_params = {
+                EmissiveColor = {
+                    R = 0,
+                    G = 255,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 1000.0,
+                EmissiveRate = 0.0,
+            },
+            fl_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 255,
+                    B = 255,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            ds_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 1500.0,
+                EmissiveRate = 0.0,
+            },
+        },
+        ri3129_Inventory = {
+            night_sight_toggled = false,
+            flashlight_toggled = false,
+            dotsight_toggled = false,
+            ns_material_params = {
+                EmissiveColor = {
+                    R = 0,
+                    G = 255,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            fl_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 255,
+                    B = 255,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            ds_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 1500.0,
+                EmissiveRate = 0.0,
+            },
+        },
+        ri3130_Inventory = {
+            night_sight_toggled = false,
+            flashlight_toggled = false,
+            dotsight_toggled = false,
+            ns_material_params = {
+                EmissiveColor = {
+                    R = 0,
+                    G = 255,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            fl_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 255,
+                    B = 255,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            ds_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 1500.0,
+                EmissiveRate = 0.0,
+            },
+        },
+        ri3135_Inventory = {
+            night_sight_toggled = false,
+            flashlight_toggled = false,
+            dotsight_toggled = false,
+            ns_material_params = {
+                EmissiveColor = {
+                    R = 0,
+                    G = 255,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            fl_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 255,
+                    B = 255,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            ds_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 1500.0,
+                EmissiveRate = 0.0,
+            },
+        },
+        ri3147_Inventory = {
+            night_sight_toggled = false,
+            flashlight_toggled = false,
+            dotsight_toggled = false,
+            ns_material_params = {
+                EmissiveColor = {
+                    R = 0,
+                    G = 255,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            fl_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 255,
+                    B = 255,
+                    A = 255,
+                },
+                EmissiveIntensity = 150.0,
+                EmissiveRate = 0.0,
+            },
+            ds_material_params = {
+                EmissiveColor = {
+                    R = 255,
+                    G = 0,
+                    B = 0,
+                    A = 255,
+                },
+                EmissiveIntensity = 1500.0,
                 EmissiveRate = 0.0,
             },
         },
     },
 }
 
-local AWF_NS_settings = hk.merge_tables({}, AWF_NS_default_settings) and func.recurse_def_settings(json.load_file("AWF/AWF_NightSights/AWF_NightSight_Settings.json") or {}, AWF_NS_default_settings)
+local AWF_NS_settings = hk.merge_tables({}, AWF_NS_default_settings) and hk.recurse_def_settings(json.load_file("AWF/AWF_NightSights/AWF_NightSight_Settings.json") or {}, AWF_NS_default_settings)
 hk.setup_hotkeys(AWF_NS_settings.hotkeys)
 
-local AWF_settings = hk.merge_tables({}, AWFWeapons) and func.recurse_def_settings(json.load_file("AWF/AWF_NightSights/AWF_NightSight_ColorSettings.json") or {}, AWFWeapons)
+local AWF_settings = hk.merge_tables({}, AWFWeapons) and hk.recurse_def_settings(json.load_file("AWF/AWF_NightSights/AWF_NightSight_ColorSettings.json") or {}, AWFWeapons)
 
 local function toggle_night_sights_RE7(weaponData, NS_table)
     for _, weapon in pairs(weaponData) do
@@ -415,7 +3334,7 @@ local function toggle_night_sights_RE7(weaponData, NS_table)
                             local MatName = render_mesh:call("getMaterialName", i)
                             local MatParam = render_mesh:call("getMaterialVariableNum", i)
                             
-                            if MatName:match("%NightSight$") or MatName:match("%NSight$") or MatName:match("%NS$") then
+                            if MatName:match("NightSight$") or MatName:match("NightSights$") or MatName:match("NSights$") or MatName:match("NSight$") or MatName:match("NS$") then
                                 --log.info("---------------------------Got " .. MatName)
 
                                 if MatParam then
@@ -428,15 +3347,53 @@ local function toggle_night_sights_RE7(weaponData, NS_table)
                                             --log.info(MatParamNames)
 
                                             if MatParamNames == "EmissiveColor" then
-                                                render_mesh:call("setMaterialFloat4", i, j, func.convert_rgba_to_vector4f(NS_table[weapon.ID].material_params.EmissiveColor.R, NS_table[weapon.ID].material_params.EmissiveColor.G, NS_table[weapon.ID].material_params.EmissiveColor.B, NS_table[weapon.ID].material_params.EmissiveColor.A))
+                                                render_mesh:call("setMaterialFloat4", i, j, func.convert_rgba_to_vector4f(NS_table[weapon.ID].ns_material_params.EmissiveColor.R, NS_table[weapon.ID].ns_material_params.EmissiveColor.G, NS_table[weapon.ID].ns_material_params.EmissiveColor.B, NS_table[weapon.ID].ns_material_params.EmissiveColor.A))
                                             end
 
                                             if MatParamNames == "EmissiveIntensity" then
-                                                render_mesh:call("setMaterialFloat", i, j, NS_table[weapon.ID].material_params.EmissiveIntensity)
+                                                render_mesh:call("setMaterialFloat", i, j, NS_table[weapon.ID].ns_material_params.EmissiveIntensity)
                                             end
 
                                             if MatParamNames == "EmissiveRate" then
-                                                render_mesh:call("setMaterialFloat", i, j, NS_table[weapon.ID].material_params.EmissiveRate)
+                                                render_mesh:call("setMaterialFloat", i, j, NS_table[weapon.ID].ns_material_params.EmissiveRate)
+                                            end
+                                        end
+                                    end
+                                end
+                            end
+                            if MatName:match("DotSight$") or MatName:match("DSight$") or MatName:match("DS$") or MatName:match("RedDotSight$") or MatName:match("RDS$") then
+                                if MatParam then
+                                    for j = 0, MatParam - 1 do
+                                        local MatParamNames = render_mesh:call("getMaterialVariableName", i, j)
+                                        
+                                        if MatParamNames then
+                                            if MatParamNames == "EmissiveColor" then
+                                                render_mesh:call("setMaterialFloat4", i, j, func.convert_rgba_to_vector4f(NS_table[weapon.ID].ds_material_params.EmissiveColor.R, NS_table[weapon.ID].ds_material_params.EmissiveColor.G, NS_table[weapon.ID].ds_material_params.EmissiveColor.B, NS_table[weapon.ID].ds_material_params.EmissiveColor.A))
+                                            end
+                                            if MatParamNames == "EmissiveIntensity" then
+                                                render_mesh:call("setMaterialFloat", i, j, NS_table[weapon.ID].ds_material_params.EmissiveIntensity)
+                                            end
+                                            if MatParamNames == "EmissiveRate" then
+                                                render_mesh:call("setMaterialFloat", i, j, NS_table[weapon.ID].ds_material_params.EmissiveRate)
+                                            end
+                                        end
+                                    end
+                                end
+                            end
+                            if MatName:match("Flashlight$") or MatName:match("FLight$") or MatName:match("FL$") then
+                                if MatParam then
+                                    for j = 0, MatParam - 1 do
+                                        local MatParamNames = render_mesh:call("getMaterialVariableName", i, j)
+                                        
+                                        if MatParamNames then
+                                            if MatParamNames == "EmissiveColor" then
+                                                render_mesh:call("setMaterialFloat4", i, j, func.convert_rgba_to_vector4f(NS_table[weapon.ID].fl_material_params.EmissiveColor.R, NS_table[weapon.ID].fl_material_params.EmissiveColor.G, NS_table[weapon.ID].fl_material_params.EmissiveColor.B, NS_table[weapon.ID].fl_material_params.EmissiveColor.A))
+                                            end
+                                            if MatParamNames == "EmissiveIntensity" then
+                                                render_mesh:call("setMaterialFloat", i, j, NS_table[weapon.ID].fl_material_params.EmissiveIntensity)
+                                            end
+                                            if MatParamNames == "EmissiveRate" then
+                                                render_mesh:call("setMaterialFloat", i, j, NS_table[weapon.ID].fl_material_params.EmissiveRate)
                                             end
                                         end
                                     end
@@ -465,7 +3422,7 @@ local function toggle_night_sights_RE2(weaponData, NS_table)
                         local MatName = render_mesh:call("getMaterialName", i)
                         local MatParam = render_mesh:call("getMaterialVariableNum", i)
                         
-                        if MatName:match("%NightSight$") or MatName:match("%NSight$") or MatName:match("%NS$") then
+                        if MatName:match("NightSight$") or MatName:match("NightSights$") or MatName:match("NSights$") or MatName:match("NSight$") or MatName:match("NS$") then
                             --log.info("---------------------------Got " .. MatName)
                             if MatParam then
                                 for j = 0, MatParam - 1 do
@@ -473,13 +3430,293 @@ local function toggle_night_sights_RE2(weaponData, NS_table)
                                     
                                     if MatParamNames then
                                         if MatParamNames == "EmissiveColor" then
-                                            render_mesh:call("setMaterialFloat4", i, j, func.convert_rgba_to_vector4f(NS_table[weapon.ID].material_params.EmissiveColor.R, NS_table[weapon.ID].material_params.EmissiveColor.G, NS_table[weapon.ID].material_params.EmissiveColor.B, NS_table[weapon.ID].material_params.EmissiveColor.A))
+                                            render_mesh:call("setMaterialFloat4", i, j, func.convert_rgba_to_vector4f(NS_table[weapon.ID].ns_material_params.EmissiveColor.R, NS_table[weapon.ID].ns_material_params.EmissiveColor.G, NS_table[weapon.ID].ns_material_params.EmissiveColor.B, NS_table[weapon.ID].ns_material_params.EmissiveColor.A))
                                         end
                                         if MatParamNames == "EmissiveIntensity" then
-                                            render_mesh:call("setMaterialFloat", i, j, NS_table[weapon.ID].material_params.EmissiveIntensity)
+                                            render_mesh:call("setMaterialFloat", i, j, NS_table[weapon.ID].ns_material_params.EmissiveIntensity)
                                         end
                                         if MatParamNames == "EmissiveRate" then
-                                            render_mesh:call("setMaterialFloat", i, j, NS_table[weapon.ID].material_params.EmissiveRate)
+                                            render_mesh:call("setMaterialFloat", i, j, NS_table[weapon.ID].ns_material_params.EmissiveRate)
+                                        end
+                                    end
+                                end
+                            end
+                        end
+                        if MatName:match("DotSight$") or MatName:match("DSight$") or MatName:match("DS$") or MatName:match("RedDotSight$") or MatName:match("RDS$") then
+                            if MatParam then
+                                for j = 0, MatParam - 1 do
+                                    local MatParamNames = render_mesh:call("getMaterialVariableName", i, j)
+                                    
+                                    if MatParamNames then
+                                        if MatParamNames == "EmissiveColor" then
+                                            render_mesh:call("setMaterialFloat4", i, j, func.convert_rgba_to_vector4f(NS_table[weapon.ID].ds_material_params.EmissiveColor.R, NS_table[weapon.ID].ds_material_params.EmissiveColor.G, NS_table[weapon.ID].ds_material_params.EmissiveColor.B, NS_table[weapon.ID].ds_material_params.EmissiveColor.A))
+                                        end
+                                        if MatParamNames == "EmissiveIntensity" then
+                                            render_mesh:call("setMaterialFloat", i, j, NS_table[weapon.ID].ds_material_params.EmissiveIntensity)
+                                        end
+                                        if MatParamNames == "EmissiveRate" then
+                                            render_mesh:call("setMaterialFloat", i, j, NS_table[weapon.ID].ds_material_params.EmissiveRate)
+                                        end
+                                    end
+                                end
+                            end
+                        end
+                        if MatName:match("Flashlight$") or MatName:match("FLight$") or MatName:match("FL$") then
+                            if MatParam then
+                                for j = 0, MatParam - 1 do
+                                    local MatParamNames = render_mesh:call("getMaterialVariableName", i, j)
+                                    
+                                    if MatParamNames then
+                                        if MatParamNames == "EmissiveColor" then
+                                            render_mesh:call("setMaterialFloat4", i, j, func.convert_rgba_to_vector4f(NS_table[weapon.ID].fl_material_params.EmissiveColor.R, NS_table[weapon.ID].fl_material_params.EmissiveColor.G, NS_table[weapon.ID].fl_material_params.EmissiveColor.B, NS_table[weapon.ID].fl_material_params.EmissiveColor.A))
+                                        end
+                                        if MatParamNames == "EmissiveIntensity" then
+                                            render_mesh:call("setMaterialFloat", i, j, NS_table[weapon.ID].fl_material_params.EmissiveIntensity)
+                                        end
+                                        if MatParamNames == "EmissiveRate" then
+                                            render_mesh:call("setMaterialFloat", i, j, NS_table[weapon.ID].fl_material_params.EmissiveRate)
+                                        end
+                                    end
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+        end
+    end
+end
+
+local function toggle_night_sights_RE3(weaponData, NS_table)
+    for _, weapon in pairs(weaponData) do
+        if NS_table[weapon.ID] then
+            local Weapon_GameObject_RE3 = scene:call("findGameObject(System.String)", weapon.ID)
+
+            if Weapon_GameObject_RE3 then
+                local render_mesh = Weapon_GameObject_RE3:call("getComponent(System.Type)", sdk.typeof("via.render.Mesh"))
+                local MatCount = render_mesh:call("get_MaterialNum")
+                    
+                if MatCount then
+                    for i = 0, MatCount - 1 do
+                        local MatName = render_mesh:call("getMaterialName", i)
+                        local MatParam = render_mesh:call("getMaterialVariableNum", i)
+                        
+                        if MatName:match("NightSight$") or MatName:match("NightSights$") or MatName:match("NSights$") or MatName:match("NSight$") or MatName:match("NS$") then
+                            --log.info("---------------------------Got " .. MatName)
+                            if MatParam then
+                                for j = 0, MatParam - 1 do
+                                    local MatParamNames = render_mesh:call("getMaterialVariableName", i, j)
+                                    
+                                    if MatParamNames then
+                                        if MatParamNames == "EmissiveColor" then
+                                            render_mesh:call("setMaterialFloat4", i, j, func.convert_rgba_to_vector4f(NS_table[weapon.ID].ns_material_params.EmissiveColor.R, NS_table[weapon.ID].ns_material_params.EmissiveColor.G, NS_table[weapon.ID].ns_material_params.EmissiveColor.B, NS_table[weapon.ID].ns_material_params.EmissiveColor.A))
+                                        end
+                                        if MatParamNames == "EmissiveIntensity" then
+                                            render_mesh:call("setMaterialFloat", i, j, NS_table[weapon.ID].ns_material_params.EmissiveIntensity)
+                                        end
+                                        if MatParamNames == "EmissiveRate" then
+                                            render_mesh:call("setMaterialFloat", i, j, NS_table[weapon.ID].ns_material_params.EmissiveRate)
+                                        end
+                                    end
+                                end
+                            end
+                        end
+                        if MatName:match("DotSight$") or MatName:match("DSight$") or MatName:match("DS$") or MatName:match("RedDotSight$") or MatName:match("RDS$") then
+                            --log.info("---------------------------Got " .. MatName)
+                            if MatParam then
+                                for k = 0, MatParam - 1 do
+                                    local MatParamNames = render_mesh:call("getMaterialVariableName", i, k)
+                                    
+                                    if MatParamNames then
+                                        if MatParamNames == "EmissiveColor" then
+                                            render_mesh:call("setMaterialFloat4", i, k, func.convert_rgba_to_vector4f(NS_table[weapon.ID].ds_material_params.EmissiveColor.R, NS_table[weapon.ID].ds_material_params.EmissiveColor.G, NS_table[weapon.ID].ds_material_params.EmissiveColor.B, NS_table[weapon.ID].ds_material_params.EmissiveColor.A))
+                                        end
+                                        if MatParamNames == "EmissiveIntensity" then
+                                            render_mesh:call("setMaterialFloat", i, k, NS_table[weapon.ID].ds_material_params.EmissiveIntensity)
+                                        end
+                                        if MatParamNames == "EmissiveRate" then
+                                            render_mesh:call("setMaterialFloat", i, k, NS_table[weapon.ID].ds_material_params.EmissiveRate)
+                                        end
+                                    end
+                                end
+                            end
+                        end
+                        if MatName:match("Flashlight$") or MatName:match("FLight$") or MatName:match("FL$") then
+                            if MatParam then
+                                for j = 0, MatParam - 1 do
+                                    local MatParamNames = render_mesh:call("getMaterialVariableName", i, j)
+                                    
+                                    if MatParamNames then
+                                        if MatParamNames == "EmissiveColor" then
+                                            render_mesh:call("setMaterialFloat4", i, j, func.convert_rgba_to_vector4f(NS_table[weapon.ID].fl_material_params.EmissiveColor.R, NS_table[weapon.ID].fl_material_params.EmissiveColor.G, NS_table[weapon.ID].fl_material_params.EmissiveColor.B, NS_table[weapon.ID].fl_material_params.EmissiveColor.A))
+                                        end
+                                        if MatParamNames == "EmissiveIntensity" then
+                                            render_mesh:call("setMaterialFloat", i, j, NS_table[weapon.ID].fl_material_params.EmissiveIntensity)
+                                        end
+                                        if MatParamNames == "EmissiveRate" then
+                                            render_mesh:call("setMaterialFloat", i, j, NS_table[weapon.ID].fl_material_params.EmissiveRate)
+                                        end
+                                    end
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+        end
+    end
+end
+
+local function toggle_night_sights_RE8(weaponData, NS_table)
+    for _, weapon in pairs(weaponData) do
+        if NS_table[weapon.ID] then
+            local Weapon_GameObject_RE8 = scene:call("findGameObject(System.String)", weapon.ID)
+
+            if Weapon_GameObject_RE8 then
+                local render_mesh = Weapon_GameObject_RE8:call("getComponent(System.Type)", sdk.typeof("via.render.Mesh"))
+                local MatCount = render_mesh:call("get_MaterialNum")
+                    
+                if MatCount then
+                    for i = 0, MatCount - 1 do
+                        local MatName = render_mesh:call("getMaterialName", i)
+                        local MatParam = render_mesh:call("getMaterialVariableNum", i)
+                        
+                        if MatName:match("NightSight$") or MatName:match("NightSights$") or MatName:match("NSights$") or MatName:match("NSight$") or MatName:match("NS$") then
+                            --log.info("---------------------------Got " .. MatName)
+                            if MatParam then
+                                for j = 0, MatParam - 1 do
+                                    local MatParamNames = render_mesh:call("getMaterialVariableName", i, j)
+                                    
+                                    if MatParamNames then
+                                        if MatParamNames == "EmissiveColor" then
+                                            render_mesh:call("setMaterialFloat4", i, j, func.convert_rgba_to_vector4f(NS_table[weapon.ID].ns_material_params.EmissiveColor.R, NS_table[weapon.ID].ns_material_params.EmissiveColor.G, NS_table[weapon.ID].ns_material_params.EmissiveColor.B, NS_table[weapon.ID].ns_material_params.EmissiveColor.A))
+                                        end
+                                        if MatParamNames == "EmissiveIntensity" then
+                                            render_mesh:call("setMaterialFloat", i, j, NS_table[weapon.ID].ns_material_params.EmissiveIntensity)
+                                        end
+                                        if MatParamNames == "EmissiveRate" then
+                                            render_mesh:call("setMaterialFloat", i, j, NS_table[weapon.ID].ns_material_params.EmissiveRate)
+                                        end
+                                    end
+                                end
+                            end
+                        end
+                        if MatName:match("DotSight$") or MatName:match("DSight$") or MatName:match("DS$") or MatName:match("RedDotSight$") or MatName:match("RDS$") then
+                            --log.info("---------------------------Got " .. MatName)
+                            if MatParam then
+                                for k = 0, MatParam - 1 do
+                                    local MatParamNames = render_mesh:call("getMaterialVariableName", i, k)
+                                    
+                                    if MatParamNames then
+                                        if MatParamNames == "EmissiveColor" then
+                                            render_mesh:call("setMaterialFloat4", i, k, func.convert_rgba_to_vector4f(NS_table[weapon.ID].ds_material_params.EmissiveColor.R, NS_table[weapon.ID].ds_material_params.EmissiveColor.G, NS_table[weapon.ID].ds_material_params.EmissiveColor.B, NS_table[weapon.ID].ds_material_params.EmissiveColor.A))
+                                        end
+                                        if MatParamNames == "EmissiveIntensity" then
+                                            render_mesh:call("setMaterialFloat", i, k, NS_table[weapon.ID].ds_material_params.EmissiveIntensity)
+                                        end
+                                        if MatParamNames == "EmissiveRate" then
+                                            render_mesh:call("setMaterialFloat", i, k, NS_table[weapon.ID].ds_material_params.EmissiveRate)
+                                        end
+                                    end
+                                end
+                            end
+                        end
+                        if MatName:match("Flashlight$") or MatName:match("FLight$") or MatName:match("FL$") then
+                            --log.info("---------------------------Got " .. MatName)
+                            if MatParam then
+                                for v = 0, MatParam - 1 do
+                                    local MatParamNames = render_mesh:call("getMaterialVariableName", i, v)
+                                    
+                                    if MatParamNames then
+                                        if MatParamNames == "EmissiveColor" then
+                                            render_mesh:call("setMaterialFloat4", i, v, func.convert_rgba_to_vector4f(NS_table[weapon.ID].fl_material_params.EmissiveColor.R, NS_table[weapon.ID].fl_material_params.EmissiveColor.G, NS_table[weapon.ID].fl_material_params.EmissiveColor.B, NS_table[weapon.ID].fl_material_params.EmissiveColor.A))
+                                        end
+                                        if MatParamNames == "EmissiveIntensity" then
+                                            render_mesh:call("setMaterialFloat", i, v, NS_table[weapon.ID].fl_material_params.EmissiveIntensity)
+                                        end
+                                        if MatParamNames == "EmissiveRate" then
+                                            render_mesh:call("setMaterialFloat", i, v, NS_table[weapon.ID].fl_material_params.EmissiveRate)
+                                        end
+                                    end
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+        end
+    end
+end
+
+local function toggle_night_sights_RE4(weaponData, NS_table)
+    for _, weapon in pairs(weaponData) do
+        if NS_table[weapon.ID] then
+            local Weapon_GameObject_RE4 = scene:call("findGameObject(System.String)", weapon.ID)
+
+            if Weapon_GameObject_RE4 then
+                local render_mesh = Weapon_GameObject_RE4:call("getComponent(System.Type)", sdk.typeof("via.render.Mesh"))
+                local MatCount = render_mesh:call("get_MaterialNum")
+                    
+                if MatCount then
+                    for i = 0, MatCount - 1 do
+                        local MatName = render_mesh:call("getMaterialName", i)
+                        local MatParam = render_mesh:call("getMaterialVariableNum", i)
+                        
+                        if MatName:match("NightSight$") or MatName:match("NightSights$") or MatName:match("NSights$") or MatName:match("NSight$") or MatName:match("NS$") then
+                            --log.info("---------------------------Got " .. MatName)
+                            if MatParam then
+                                for j = 0, MatParam - 1 do
+                                    local MatParamNames = render_mesh:call("getMaterialVariableName", i, j)
+                                    
+                                    if MatParamNames then
+                                        if MatParamNames == "EmissiveColor" then
+                                            render_mesh:call("setMaterialFloat4", i, j, func.convert_rgba_to_vector4f(NS_table[weapon.ID].ns_material_params.EmissiveColor.R, NS_table[weapon.ID].ns_material_params.EmissiveColor.G, NS_table[weapon.ID].ns_material_params.EmissiveColor.B, NS_table[weapon.ID].ns_material_params.EmissiveColor.A))
+                                        end
+                                        if MatParamNames == "EmissiveIntensity" then
+                                            render_mesh:call("setMaterialFloat", i, j, NS_table[weapon.ID].ns_material_params.EmissiveIntensity)
+                                        end
+                                        if MatParamNames == "EmissiveRate" then
+                                            render_mesh:call("setMaterialFloat", i, j, NS_table[weapon.ID].ns_material_params.EmissiveRate)
+                                        end
+                                    end
+                                end
+                            end
+                        end
+                        if MatName:match("DotSight$") or MatName:match("DSight$") or MatName:match("DS$") or MatName:match("RedDotSight$") or MatName:match("RDS$") then
+                            --log.info("---------------------------Got " .. MatName)
+                            if MatParam then
+                                for k = 0, MatParam - 1 do
+                                    local MatParamNames = render_mesh:call("getMaterialVariableName", i, k)
+                                    
+                                    if MatParamNames then
+                                        if MatParamNames == "EmissiveColor" then
+                                            render_mesh:call("setMaterialFloat4", i, k, func.convert_rgba_to_vector4f(NS_table[weapon.ID].ds_material_params.EmissiveColor.R, NS_table[weapon.ID].ds_material_params.EmissiveColor.G, NS_table[weapon.ID].ds_material_params.EmissiveColor.B, NS_table[weapon.ID].ds_material_params.EmissiveColor.A))
+                                        end
+                                        if MatParamNames == "EmissiveIntensity" then
+                                            render_mesh:call("setMaterialFloat", i, k, NS_table[weapon.ID].ds_material_params.EmissiveIntensity)
+                                        end
+                                        if MatParamNames == "EmissiveRate" then
+                                            render_mesh:call("setMaterialFloat", i, k, NS_table[weapon.ID].ds_material_params.EmissiveRate)
+                                        end
+                                    end
+                                end
+                            end
+                        end
+                        if MatName:match("Flashlight$") or MatName:match("FLight$") or MatName:match("FL$") then
+                            --log.info("---------------------------Got " .. MatName)
+                            if MatParam then
+                                for v = 0, MatParam - 1 do
+                                    local MatParamNames = render_mesh:call("getMaterialVariableName", i, v)
+                                    
+                                    if MatParamNames then
+                                        if MatParamNames == "EmissiveColor" then
+                                            render_mesh:call("setMaterialFloat4", i, v, func.convert_rgba_to_vector4f(NS_table[weapon.ID].fl_material_params.EmissiveColor.R, NS_table[weapon.ID].fl_material_params.EmissiveColor.G, NS_table[weapon.ID].fl_material_params.EmissiveColor.B, NS_table[weapon.ID].fl_material_params.EmissiveColor.A))
+                                        end
+                                        if MatParamNames == "EmissiveIntensity" then
+                                            render_mesh:call("setMaterialFloat", i, v, NS_table[weapon.ID].fl_material_params.EmissiveIntensity)
+                                        end
+                                        if MatParamNames == "EmissiveRate" then
+                                            render_mesh:call("setMaterialFloat", i, v, NS_table[weapon.ID].fl_material_params.EmissiveRate)
                                         end
                                     end
                                 end
@@ -493,40 +3730,124 @@ local function toggle_night_sights_RE2(weaponData, NS_table)
 end
 
 if reframework.get_game_name() == "re7" then
-    toggle_night_sights_RE7(AWF.AWF_settings.RE7_Weapons, AWF_settings.RE7_Night_Sights)
+    toggle_night_sights_RE7(AWF.AWF_settings.RE7.Weapons, AWF_settings.RE7_Night_Sights)
 elseif reframework.get_game_name() == "re2" then
-    toggle_night_sights_RE2(AWF.AWF_settings.RE2_Weapons, AWF_settings.RE2_Night_Sights)
+    toggle_night_sights_RE2(AWF.AWF_settings.RE2.Weapons, AWF_settings.RE2_Night_Sights)
+elseif reframework.get_game_name() == "re3" then
+    toggle_night_sights_RE3(AWF.AWF_settings.RE3.Weapons, AWF_settings.RE3_Night_Sights)
+elseif reframework.get_game_name() == "re8" then
+    toggle_night_sights_RE8(AWF.AWF_settings.RE8.Weapons, AWF_settings.RE8_Night_Sights)
+elseif reframework.get_game_name() == "re4" then
+    toggle_night_sights_RE8(AWF.AWF_settings.RE4.Weapons, AWF_settings.RE4_Night_Sights)
 end
 
 local function update_night_sights_RE7(weaponData)
-    local KM_controls = ((not AWF_NS_settings.use_modifier or hk.check_hotkey("Modifier", false)) and hk.check_hotkey("Night Sight Switch")) or (hk.check_hotkey("Modifier", true) and hk.check_hotkey("Night Sight Switch"))
-    local PAD_controls = ((not AWF_NS_settings.use_pad_modifier or hk.check_hotkey("Pad Modifier", false)) and hk.check_hotkey("Pad Night Sight Switch")) or (hk.check_hotkey("Pad Modifier", true) and hk.check_hotkey("Pad Night Sight Switch"))
+    local KM_controls = ((not AWF_NS_settings.use_modifier or hk.check_hotkey("Night Sight Modifier", false)) and hk.check_hotkey("Night Sight Switch")) or (hk.check_hotkey("Night Sight Modifier", true) and hk.check_hotkey("Night Sight Switch"))
+    local PAD_controls = ((not AWF_NS_settings.use_pad_modifier or hk.check_hotkey("Pad Night Sight Modifier", false)) and hk.check_hotkey("Pad Night Sight Switch")) or (hk.check_hotkey("Pad Night Sight Modifier", true) and hk.check_hotkey("Pad Night Sight Switch"))
 
     if KM_controls or PAD_controls then
         for _, weapon in pairs(weaponData) do
             local NS_Params = AWF_settings.RE7_Night_Sights[weapon.ID]
 
             if NS_Params then
-                NS_Params.material_params.EmissiveRate = NS_Params.night_sight_toggled and 0.0 or 1.0
+                NS_Params.ns_material_params.EmissiveRate = NS_Params.night_sight_toggled and 0.0 or 1.0
                 NS_Params.night_sight_toggled = not NS_Params.night_sight_toggled
-                toggle_night_sights_RE2(AWF.AWF_settings.RE7_Weapons, AWF_settings.RE7_Night_Sights)
+                NS_Params.ds_material_params.EmissiveRate = NS_Params.dotsight_toggled and 0.0 or 1.0
+                NS_Params.dotsight_toggled = not NS_Params.dotsight_toggled
+                toggle_night_sights_RE7(AWF.AWF_settings.RE7.Weapons, AWF_settings.RE7_Night_Sights)
             end
         end
     end
 end
 
 local function update_night_sights_RE2(weaponData)
-    local KM_controls = ((not AWF_NS_settings.use_modifier or hk.check_hotkey("Modifier", false)) and hk.check_hotkey("Night Sight Switch")) or (hk.check_hotkey("Modifier", true) and hk.check_hotkey("Night Sight Switch"))
-    local PAD_controls = ((not AWF_NS_settings.use_pad_modifier or hk.check_hotkey("Pad Modifier", false)) and hk.check_hotkey("Pad Night Sight Switch")) or (hk.check_hotkey("Pad Modifier", true) and hk.check_hotkey("Pad Night Sight Switch"))
+    local KM_controls = ((not AWF_NS_settings.use_modifier or hk.check_hotkey("Night Sight Modifier", false)) and hk.check_hotkey("Night Sight Switch")) or (hk.check_hotkey("Night Sight Modifier", true) and hk.check_hotkey("Night Sight Switch"))
+    local PAD_controls = ((not AWF_NS_settings.use_pad_modifier or hk.check_hotkey("Pad Night Sight Modifier", false)) and hk.check_hotkey("Pad Night Sight Switch")) or (hk.check_hotkey("Pad Night Sight Modifier", true) and hk.check_hotkey("Pad Night Sight Switch"))
 
     if KM_controls or PAD_controls then
         for _, weapon in pairs(weaponData) do
             local NS_Params = AWF_settings.RE2_Night_Sights[weapon.ID]
 
             if NS_Params then
-                NS_Params.material_params.EmissiveRate = NS_Params.night_sight_toggled and 0.0 or 1.0
+                NS_Params.ns_material_params.EmissiveRate = NS_Params.night_sight_toggled and 0.0 or 1.0
                 NS_Params.night_sight_toggled = not NS_Params.night_sight_toggled
-                toggle_night_sights_RE2(AWF.AWF_settings.RE2_Weapons, AWF_settings.RE2_Night_Sights)
+                NS_Params.ds_material_params.EmissiveRate = NS_Params.dotsight_toggled and 0.0 or 1.0
+                NS_Params.dotsight_toggled = not NS_Params.dotsight_toggled
+                toggle_night_sights_RE2(AWF.AWF_settings.RE2.Weapons, AWF_settings.RE2_Night_Sights)
+            end
+        end
+    end
+end
+
+local function update_night_sights_RE3(weaponData)
+    local KM_controls = ((not AWF_NS_settings.use_modifier or hk.check_hotkey("Night Sight Modifier", false)) and hk.check_hotkey("Night Sight Switch")) or (hk.check_hotkey("Night Sight Modifier", true) and hk.check_hotkey("Night Sight Switch"))
+    local PAD_controls = ((not AWF_NS_settings.use_pad_modifier or hk.check_hotkey("Pad Night Sight Modifier", false)) and hk.check_hotkey("Pad Night Sight Switch")) or (hk.check_hotkey("Pad Night Sight Modifier", true) and hk.check_hotkey("Pad Night Sight Switch"))
+
+    if KM_controls or PAD_controls then
+        for _, weapon in pairs(weaponData) do
+            local NS_Params = AWF_settings.RE3_Night_Sights[weapon.ID]
+
+            if NS_Params then
+                NS_Params.ns_material_params.EmissiveRate = NS_Params.night_sight_toggled and 0.0 or 1.0
+                NS_Params.night_sight_toggled = not NS_Params.night_sight_toggled
+                NS_Params.ds_material_params.EmissiveRate = NS_Params.dotsight_toggled and 0.0 or 1.0
+                NS_Params.dotsight_toggled = not NS_Params.dotsight_toggled
+                toggle_night_sights_RE3(AWF.AWF_settings.RE3.Weapons, AWF_settings.RE3_Night_Sights)
+            end
+        end
+    end
+end
+
+local function update_night_sights_RE8(weaponData)
+    local KM_controls = ((not AWF_NS_settings.use_modifier or hk.check_hotkey("Night Sight Modifier", false)) and hk.check_hotkey("Night Sight Switch")) or (hk.check_hotkey("Night Sight Modifier", true) and hk.check_hotkey("Night Sight Switch"))
+    local PAD_controls = ((not AWF_NS_settings.use_pad_modifier or hk.check_hotkey("Pad Night Sight Modifier", false)) and hk.check_hotkey("Pad Night Sight Switch")) or (hk.check_hotkey("Pad Night Sight Modifier", true) and hk.check_hotkey("Pad Night Sight Switch"))
+
+    if KM_controls or PAD_controls then
+        for _, weapon in pairs(weaponData) do
+            local NS_Params = AWF_settings.RE8_Night_Sights[weapon.ID]
+
+            if NS_Params then
+                NS_Params.ns_material_params.EmissiveRate = NS_Params.night_sight_toggled and 0.0 or 1.0
+                NS_Params.night_sight_toggled = not NS_Params.night_sight_toggled
+                NS_Params.ds_material_params.EmissiveRate = NS_Params.dotsight_toggled and 0.0 or 1.0
+                NS_Params.dotsight_toggled = not NS_Params.dotsight_toggled
+                toggle_night_sights_RE8(AWF.AWF_settings.RE8.Weapons, AWF_settings.RE8_Night_Sights)
+            end
+        end
+    end
+end
+
+local function update_gun_light_RE8(weaponData)
+    local KM_controls = ((not AWF_NS_settings.fl_use_modifier or hk.check_hotkey("Gun Light Modifier", false)) and hk.check_hotkey("Gun Light Switch")) or (hk.check_hotkey("Gun Light Modifier", true) and hk.check_hotkey("Gun Light Switch"))
+    local PAD_controls = ((not AWF_NS_settings.fl_use_pad_modifier or hk.check_hotkey("Pad Gun Light Modifier", false)) and hk.check_hotkey("Pad Gun Light Switch")) or (hk.check_hotkey("Pad Gun Light Modifier", true) and hk.check_hotkey("Pad Gun Light Switch"))
+
+    if KM_controls or PAD_controls then
+        for _, weapon in pairs(weaponData) do
+            local NS_Params = AWF_settings.RE8_Night_Sights[weapon.ID]
+
+            if NS_Params then
+                NS_Params.fl_material_params.EmissiveRate = NS_Params.flashlight_toggled and 0.0 or 1.0
+                NS_Params.flashlight_toggled = not NS_Params.flashlight_toggled
+                toggle_night_sights_RE8(AWF.AWF_settings.RE8.Weapons, AWF_settings.RE8_Night_Sights)
+            end
+        end
+    end
+end
+
+local function update_night_sights_RE4(weaponData)
+    local KM_controls = ((not AWF_NS_settings.use_modifier or hk.check_hotkey("Night Sight Modifier", false)) and hk.check_hotkey("Night Sight Switch")) or (hk.check_hotkey("Night Sight Modifier", true) and hk.check_hotkey("Night Sight Switch"))
+    local PAD_controls = ((not AWF_NS_settings.use_pad_modifier or hk.check_hotkey("Pad Night Sight Modifier", false)) and hk.check_hotkey("Pad Night Sight Switch")) or (hk.check_hotkey("Pad Night Sight Modifier", true) and hk.check_hotkey("Pad Night Sight Switch"))
+
+    if KM_controls or PAD_controls then
+        for _, weapon in pairs(weaponData) do
+            local NS_Params = AWF_settings.RE4_Night_Sights[weapon.ID]
+
+            if NS_Params then
+                NS_Params.ns_material_params.EmissiveRate = NS_Params.night_sight_toggled and 0.0 or 1.0
+                NS_Params.night_sight_toggled = not NS_Params.night_sight_toggled
+                NS_Params.ds_material_params.EmissiveRate = NS_Params.dotsight_toggled and 0.0 or 1.0
+                NS_Params.dotsight_toggled = not NS_Params.dotsight_toggled
+                toggle_night_sights_RE4(AWF.AWF_settings.RE4.Weapons, AWF_settings.RE4_Night_Sights)
             end
         end
     end
@@ -534,10 +3855,20 @@ end
 
 re.on_frame(function()
 	if reframework.get_game_name() == "re7" then
-        update_night_sights_RE7(AWF.AWF_settings.RE7_Weapons)
+        update_night_sights_RE7(AWF.AWF_settings.RE7.Weapons)
     end
     if reframework.get_game_name() == "re2" then
-        update_night_sights_RE2(AWF.AWF_settings.RE2_Weapons)
+        update_night_sights_RE2(AWF.AWF_settings.RE2.Weapons)
+    end
+    if reframework.get_game_name() == "re3" then
+        update_night_sights_RE3(AWF.AWF_settings.RE3.Weapons)
+    end
+    if reframework.get_game_name() == "re8" then
+        update_gun_light_RE8(AWF.AWF_settings.RE8.Weapons)
+        update_night_sights_RE8(AWF.AWF_settings.RE8.Weapons)
+    end
+    if reframework.get_game_name() == "re4" then
+        update_night_sights_RE4(AWF.AWF_settings.RE4.Weapons)
     end
 end)
 
@@ -547,7 +3878,7 @@ local function draw_AWFNS_RE7Editor_GUI(weaponOrder)
         imgui.button("[==============| AWF NIGHT SIGHT EDITOR |==============]")
 
         for _, weaponName in ipairs(weaponOrder) do
-            local weapon = AWF.AWF_settings.RE7_Weapons[weaponName]
+            local weapon = AWF.AWF_settings.RE7.Weapons[weaponName]
 
             if weapon.Type ~= "Ammo" and weapon.Type ~= "KNF" and imgui.tree_node(string.upper(weapon.Name)) then
                 imgui.begin_rect()
@@ -555,19 +3886,32 @@ local function draw_AWFNS_RE7Editor_GUI(weaponOrder)
 
                 if imgui.button("Reset to Defaults") then
                     wc = true
-                    AWF_settings.RE7_Night_Sights[weapon.ID] = func.recurse_def_settings({}, AWFWeapons.RE7_Night_Sights[weapon.ID]); wc = wc or changed
+                    AWF_settings.RE7_Night_Sights[weapon.ID] = hk.recurse_def_settings({}, AWFWeapons.RE7_Night_Sights[weapon.ID]); wc = wc or changed
                 end
 
-                changed, AWF_settings.RE7_Night_Sights[weapon.ID].material_params.EmissiveIntensity = imgui.drag_float("Intensity", AWF_settings.RE7_Night_Sights[weapon.ID].material_params.EmissiveIntensity, 1.0, 0.0, 1000.0); wc = wc or changed
+                changed, AWF_settings.RE7_Night_Sights[weapon.ID].ns_material_params.EmissiveIntensity = imgui.drag_float("Intensity", AWF_settings.RE7_Night_Sights[weapon.ID].ns_material_params.EmissiveIntensity, 1.0, 0.0, 1000.0); wc = wc or changed
 
-                local NS_EmissiveColor = func.convert_rgba_to_vector4f(AWF_settings.RE7_Night_Sights[weapon.ID].material_params.EmissiveColor.R, AWF_settings.RE7_Night_Sights[weapon.ID].material_params.EmissiveColor.G, AWF_settings.RE7_Night_Sights[weapon.ID].material_params.EmissiveColor.B, AWF_settings.RE7_Night_Sights[weapon.ID].material_params.EmissiveColor.A)
+                local NS_EmissiveColor = func.convert_rgba_to_vector4f(AWF_settings.RE7_Night_Sights[weapon.ID].ns_material_params.EmissiveColor.R, AWF_settings.RE7_Night_Sights[weapon.ID].ns_material_params.EmissiveColor.G, AWF_settings.RE7_Night_Sights[weapon.ID].ns_material_params.EmissiveColor.B, AWF_settings.RE7_Night_Sights[weapon.ID].ns_material_params.EmissiveColor.A)
                 changed, NS_EmissiveColor = imgui.color_picker4("Night Sight Color", NS_EmissiveColor); wc = wc or changed
                 
                 local R, G, B, A = func.convert_vector4f_to_rgba(NS_EmissiveColor)
-                AWF_settings.RE7_Night_Sights[weapon.ID].material_params.EmissiveColor.R = R
-                AWF_settings.RE7_Night_Sights[weapon.ID].material_params.EmissiveColor.G = G
-                AWF_settings.RE7_Night_Sights[weapon.ID].material_params.EmissiveColor.B = B
-                AWF_settings.RE7_Night_Sights[weapon.ID].material_params.EmissiveColor.A = A
+                AWF_settings.RE7_Night_Sights[weapon.ID].ns_material_params.EmissiveColor.R = R
+                AWF_settings.RE7_Night_Sights[weapon.ID].ns_material_params.EmissiveColor.G = G
+                AWF_settings.RE7_Night_Sights[weapon.ID].ns_material_params.EmissiveColor.B = B
+                AWF_settings.RE7_Night_Sights[weapon.ID].ns_material_params.EmissiveColor.A = A
+
+                imgui.spacing()
+
+                changed, AWF_settings.RE7_Night_Sights[weapon.ID].ds_material_params.EmissiveIntensity = imgui.drag_float("Dot Sight Intensity", AWF_settings.RE7_Night_Sights[weapon.ID].ds_material_params.EmissiveIntensity, 5.0, 0.0, 10000.0); wc = wc or changed
+
+                local DS_EmissiveColor = func.convert_rgba_to_vector4f(AWF_settings.RE7_Night_Sights[weapon.ID].ds_material_params.EmissiveColor.R, AWF_settings.RE7_Night_Sights[weapon.ID].ds_material_params.EmissiveColor.G, AWF_settings.RE7_Night_Sights[weapon.ID].ds_material_params.EmissiveColor.B, AWF_settings.RE7_Night_Sights[weapon.ID].ds_material_params.EmissiveColor.A)
+                changed, DS_EmissiveColor = imgui.color_picker4("Dot Sight Color", DS_EmissiveColor); wc = wc or changed
+                
+                local R2, G2, B2, A2 = func.convert_vector4f_to_rgba(DS_EmissiveColor)
+                AWF_settings.RE7_Night_Sights[weapon.ID].ds_material_params.EmissiveColor.R = R2
+                AWF_settings.RE7_Night_Sights[weapon.ID].ds_material_params.EmissiveColor.G = G2
+                AWF_settings.RE7_Night_Sights[weapon.ID].ds_material_params.EmissiveColor.B = B2
+                AWF_settings.RE7_Night_Sights[weapon.ID].ds_material_params.EmissiveColor.A = A2
                 
                 imgui.end_rect(2)
                 imgui.tree_pop()
@@ -585,7 +3929,7 @@ local function draw_AWFNS_RE2Editor_GUI(weaponOrder)
         imgui.button("[==============| AWF NIGHT SIGHT EDITOR |==============]")
 
         for _, weaponName in ipairs(weaponOrder) do
-            local weapon = AWF.AWF_settings.RE2_Weapons[weaponName]
+            local weapon = AWF.AWF_settings.RE2.Weapons[weaponName]
 
             if (not weapon.ID:match("^wp4%d%d%d$") and not weapon.ID:match("^wp8%d%d%d$") or weapon.ID == "wp4300") and imgui.tree_node(string.upper(weapon.Name)) then
                 imgui.begin_rect()
@@ -593,20 +3937,214 @@ local function draw_AWFNS_RE2Editor_GUI(weaponOrder)
 
                 if imgui.button("Reset to Defaults") then
                     wc = true
-                    AWF_settings.RE2_Night_Sights[weapon.ID] = func.recurse_def_settings({}, AWFWeapons.RE2_Night_Sights[weapon.ID]); wc = wc or changed
+                    AWF_settings.RE2_Night_Sights[weapon.ID] = hk.recurse_def_settings({}, AWFWeapons.RE2_Night_Sights[weapon.ID]); wc = wc or changed
                 end
 
-                changed, AWF_settings.RE2_Night_Sights[weapon.ID].material_params.EmissiveIntensity = imgui.drag_float("Intensity", AWF_settings.RE2_Night_Sights[weapon.ID].material_params.EmissiveIntensity, 1.0, 0.0, 1000.0); wc = wc or changed
+                changed, AWF_settings.RE2_Night_Sights[weapon.ID].ns_material_params.EmissiveIntensity = imgui.drag_float("Intensity", AWF_settings.RE2_Night_Sights[weapon.ID].ns_material_params.EmissiveIntensity, 1.0, 0.0, 1000.0); wc = wc or changed
 
-                local NS_EmissiveColor = func.convert_rgba_to_vector4f(AWF_settings.RE2_Night_Sights[weapon.ID].material_params.EmissiveColor.R, AWF_settings.RE2_Night_Sights[weapon.ID].material_params.EmissiveColor.G, AWF_settings.RE2_Night_Sights[weapon.ID].material_params.EmissiveColor.B, AWF_settings.RE2_Night_Sights[weapon.ID].material_params.EmissiveColor.A)
+                local NS_EmissiveColor = func.convert_rgba_to_vector4f(AWF_settings.RE2_Night_Sights[weapon.ID].ns_material_params.EmissiveColor.R, AWF_settings.RE2_Night_Sights[weapon.ID].ns_material_params.EmissiveColor.G, AWF_settings.RE2_Night_Sights[weapon.ID].ns_material_params.EmissiveColor.B, AWF_settings.RE2_Night_Sights[weapon.ID].ns_material_params.EmissiveColor.A)
                 changed, NS_EmissiveColor = imgui.color_picker4("Night Sight Color", NS_EmissiveColor); wc = wc or changed
                 
                 local R, G, B, A = func.convert_vector4f_to_rgba(NS_EmissiveColor)
-                AWF_settings.RE2_Night_Sights[weapon.ID].material_params.EmissiveColor.R = R
-                AWF_settings.RE2_Night_Sights[weapon.ID].material_params.EmissiveColor.G = G
-                AWF_settings.RE2_Night_Sights[weapon.ID].material_params.EmissiveColor.B = B
-                AWF_settings.RE2_Night_Sights[weapon.ID].material_params.EmissiveColor.A = A
+                AWF_settings.RE2_Night_Sights[weapon.ID].ns_material_params.EmissiveColor.R = R
+                AWF_settings.RE2_Night_Sights[weapon.ID].ns_material_params.EmissiveColor.G = G
+                AWF_settings.RE2_Night_Sights[weapon.ID].ns_material_params.EmissiveColor.B = B
+                AWF_settings.RE2_Night_Sights[weapon.ID].ns_material_params.EmissiveColor.A = A
                 
+                imgui.spacing()
+
+                changed, AWF_settings.RE2_Night_Sights[weapon.ID].ds_material_params.EmissiveIntensity = imgui.drag_float("Dot Sight Intensity", AWF_settings.RE2_Night_Sights[weapon.ID].ds_material_params.EmissiveIntensity, 5.0, 0.0, 10000.0); wc = wc or changed
+
+                local DS_EmissiveColor = func.convert_rgba_to_vector4f(AWF_settings.RE2_Night_Sights[weapon.ID].ds_material_params.EmissiveColor.R, AWF_settings.RE2_Night_Sights[weapon.ID].ds_material_params.EmissiveColor.G, AWF_settings.RE2_Night_Sights[weapon.ID].ds_material_params.EmissiveColor.B, AWF_settings.RE2_Night_Sights[weapon.ID].ds_material_params.EmissiveColor.A)
+                changed, DS_EmissiveColor = imgui.color_picker4("Dot Sight Color", DS_EmissiveColor); wc = wc or changed
+                
+                local R2, G2, B2, A2 = func.convert_vector4f_to_rgba(DS_EmissiveColor)
+                AWF_settings.RE2_Night_Sights[weapon.ID].ds_material_params.EmissiveColor.R = R2
+                AWF_settings.RE2_Night_Sights[weapon.ID].ds_material_params.EmissiveColor.G = G2
+                AWF_settings.RE2_Night_Sights[weapon.ID].ds_material_params.EmissiveColor.B = B2
+                AWF_settings.RE2_Night_Sights[weapon.ID].ds_material_params.EmissiveColor.A = A2
+
+                imgui.end_rect(2)
+                imgui.tree_pop()
+            end
+            imgui.separator()
+        end
+        imgui.end_rect(1)
+        imgui.end_window()
+    end
+end
+
+local function draw_AWFNS_RE3Editor_GUI(weaponOrder)
+    if imgui.begin_window("AWF Night Sight Editor") then
+        imgui.begin_rect()
+        imgui.button("[==============| AWF NIGHT SIGHT EDITOR |==============]")
+
+        for _, weaponName in ipairs(weaponOrder) do
+            local weapon = AWF.AWF_settings.RE3.Weapons[weaponName]
+
+            if not weapon.ID:match("^wp4%d%d%d$") and imgui.tree_node(string.upper(weapon.Name)) then
+                imgui.begin_rect()
+                imgui.spacing()
+
+                if imgui.button("Reset to Defaults") then
+                    wc = true
+                    AWF_settings.RE3_Night_Sights[weapon.ID] = hk.recurse_def_settings({}, AWFWeapons.RE3_Night_Sights[weapon.ID]); wc = wc or changed
+                end
+
+                changed, AWF_settings.RE3_Night_Sights[weapon.ID].ns_material_params.EmissiveIntensity = imgui.drag_float("Night Sight Intensity", AWF_settings.RE3_Night_Sights[weapon.ID].ns_material_params.EmissiveIntensity, 1.0, 0.0, 1000.0); wc = wc or changed
+
+                local NS_EmissiveColor = func.convert_rgba_to_vector4f(AWF_settings.RE3_Night_Sights[weapon.ID].ns_material_params.EmissiveColor.R, AWF_settings.RE3_Night_Sights[weapon.ID].ns_material_params.EmissiveColor.G, AWF_settings.RE3_Night_Sights[weapon.ID].ns_material_params.EmissiveColor.B, AWF_settings.RE3_Night_Sights[weapon.ID].ns_material_params.EmissiveColor.A)
+                changed, NS_EmissiveColor = imgui.color_picker4("Night Sight Color", NS_EmissiveColor); wc = wc or changed
+                
+                local R, G, B, A = func.convert_vector4f_to_rgba(NS_EmissiveColor)
+                AWF_settings.RE3_Night_Sights[weapon.ID].ns_material_params.EmissiveColor.R = R
+                AWF_settings.RE3_Night_Sights[weapon.ID].ns_material_params.EmissiveColor.G = G
+                AWF_settings.RE3_Night_Sights[weapon.ID].ns_material_params.EmissiveColor.B = B
+                AWF_settings.RE3_Night_Sights[weapon.ID].ns_material_params.EmissiveColor.A = A
+
+                imgui.spacing()
+
+                changed, AWF_settings.RE3_Night_Sights[weapon.ID].ds_material_params.EmissiveIntensity = imgui.drag_float("Dot Sight Intensity", AWF_settings.RE3_Night_Sights[weapon.ID].ds_material_params.EmissiveIntensity, 5.0, 0.0, 10000.0); wc = wc or changed
+
+                local DS_EmissiveColor = func.convert_rgba_to_vector4f(AWF_settings.RE3_Night_Sights[weapon.ID].ds_material_params.EmissiveColor.R, AWF_settings.RE3_Night_Sights[weapon.ID].ds_material_params.EmissiveColor.G, AWF_settings.RE3_Night_Sights[weapon.ID].ds_material_params.EmissiveColor.B, AWF_settings.RE3_Night_Sights[weapon.ID].ds_material_params.EmissiveColor.A)
+                changed, DS_EmissiveColor = imgui.color_picker4("Dot Sight Color", DS_EmissiveColor); wc = wc or changed
+                
+                local R2, G2, B2, A2 = func.convert_vector4f_to_rgba(DS_EmissiveColor)
+                AWF_settings.RE3_Night_Sights[weapon.ID].ds_material_params.EmissiveColor.R = R2
+                AWF_settings.RE3_Night_Sights[weapon.ID].ds_material_params.EmissiveColor.G = G2
+                AWF_settings.RE3_Night_Sights[weapon.ID].ds_material_params.EmissiveColor.B = B2
+                AWF_settings.RE3_Night_Sights[weapon.ID].ds_material_params.EmissiveColor.A = A2
+                
+                imgui.end_rect(2)
+                imgui.tree_pop()
+            end
+            imgui.separator()
+        end
+        imgui.end_rect(1)
+        imgui.end_window()
+    end
+end
+
+local function draw_AWFNS_RE8Editor_GUI(weaponOrder)
+    if imgui.begin_window("AWF Night Sight Editor") then
+        imgui.begin_rect()
+        imgui.button("[==============| AWF NIGHT SIGHT EDITOR |==============]")
+
+        for _, weaponName in ipairs(weaponOrder) do
+            local weapon = AWF.AWF_settings.RE8.Weapons[weaponName]
+
+            if imgui.tree_node(string.upper(weapon.Name)) then
+                imgui.begin_rect()
+                imgui.spacing()
+
+                if imgui.button("Reset to Defaults") then
+                    wc = true
+                    AWF_settings.RE8_Night_Sights[weapon.ID] = hk.recurse_def_settings({}, AWFWeapons.RE8_Night_Sights[weapon.ID]); wc = wc or changed
+                end
+
+                changed, AWF_settings.RE8_Night_Sights[weapon.ID].ns_material_params.EmissiveIntensity = imgui.drag_float("Night Sight Intensity", AWF_settings.RE8_Night_Sights[weapon.ID].ns_material_params.EmissiveIntensity, 1.0, 0.0, 1000.0); wc = wc or changed
+
+                local NS_EmissiveColor = func.convert_rgba_to_vector4f(AWF_settings.RE8_Night_Sights[weapon.ID].ns_material_params.EmissiveColor.R, AWF_settings.RE8_Night_Sights[weapon.ID].ns_material_params.EmissiveColor.G, AWF_settings.RE8_Night_Sights[weapon.ID].ns_material_params.EmissiveColor.B, AWF_settings.RE8_Night_Sights[weapon.ID].ns_material_params.EmissiveColor.A)
+                changed, NS_EmissiveColor = imgui.color_picker4("Night Sight Color", NS_EmissiveColor); wc = wc or changed
+                
+                local R, G, B, A = func.convert_vector4f_to_rgba(NS_EmissiveColor)
+                AWF_settings.RE8_Night_Sights[weapon.ID].ns_material_params.EmissiveColor.R = R
+                AWF_settings.RE8_Night_Sights[weapon.ID].ns_material_params.EmissiveColor.G = G
+                AWF_settings.RE8_Night_Sights[weapon.ID].ns_material_params.EmissiveColor.B = B
+                AWF_settings.RE8_Night_Sights[weapon.ID].ns_material_params.EmissiveColor.A = A
+
+                imgui.spacing()
+
+                changed, AWF_settings.RE8_Night_Sights[weapon.ID].ds_material_params.EmissiveIntensity = imgui.drag_float("Dot Sight Intensity", AWF_settings.RE8_Night_Sights[weapon.ID].ds_material_params.EmissiveIntensity, 5.0, 0.0, 10000.0); wc = wc or changed
+
+                local DS_EmissiveColor = func.convert_rgba_to_vector4f(AWF_settings.RE8_Night_Sights[weapon.ID].ds_material_params.EmissiveColor.R, AWF_settings.RE8_Night_Sights[weapon.ID].ds_material_params.EmissiveColor.G, AWF_settings.RE8_Night_Sights[weapon.ID].ds_material_params.EmissiveColor.B, AWF_settings.RE8_Night_Sights[weapon.ID].ds_material_params.EmissiveColor.A)
+                changed, DS_EmissiveColor = imgui.color_picker4("Dot Sight Color", DS_EmissiveColor); wc = wc or changed
+                
+                local R2, G2, B2, A2 = func.convert_vector4f_to_rgba(DS_EmissiveColor)
+                AWF_settings.RE8_Night_Sights[weapon.ID].ds_material_params.EmissiveColor.R = R2
+                AWF_settings.RE8_Night_Sights[weapon.ID].ds_material_params.EmissiveColor.G = G2
+                AWF_settings.RE8_Night_Sights[weapon.ID].ds_material_params.EmissiveColor.B = B2
+                AWF_settings.RE8_Night_Sights[weapon.ID].ds_material_params.EmissiveColor.A = A2
+                
+                if weapon.ID == "ri3124_Inventory" then
+                    imgui.spacing()
+
+                    changed, AWF_settings.RE8_Night_Sights[weapon.ID].fl_material_params.EmissiveIntensity = imgui.drag_float("Gun Light Intensity", AWF_settings.RE8_Night_Sights[weapon.ID].fl_material_params.EmissiveIntensity, 5.0, 0.0, 10000.0); wc = wc or changed
+
+                    local FL_EmissiveColor = func.convert_rgba_to_vector4f(AWF_settings.RE8_Night_Sights[weapon.ID].fl_material_params.EmissiveColor.R, AWF_settings.RE8_Night_Sights[weapon.ID].fl_material_params.EmissiveColor.G, AWF_settings.RE8_Night_Sights[weapon.ID].fl_material_params.EmissiveColor.B, AWF_settings.RE8_Night_Sights[weapon.ID].fl_material_params.EmissiveColor.A)
+                    changed, FL_EmissiveColor = imgui.color_picker4("Gun Light Color", FL_EmissiveColor); wc = wc or changed
+                    
+                    local R3, G3, B3, A3 = func.convert_vector4f_to_rgba(FL_EmissiveColor)
+                    AWF_settings.RE8_Night_Sights[weapon.ID].fl_material_params.EmissiveColor.R = R3
+                    AWF_settings.RE8_Night_Sights[weapon.ID].fl_material_params.EmissiveColor.G = G3
+                    AWF_settings.RE8_Night_Sights[weapon.ID].fl_material_params.EmissiveColor.B = B3
+                    AWF_settings.RE8_Night_Sights[weapon.ID].fl_material_params.EmissiveColor.A = A3
+                end
+                imgui.end_rect(2)
+                imgui.tree_pop()
+            end
+            imgui.separator()
+        end
+        imgui.end_rect(1)
+        imgui.end_window()
+    end
+end
+
+local function draw_AWFNS_RE4Editor_GUI(weaponOrder)
+    if imgui.begin_window("AWF Night Sight Editor") then
+        imgui.begin_rect()
+        imgui.button("[==============| AWF NIGHT SIGHT EDITOR |==============]")
+
+        for _, weaponName in ipairs(weaponOrder) do
+            local weapon = AWF.AWF_settings.RE4.Weapons[weaponName]
+
+            if imgui.tree_node(string.upper(weapon.Name)) then
+                imgui.begin_rect()
+                imgui.spacing()
+
+                if imgui.button("Reset to Defaults") then
+                    wc = true
+                    AWF_settings.RE4_Night_Sights[weapon.ID] = hk.recurse_def_settings({}, AWFWeapons.RE4_Night_Sights[weapon.ID]); wc = wc or changed
+                end
+
+                changed, AWF_settings.RE4_Night_Sights[weapon.ID].ns_material_params.EmissiveIntensity = imgui.drag_float("Night Sight Intensity", AWF_settings.RE4_Night_Sights[weapon.ID].ns_material_params.EmissiveIntensity, 1.0, 0.0, 1000.0); wc = wc or changed
+
+                local NS_EmissiveColor = func.convert_rgba_to_vector4f(AWF_settings.RE4_Night_Sights[weapon.ID].ns_material_params.EmissiveColor.R, AWF_settings.RE4_Night_Sights[weapon.ID].ns_material_params.EmissiveColor.G, AWF_settings.RE4_Night_Sights[weapon.ID].ns_material_params.EmissiveColor.B, AWF_settings.RE4_Night_Sights[weapon.ID].ns_material_params.EmissiveColor.A)
+                changed, NS_EmissiveColor = imgui.color_picker4("Night Sight Color", NS_EmissiveColor); wc = wc or changed
+                
+                local R, G, B, A = func.convert_vector4f_to_rgba(NS_EmissiveColor)
+                AWF_settings.RE4_Night_Sights[weapon.ID].ns_material_params.EmissiveColor.R = R
+                AWF_settings.RE4_Night_Sights[weapon.ID].ns_material_params.EmissiveColor.G = G
+                AWF_settings.RE4_Night_Sights[weapon.ID].ns_material_params.EmissiveColor.B = B
+                AWF_settings.RE4_Night_Sights[weapon.ID].ns_material_params.EmissiveColor.A = A
+
+                imgui.spacing()
+
+                changed, AWF_settings.RE4_Night_Sights[weapon.ID].ds_material_params.EmissiveIntensity = imgui.drag_float("Dot Sight Intensity", AWF_settings.RE4_Night_Sights[weapon.ID].ds_material_params.EmissiveIntensity, 5.0, 0.0, 10000.0); wc = wc or changed
+
+                local DS_EmissiveColor = func.convert_rgba_to_vector4f(AWF_settings.RE4_Night_Sights[weapon.ID].ds_material_params.EmissiveColor.R, AWF_settings.RE4_Night_Sights[weapon.ID].ds_material_params.EmissiveColor.G, AWF_settings.RE4_Night_Sights[weapon.ID].ds_material_params.EmissiveColor.B, AWF_settings.RE4_Night_Sights[weapon.ID].ds_material_params.EmissiveColor.A)
+                changed, DS_EmissiveColor = imgui.color_picker4("Dot Sight Color", DS_EmissiveColor); wc = wc or changed
+                
+                local R2, G2, B2, A2 = func.convert_vector4f_to_rgba(DS_EmissiveColor)
+                AWF_settings.RE4_Night_Sights[weapon.ID].ds_material_params.EmissiveColor.R = R2
+                AWF_settings.RE4_Night_Sights[weapon.ID].ds_material_params.EmissiveColor.G = G2
+                AWF_settings.RE4_Night_Sights[weapon.ID].ds_material_params.EmissiveColor.B = B2
+                AWF_settings.RE4_Night_Sights[weapon.ID].ds_material_params.EmissiveColor.A = A2
+                
+                -- if weapon.ID == "ri3124_Inventory" then
+                --     imgui.spacing()
+
+                --     changed, AWF_settings.RE4_Night_Sights[weapon.ID].fl_material_params.EmissiveIntensity = imgui.drag_float("Gun Light Intensity", AWF_settings.RE4_Night_Sights[weapon.ID].fl_material_params.EmissiveIntensity, 5.0, 0.0, 10000.0); wc = wc or changed
+
+                --     local FL_EmissiveColor = func.convert_rgba_to_vector4f(AWF_settings.RE4_Night_Sights[weapon.ID].fl_material_params.EmissiveColor.R, AWF_settings.RE4_Night_Sights[weapon.ID].fl_material_params.EmissiveColor.G, AWF_settings.RE4_Night_Sights[weapon.ID].fl_material_params.EmissiveColor.B, AWF_settings.RE4_Night_Sights[weapon.ID].fl_material_params.EmissiveColor.A)
+                --     changed, FL_EmissiveColor = imgui.color_picker4("Gun Light Color", FL_EmissiveColor); wc = wc or changed
+                    
+                --     local R3, G3, B3, A3 = func.convert_vector4f_to_rgba(FL_EmissiveColor)
+                --     AWF_settings.RE4_Night_Sights[weapon.ID].fl_material_params.EmissiveColor.R = R3
+                --     AWF_settings.RE4_Night_Sights[weapon.ID].fl_material_params.EmissiveColor.G = G3
+                --     AWF_settings.RE4_Night_Sights[weapon.ID].fl_material_params.EmissiveColor.B = B3
+                --     AWF_settings.RE4_Night_Sights[weapon.ID].fl_material_params.EmissiveColor.A = A3
+                -- end
                 imgui.end_rect(2)
                 imgui.tree_pop()
             end
@@ -625,16 +4163,16 @@ re.on_draw_ui(function()
             if imgui.button("Reset to Defaults") then
                 wc = true
                 changed = true
-                AWF_NS_settings = func.recurse_def_settings({}, AWF_NS_default_settings); wc = wc or changed
+                AWF_NS_settings = hk.recurse_def_settings({}, AWF_NS_default_settings); wc = wc or changed
                 hk.reset_from_defaults_tbl(AWF_NS_default_settings.hotkeys)
-                AWF_settings = func.recurse_def_settings({}, AWFWeapons); wc = wc or changed
+                AWF_settings = hk.recurse_def_settings({}, AWFWeapons); wc = wc or changed
             end
             
             changed, show_AWFNS_editor = imgui.checkbox("Open AWF Night Sight Editor", show_AWFNS_editor)
             func.tooltip("Show/Hide the AWF Night Sight Editor.")
 
             if show_AWFNS_editor then
-                draw_AWFNS_RE7Editor_GUI(AWF.AWF_settings.RE7_Weapon_Order)
+                draw_AWFNS_RE7Editor_GUI(AWF.AWF_settings.RE7.Weapon_Order)
             end
 
             imgui.spacing()
@@ -647,8 +4185,8 @@ re.on_draw_ui(function()
                     changed, AWF_NS_settings.use_modifier = imgui.checkbox(" ", AWF_NS_settings.use_modifier); wc = wc or changed
                     func.tooltip("Require that you hold down this button")
                     imgui.same_line()
-                    changed = hk.hotkey_setter("Modifier"); wc = wc or changed
-                    changed = hk.hotkey_setter("Night Sight Switch", AWF_NS_settings.use_modifier and "Modifier"); wc = wc or changed
+                    changed = hk.hotkey_setter("Night Sight Modifier"); wc = wc or changed
+                    changed = hk.hotkey_setter("Night Sight Switch", AWF_NS_settings.use_modifier and "Night Sight Modifier"); wc = wc or changed
                     imgui.tree_pop()
                 end
                 
@@ -656,14 +4194,14 @@ re.on_draw_ui(function()
                     changed, AWF_NS_settings.use_pad_modifier = imgui.checkbox(" ", AWF_NS_settings.use_pad_modifier); wc = wc or changed
                     func.tooltip("Require that you hold down this button")
                     imgui.same_line()
-                    changed = hk.hotkey_setter("Pad Modifier"); wc = wc or changed
-                    changed = hk.hotkey_setter("Pad Night Sight Switch", AWF_NS_settings.use_pad_modifier and "Pad Modifier"); wc = wc or changed
+                    changed = hk.hotkey_setter("Pad Night Sight Modifier"); wc = wc or changed
+                    changed = hk.hotkey_setter("Pad Night Sight Switch", AWF_NS_settings.use_pad_modifier and "Pad Night Sight Modifier"); wc = wc or changed
                     imgui.tree_pop()
                 end
             end
             imgui.end_rect(2)
 
-            ui.button_n_colored_txt("Current Version:", "v1.4.45 | 01/25/2024", 0xFF00FF00)
+            ui.button_n_colored_txt("Current Version:", "v1.8.0 | 03/05/2024", 0xFF00FF00)
             imgui.same_line()
             imgui.text("| by SilverEzredes")
             
@@ -677,16 +4215,15 @@ re.on_draw_ui(function()
             imgui.tree_pop()
         end
     end
-
     if reframework.get_game_name() == "re2" then
         if imgui.tree_node("AWF - Night Sights") then
             imgui.begin_rect()
             if imgui.button("Reset to Defaults") then
                 wc = true
                 changed = true
-                AWF_NS_settings = func.recurse_def_settings({}, AWF_NS_default_settings); wc = wc or changed
+                AWF_NS_settings = hk.recurse_def_settings({}, AWF_NS_default_settings); wc = wc or changed
                 hk.reset_from_defaults_tbl(AWF_NS_default_settings.hotkeys)
-                AWF_settings = func.recurse_def_settings({}, AWFWeapons); wc = wc or changed
+                AWF_settings = hk.recurse_def_settings({}, AWFWeapons); wc = wc or changed
             end
             func.tooltip("Reset every parameter.")
             
@@ -696,7 +4233,7 @@ re.on_draw_ui(function()
             func.tooltip("Show/Hide the AWF Night Sight Editor.")
 
             if show_AWFNS_editor then
-                draw_AWFNS_RE2Editor_GUI(AWF.AWF_settings.RE2_Weapon_Order)
+                draw_AWFNS_RE2Editor_GUI(AWF.AWF_settings.RE2.Weapon_Order)
             end
             
             imgui.spacing()
@@ -709,8 +4246,8 @@ re.on_draw_ui(function()
                     changed, AWF_NS_settings.use_modifier = imgui.checkbox(" ", AWF_NS_settings.use_modifier); wc = wc or changed
                     func.tooltip("Require that you hold down this button")
                     imgui.same_line()
-                    changed = hk.hotkey_setter("Modifier"); wc = wc or changed
-                    changed = hk.hotkey_setter("Night Sight Switch", AWF_NS_settings.use_modifier and "Modifier"); wc = wc or changed
+                    changed = hk.hotkey_setter("Night Sight Modifier"); wc = wc or changed
+                    changed = hk.hotkey_setter("Night Sight Switch", AWF_NS_settings.use_modifier and "Night Sight Modifier"); wc = wc or changed
                     imgui.tree_pop()
                 end
                 
@@ -718,14 +4255,249 @@ re.on_draw_ui(function()
                     changed, AWF_NS_settings.use_pad_modifier = imgui.checkbox(" ", AWF_NS_settings.use_pad_modifier); wc = wc or changed
                     func.tooltip("Require that you hold down this button")
                     imgui.same_line()
-                    changed = hk.hotkey_setter("Pad Modifier"); wc = wc or changed
-                    changed = hk.hotkey_setter("Pad Night Sight Switch", AWF_NS_settings.use_pad_modifier and "Pad Modifier"); wc = wc or changed
+                    changed = hk.hotkey_setter("Pad Night Sight Modifier"); wc = wc or changed
+                    changed = hk.hotkey_setter("Pad Night Sight Switch", AWF_NS_settings.use_pad_modifier and "Pad Night Sight Modifier"); wc = wc or changed
                     imgui.tree_pop()
                 end
             end
             imgui.end_rect(2)
 
-            ui.button_n_colored_txt("Current Version:", "v1.4.45 | 01/24/2024", 0xFF00FF00)
+            ui.button_n_colored_txt("Current Version:", "v1.8.0 | 03/05/2024", 0xFF00FF00)
+            imgui.same_line()
+            imgui.text("| by SilverEzredes")
+            
+            if show_AWFNS_editor and (changed or wc) then
+                hk.update_hotkey_table(AWF_NS_settings.hotkeys)
+                json.dump_file("AWF/AWF_NightSights/AWF_NightSight_Settings.json", AWF_NS_settings)
+                json.dump_file("AWF/AWF_NightSights/AWF_NightSight_ColorSettings.json", AWF_settings)
+            end
+            
+            imgui.end_rect(1)
+            imgui.tree_pop()
+        end
+    end
+    if reframework.get_game_name() == "re3" then
+        if imgui.tree_node("AWF - Night Sights") then
+            imgui.begin_rect()
+            if imgui.button("Reset to Defaults") then
+                wc = true
+                changed = true
+                AWF_NS_settings = hk.recurse_def_settings({}, AWF_NS_default_settings); wc = wc or changed
+                hk.reset_from_defaults_tbl(AWF_NS_default_settings.hotkeys)
+                AWF_settings = hk.recurse_def_settings({}, AWFWeapons); wc = wc or changed
+            end
+            func.tooltip("Reset every parameter.")
+            
+            imgui.spacing()
+
+            changed, show_AWFNS_editor = imgui.checkbox("Open AWF Night Sight Editor", show_AWFNS_editor)
+            func.tooltip("Show/Hide the AWF Night Sight Editor.")
+
+            if show_AWFNS_editor then
+                draw_AWFNS_RE3Editor_GUI(AWF.AWF_settings.RE3.Weapon_Order)
+            end
+            
+            imgui.spacing()
+
+            imgui.begin_rect()
+            changed, AWF_NS_settings.input_mode_idx = imgui.combo("Input Settings", AWF_NS_settings.input_mode_idx, {"Default", "Custom"}); wc = wc or changed
+            func.tooltip("Set the control scheme for the mod")
+            if AWF_NS_settings.input_mode_idx == 2 then
+                if imgui.tree_node("Keyboard and Mouse Settings") then
+                    changed, AWF_NS_settings.use_modifier = imgui.checkbox(" ", AWF_NS_settings.use_modifier); wc = wc or changed
+                    func.tooltip("Require that you hold down this button")
+                    imgui.same_line()
+                    changed = hk.hotkey_setter("Night Sight Modifier"); wc = wc or changed
+                    changed = hk.hotkey_setter("Night Sight Switch", AWF_NS_settings.use_modifier and "Night Sight Modifier"); wc = wc or changed
+                    imgui.tree_pop()
+                end
+                
+                if imgui.tree_node("Gamepad Settings") then
+                    changed, AWF_NS_settings.use_pad_modifier = imgui.checkbox(" ", AWF_NS_settings.use_pad_modifier); wc = wc or changed
+                    func.tooltip("Require that you hold down this button")
+                    imgui.same_line()
+                    changed = hk.hotkey_setter("Pad Night Sight Modifier"); wc = wc or changed
+                    changed = hk.hotkey_setter("Pad Night Sight Switch", AWF_NS_settings.use_pad_modifier and "Pad Night Sight Modifier"); wc = wc or changed
+                    imgui.tree_pop()
+                end
+            end
+            imgui.end_rect(2)
+
+            ui.button_n_colored_txt("Current Version:", "v1.8.0 | 03/05/2024", 0xFF00FF00)
+            imgui.same_line()
+            imgui.text("| by SilverEzredes")
+            
+            if show_AWFNS_editor and (changed or wc) then
+                hk.update_hotkey_table(AWF_NS_settings.hotkeys)
+                json.dump_file("AWF/AWF_NightSights/AWF_NightSight_Settings.json", AWF_NS_settings)
+                json.dump_file("AWF/AWF_NightSights/AWF_NightSight_ColorSettings.json", AWF_settings)
+            end
+            
+            imgui.end_rect(1)
+            imgui.tree_pop()
+        end
+    end
+    if reframework.get_game_name() == "re8" then
+        if imgui.tree_node("AWF - Night Sights") then
+            imgui.begin_rect()
+            if imgui.button("Reset to Defaults") then
+                wc = true
+                changed = true
+                AWF_NS_settings = hk.recurse_def_settings({}, AWF_NS_default_settings); wc = wc or changed
+                hk.reset_from_defaults_tbl(AWF_NS_default_settings.hotkeys)
+                AWF_settings = hk.recurse_def_settings({}, AWFWeapons); wc = wc or changed
+            end
+            func.tooltip("Reset every parameter.")
+            
+            imgui.spacing()
+
+            changed, show_AWFNS_editor = imgui.checkbox("Open AWF Night Sight Editor", show_AWFNS_editor)
+            func.tooltip("Show/Hide the AWF Night Sight Editor.")
+
+            if show_AWFNS_editor then
+                draw_AWFNS_RE8Editor_GUI(AWF.AWF_settings.RE8.Weapon_Order)
+            end
+            
+            imgui.spacing()
+
+            imgui.begin_rect()
+            changed, AWF_NS_settings.input_mode_idx = imgui.combo("Night Sight and Dot Sight: Input Settings", AWF_NS_settings.input_mode_idx, {"Default", "Custom"}); wc = wc or changed
+            func.tooltip("Set the control scheme for the mod")
+            if AWF_NS_settings.input_mode_idx == 2 then
+                if imgui.tree_node("Keyboard and Mouse Settings") then
+                    changed, AWF_NS_settings.use_modifier = imgui.checkbox(" ", AWF_NS_settings.use_modifier); wc = wc or changed
+                    func.tooltip("Require that you hold down this button")
+                    imgui.same_line()
+                    changed = hk.hotkey_setter("Night Sight Modifier"); wc = wc or changed
+                    changed = hk.hotkey_setter("Night Sight Switch", AWF_NS_settings.use_modifier and "Night Sight Modifier"); wc = wc or changed
+                    imgui.tree_pop()
+                end
+                
+                if imgui.tree_node("Gamepad Settings") then
+                    changed, AWF_NS_settings.use_pad_modifier = imgui.checkbox(" ", AWF_NS_settings.use_pad_modifier); wc = wc or changed
+                    func.tooltip("Require that you hold down this button")
+                    imgui.same_line()
+                    changed = hk.hotkey_setter("Pad Night Sight Modifier"); wc = wc or changed
+                    changed = hk.hotkey_setter("Pad Night Sight Switch", AWF_NS_settings.use_pad_modifier and "Pad Night Sight Modifier"); wc = wc or changed
+                    imgui.tree_pop()
+                end
+            end
+            imgui.end_rect(2)
+            
+            imgui.spacing()
+
+            imgui.begin_rect()
+            changed, AWF_NS_settings.fl_input_mode_idx = imgui.combo("Gun Light: Input Settings", AWF_NS_settings.fl_input_mode_idx, {"Default", "Custom"}); wc = wc or changed
+            func.tooltip("Set the control scheme for the mod")
+            if AWF_NS_settings.fl_input_mode_idx == 2 then
+                if imgui.tree_node("Keyboard and Mouse Settings") then
+                    changed, AWF_NS_settings.fl_use_modifier = imgui.checkbox(" ", AWF_NS_settings.fl_use_modifier); wc = wc or changed
+                    func.tooltip("Require that you hold down this button")
+                    imgui.same_line()
+                    changed = hk.hotkey_setter("Gun Light Modifier"); wc = wc or changed
+                    changed = hk.hotkey_setter("Gun Light Switch", AWF_NS_settings.fl_use_modifier and "Gun Light Modifier"); wc = wc or changed
+                    imgui.tree_pop()
+                end
+                
+                if imgui.tree_node("Gamepad Settings") then
+                    changed, AWF_NS_settings.fl_use_pad_modifier = imgui.checkbox(" ", AWF_NS_settings.fl_use_pad_modifier); wc = wc or changed
+                    func.tooltip("Require that you hold down this button")
+                    imgui.same_line()
+                    changed = hk.hotkey_setter("Pad Gun Light Modifier"); wc = wc or changed
+                    changed = hk.hotkey_setter("Pad Gun Light Switch", AWF_NS_settings.fl_use_pad_modifier and "Pad Gun Light Modifier"); wc = wc or changed
+                    imgui.tree_pop()
+                end
+            end
+            imgui.end_rect(3)
+
+            ui.button_n_colored_txt("Current Version:", "v1.8.0 | 03/05/2024", 0xFF00FF00)
+            imgui.same_line()
+            imgui.text("| by SilverEzredes")
+            
+            if show_AWFNS_editor and (changed or wc) then
+                hk.update_hotkey_table(AWF_NS_settings.hotkeys)
+                json.dump_file("AWF/AWF_NightSights/AWF_NightSight_Settings.json", AWF_NS_settings)
+                json.dump_file("AWF/AWF_NightSights/AWF_NightSight_ColorSettings.json", AWF_settings)
+            end
+            
+            imgui.end_rect(1)
+            imgui.tree_pop()
+        end
+    end
+    if reframework.get_game_name() == "re4" then
+        if imgui.tree_node("AWF - Night Sights") then
+            imgui.begin_rect()
+            if imgui.button("Reset to Defaults") then
+                wc = true
+                changed = true
+                AWF_NS_settings = hk.recurse_def_settings({}, AWF_NS_default_settings); wc = wc or changed
+                hk.reset_from_defaults_tbl(AWF_NS_default_settings.hotkeys)
+                AWF_settings = hk.recurse_def_settings({}, AWFWeapons); wc = wc or changed
+            end
+            func.tooltip("Reset every parameter.")
+            
+            imgui.spacing()
+
+            changed, show_AWFNS_editor = imgui.checkbox("Open AWF Night Sight Editor", show_AWFNS_editor)
+            func.tooltip("Show/Hide the AWF Night Sight Editor.")
+
+            if show_AWFNS_editor then
+                draw_AWFNS_RE4Editor_GUI(AWF.AWF_settings.RE4.Weapon_Order)
+            end
+            
+            imgui.spacing()
+
+            imgui.begin_rect()
+            changed, AWF_NS_settings.input_mode_idx = imgui.combo("Night Sight and Dot Sight: Input Settings", AWF_NS_settings.input_mode_idx, {"Default", "Custom"}); wc = wc or changed
+            func.tooltip("Set the control scheme for the mod")
+            if AWF_NS_settings.input_mode_idx == 2 then
+                if imgui.tree_node("Keyboard and Mouse Settings") then
+                    changed, AWF_NS_settings.use_modifier = imgui.checkbox(" ", AWF_NS_settings.use_modifier); wc = wc or changed
+                    func.tooltip("Require that you hold down this button")
+                    imgui.same_line()
+                    changed = hk.hotkey_setter("Night Sight Modifier"); wc = wc or changed
+                    changed = hk.hotkey_setter("Night Sight Switch", AWF_NS_settings.use_modifier and "Night Sight Modifier"); wc = wc or changed
+                    imgui.tree_pop()
+                end
+                
+                if imgui.tree_node("Gamepad Settings") then
+                    changed, AWF_NS_settings.use_pad_modifier = imgui.checkbox(" ", AWF_NS_settings.use_pad_modifier); wc = wc or changed
+                    func.tooltip("Require that you hold down this button")
+                    imgui.same_line()
+                    changed = hk.hotkey_setter("Pad Night Sight Modifier"); wc = wc or changed
+                    changed = hk.hotkey_setter("Pad Night Sight Switch", AWF_NS_settings.use_pad_modifier and "Pad Night Sight Modifier"); wc = wc or changed
+                    imgui.tree_pop()
+                end
+            end
+            imgui.end_rect(2)
+            
+            -- imgui.spacing()
+
+            -- imgui.begin_rect()
+            -- changed, AWF_NS_settings.fl_input_mode_idx = imgui.combo("Gun Light: Input Settings", AWF_NS_settings.fl_input_mode_idx, {"Default", "Custom"}); wc = wc or changed
+            -- func.tooltip("Set the control scheme for the mod")
+            -- if AWF_NS_settings.fl_input_mode_idx == 2 then
+            --     if imgui.tree_node("Keyboard and Mouse Settings") then
+            --         changed, AWF_NS_settings.fl_use_modifier = imgui.checkbox(" ", AWF_NS_settings.fl_use_modifier); wc = wc or changed
+            --         func.tooltip("Require that you hold down this button")
+            --         imgui.same_line()
+            --         changed = hk.hotkey_setter("Gun Light Modifier"); wc = wc or changed
+            --         changed = hk.hotkey_setter("Gun Light Switch", AWF_NS_settings.fl_use_modifier and "Gun Light Modifier"); wc = wc or changed
+            --         imgui.tree_pop()
+            --     end
+                
+            --     if imgui.tree_node("Gamepad Settings") then
+            --         changed, AWF_NS_settings.fl_use_pad_modifier = imgui.checkbox(" ", AWF_NS_settings.fl_use_pad_modifier); wc = wc or changed
+            --         func.tooltip("Require that you hold down this button")
+            --         imgui.same_line()
+            --         changed = hk.hotkey_setter("Pad Gun Light Modifier"); wc = wc or changed
+            --         changed = hk.hotkey_setter("Pad Gun Light Switch", AWF_NS_settings.fl_use_pad_modifier and "Pad Gun Light Modifier"); wc = wc or changed
+            --         imgui.tree_pop()
+            --     end
+            -- end
+            -- imgui.end_rect(3)
+
+            ui.button_n_colored_txt("Current Version:", "v3.0.0 | 03/21/2024", 0xFF00FF00)
             imgui.same_line()
             imgui.text("| by SilverEzredes")
             
@@ -745,5 +4517,8 @@ AWFNS = {
     AWFNS_Settings = AWF_settings,
     toggle_night_sights_RE7 = toggle_night_sights_RE7,
     toggle_night_sights_RE2 = toggle_night_sights_RE2,
+    toggle_night_sights_RE3 = toggle_night_sights_RE3,
+    toggle_night_sights_RE8 = toggle_night_sights_RE8,
+    toggle_night_sights_RE4 = toggle_night_sights_RE4,
 }
 return AWFNS

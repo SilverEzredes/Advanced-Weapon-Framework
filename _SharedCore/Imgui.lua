@@ -2,12 +2,13 @@
 -- Imgui LUA
 
 -- Author: SilverEzredes
--- Updated: 01/14/2024
--- Version: v1.0.0
+-- Updated: 03/04/2024
+-- Version: v1.0.1
 -- Special Thanks to: praydog; alphaZomega
 
 --/////////////////////////////////////--
 local DEBUG = false
+local func = require("_SharedCore/Functions")
 --TODO
 local function manual_slider(label, value)
     imgui.button(label)
@@ -35,6 +36,7 @@ local function button_n_colored_txt(label, text, color)
     imgui.button(label)
     imgui.same_line()
     imgui.text_colored(text, color)
+    func.tooltip("Green = Stable | Orange = Mostly Stable | Red = Unstable")
 end
 
 local function utf16(charid)
