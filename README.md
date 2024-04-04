@@ -1,7 +1,7 @@
 # Advanced Weapon Framework
 This is a repository of all Advanced Weapon Framework lua scripts, for use with [praydog](https://github.com/praydog) and [Cursey](https://github.com/cursey)'s 'REFramework'
 
-### Supported Games:
+### Supported Games
 - Resident Evil 2 Remake
 - Resident Evil 3 Remake
 - Resident Evil 4 Remake
