@@ -1,10 +1,10 @@
 --/////////////////////////////////////--
--- Advanced Weapon Framework - John Wick Mode
+local modName =  "Advanced Weapon Framework - Weapon Stance"
 
--- Author: SilverEzredes
--- Updated: 03/21/2024
--- Version: v1.2.0
--- Special Thanks to: praydog; alphaZomega
+local modAuthor = "SilverEzredes"
+local modUpdated = "08/16/2024"
+local modVersion = "v1.2.2"
+local modCredits = "praydog; alphaZomega"
 
 --/////////////////////////////////////--
 local hk = require("Hotkeys/Hotkeys")
@@ -50,25 +50,25 @@ local WPS_vars = {
 	},
 }
 
-SG09R_Stance = func.create_resource("SILVER/Weapons/SG-09R/wp4000H.motlist", "via.motion.MotionListBaseResource")
-SG09R_ExStance = func.create_resource("SILVER/Weapons/SG-09R/wp4000H_ex.motlist", "via.motion.MotionListBaseResource")
-PUN_Stance = func.create_resource("SILVER/Weapons/Punisher/wp4001H.motlist", "via.motion.MotionListBaseResource")
-PUN_ExStance = func.create_resource("SILVER/Weapons/Punisher/wp4001H_ex.motlist", "via.motion.MotionListBaseResource")
-RED9_Stance = func.create_resource("SILVER/Weapons/Red9/wp4002H.motlist", "via.motion.MotionListBaseResource")
-RED9_ExStance = func.create_resource("SILVER/Weapons/Red9/wp4002H_ex.motlist", "via.motion.MotionListBaseResource")
-BT_Stance = func.create_resource("SILVER/Weapons/Blacktail/wp4003H.motlist", "via.motion.MotionListBaseResource")
-BT_ExStance = func.create_resource("SILVER/Weapons/Blacktail/wp4003H_ex.motlist", "via.motion.MotionListBaseResource")
-VP70_Stance = func.create_resource("SILVER/Weapons/Matilda/wp4004H.motlist", "via.motion.MotionListBaseResource")
-VP70_ExStance = func.create_resource("SILVER/Weapons/Matilda/wp4004H_ex.motlist", "via.motion.MotionListBaseResource")
-SEN9_Stance = func.create_resource("SILVER/Weapons/Sentinel9/wp6000H.motlist", "via.motion.MotionListBaseResource")
-SEN9_ExStance = func.create_resource("SILVER/Weapons/Sentinel9/wp6000H_ex.motlist", "via.motion.MotionListBaseResource")
+SG09R_Stance = func.create_resource("via.motion.MotionListBaseResource", "SILVER//Weapons//SG-09R//wp4000H.motlist")
+SG09R_ExStance = func.create_resource("via.motion.MotionListBaseResource", "SILVER//Weapons//SG-09R//wp4000H_ex.motlist")
+PUN_Stance = func.create_resource("via.motion.MotionListBaseResource", "SILVER/Weapons/Punisher/wp4001H.motlist")
+PUN_ExStance = func.create_resource("via.motion.MotionListBaseResource", "SILVER/Weapons/Punisher/wp4001H_ex.motlist")
+RED9_Stance = func.create_resource("via.motion.MotionListBaseResource", "SILVER/Weapons/Red9/wp4002H.motlist")
+RED9_ExStance = func.create_resource("via.motion.MotionListBaseResource", "SILVER/Weapons/Red9/wp4002H_ex.motlist")
+BT_Stance = func.create_resource("via.motion.MotionListBaseResource", "SILVER/Weapons/Blacktail/wp4003H.motlist")
+BT_ExStance = func.create_resource("via.motion.MotionListBaseResource", "SILVER/Weapons/Blacktail/wp4003H_ex.motlist")
+VP70_Stance = func.create_resource("via.motion.MotionListBaseResource", "SILVER/Weapons/Matilda/wp4004H.motlist")
+VP70_ExStance = func.create_resource("via.motion.MotionListBaseResource", "SILVER/Weapons/Matilda/wp4004H_ex.motlist")
+SEN9_Stance = func.create_resource("via.motion.MotionListBaseResource", "SILVER/Weapons/Sentinel9/wp6000H.motlist")
+SEN9_ExStance = func.create_resource("via.motion.MotionListBaseResource", "SILVER/Weapons/Sentinel9/wp6000H_ex.motlist")
 ------------------------------------------------------------------------------------------------------------------------
-SW_PUN_Stance = func.create_resource("SILVER/Weapons/Punisher/SW/wp6112H.motlist", "via.motion.MotionListBaseResource")
-SW_PUN_ExStance = func.create_resource("SILVER/Weapons/Punisher/SW/wp6112H_ex.motlist", "via.motion.MotionListBaseResource")
-SW_RED9_Stance = func.create_resource("SILVER/Weapons/Red9/SW/wp6113H.motlist", "via.motion.MotionListBaseResource")
-SW_RED9_ExStance = func.create_resource("SILVER/Weapons/Red9/SW/wp6113H_ex.motlist", "via.motion.MotionListBaseResource")
-SW_BT_Stance = func.create_resource("SILVER/Weapons/Blacktail/SW/wp4000H.motlist", "via.motion.MotionListBaseResource")
-SW_BT_ExStance = func.create_resource("SILVER/Weapons/Blacktail/SW/wp4000H_ex.motlist", "via.motion.MotionListBaseResource")
+SW_PUN_Stance = func.create_resource("via.motion.MotionListBaseResource", "SILVER/Weapons/Punisher/SW/wp6112H.motlist")
+SW_PUN_ExStance = func.create_resource("via.motion.MotionListBaseResource", "SILVER/Weapons/Punisher/SW/wp6112H_ex.motlist")
+SW_RED9_Stance = func.create_resource("via.motion.MotionListBaseResource", "SILVER/Weapons/Red9/SW/wp6113H.motlist")
+SW_RED9_ExStance = func.create_resource("via.motion.MotionListBaseResource", "SILVER/Weapons/Red9/SW/wp6113H_ex.motlist")
+SW_BT_Stance = func.create_resource("via.motion.MotionListBaseResource", "SILVER/Weapons/Blacktail/SW/wp4000H.motlist")
+SW_BT_ExStance = func.create_resource("via.motion.MotionListBaseResource", "SILVER/Weapons/Blacktail/SW/wp4000H_ex.motlist")
 
 local AWF_WPS_settings = hk.merge_tables({}, AWF_WPS_default_settings) and hk.recurse_def_settings(json.load_file("AWF/AWF_WeaponStance_Settings.json") or {}, AWF_WPS_default_settings)
 hk.setup_hotkeys(AWF_WPS_settings.hotkeys)
@@ -140,9 +140,11 @@ re.on_frame(function()
 end)
 
 re.on_draw_ui(function()
-	if imgui.tree_node("AWF - Weapon Stance") then
-	
+	if imgui.tree_node("Advanced Weapon Framework: Weapon Stance") then
 		imgui.begin_rect()
+		imgui.spacing()
+        imgui.indent(5)
+
 		if imgui.button("Reset to Defaults") then
 			wc = true
 			AWF_WPS_settings = hk.recurse_def_settings({}, AWF_WPS_default_settings)
@@ -174,12 +176,17 @@ re.on_draw_ui(function()
 		end
 		imgui.end_rect(1)
 
+		ui.button_n_colored_txt("Current Version:", modVersion .. " | " .. modUpdated, func.convert_rgba_to_AGBR(0, 255, 0, 255))
+        imgui.same_line()
+        imgui.text("| by " .. modAuthor .. " ")
 
 		if wc then
 			hk.update_hotkey_table(AWF_WPS_settings.hotkeys)
 			json.dump_file("AWF/AWF_WeaponStance_Settings.json", AWF_WPS_settings)
 		end
-
+		
+		imgui.spacing()
+        imgui.indent(-5)
 		imgui.end_rect(2)
 		imgui.tree_pop()
 	end

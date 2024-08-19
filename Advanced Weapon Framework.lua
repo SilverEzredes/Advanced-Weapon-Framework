@@ -1,10 +1,10 @@
 --/////////////////////////////////////--
--- Advanced Weapon Framework
+local modName = "Advanced Weapon Framework"
 
--- Author: SilverEzredes
--- Updated: 03/20/2024
--- Version: v3.0.0
--- Special Thanks to: praydog; alphaZomega; MrBoobieBuyer; Lotiuss
+local modAuthor = "SilverEzredes"
+local modUpdated = "08/17/2024"
+local modVersion = "v3.2.0"
+local modCredits = "praydog; alphaZomega; MrBoobieBuyer; Lotiuss"
 
 --/////////////////////////////////////--
 local AWF = require("AWFCore")
@@ -29,7 +29,8 @@ local AWF_Cache = {
     LoadingGUI_RE8 = "GUISceneLoading",
     LoadingGUI_RE4 = "Gui_ui0600",
 }
-
+--////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+--MARK: RE2R
 local function check_for_loading_screen_RE2()
     -- This is the master function for RE2R, updates *all* AWF data on loading screens.
     local loading_screen_GameObject_RE2 = func.get_GameObject(scene, AWF_Cache.LoadingGUI_RE2)
@@ -96,7 +97,8 @@ local function check_for_inventory_RE2()
         end
     end
 end
-
+--////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+--MARK: RE3R
 local function check_for_loading_screen_RE3()
     -- This is the master function for RE3R, updates *all* AWF data on loading screens.
     local loading_screen_GameObject_RE3 = func.get_GameObject(scene, AWF_Cache.LoadingGUI_RE3)
@@ -160,7 +162,8 @@ local function check_for_inventory_RE3()
         end
     end
 end
-
+--////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+--MARK: RE4R
 local function check_for_loading_screen_RE4()
     -- This is the master function for RE4R, updates *all* AWF data on loading screens.
     tick_interval = 1.0 / 1.0
@@ -175,27 +178,50 @@ local function check_for_loading_screen_RE4()
             NowLoading = true
             for _, weapon in pairs(AWF.AWF_settings.RE4.Weapons) do
                 weapon.isUpdated = true
-                AWF.cache_weapon_gameobjects_RE4(AWF.AWF_settings.RE4.Weapons)
+                AWF.get_WeaponData_RE4(AWF.AWF_settings.RE4.Weapons)
 
-                if AWFGS then
-                    if AWFGS.AWFGS_Settings.RE4_Gunsmith[weapon.ID] ~= nil then
-                        AWFGS.AWFGS_Settings.RE4_Gunsmith[weapon.ID].isUpdated = true
-                        AWFGS.dump_weapon_parts_json_RE4(AWF.AWF_settings.RE4.Weapons)
+                local selected_preset = AWF.AWF_settings.RE4.Weapon_Params[weapon.ID].Weapon_Presets[AWF.AWF_settings.RE4.Weapon_Params[weapon.ID].current_param_indx]
+                if selected_preset ~= weapon.Name .. " Default" and selected_preset ~= nil then
+                    log.info("[AWF] [--------------------- Loaded " .. selected_preset .. " for " .. weapon.Name)
+                    local json_filepath = [[AWF\\AWF_Weapons\\]] .. weapon.Name .. [[\\]] .. selected_preset .. [[.json]]
+                    local temp_params = json.load_file(json_filepath)
+
+                    temp_params.Weapon_Presets = nil
+                    temp_params.current_param_indx = nil
+
+                    for key, value in pairs(temp_params) do
+                        AWF.AWF_settings.RE4.Weapon_Params[weapon.ID][key] = value
                     end
-                    AWFGS.weapon_parts_Manager_RE4(AWF.AWF_settings.RE4.Weapons, AWFGS.AWFGS_Settings.RE4_Gunsmith)
-                    AWFGS.update_weapon_parts_Manager_RE4(AWF.AWF_settings.RE4.Weapons, AWFGS.AWFGS_Settings.RE4_Gunsmith)
+                    AWF.cache_AWF_json_files_RE4(AWF.AWF_settings.RE4.Weapons)
+                    weapon.isCatalogUpdated = true
+                    weapon.isCustomCatalogUpdated = true
+                    weapon.isInventoryUpdated = true
+                elseif selected_preset == nil or {} then
+                    AWF.AWF_settings.RE4.Weapon_Params[weapon.ID].current_param_indx = 1
                 end
 
                 if AWFNS then
                     AWFNS.toggle_night_sights_RE4(AWF.AWF_settings.RE4.Weapons, AWFNS.AWFNS_Settings.RE4_Night_Sights)
                 end
             end
-            log.info("--------------------- Loading... All AWF Data Updated!")
+            log.info("[AWF] [--------------------- Loading... All AWF Data Updated!]")
             last_time = os.clock()
         elseif not loading_screen_RE4 and NowLoading then
             for _, weapon in pairs(AWF.AWF_settings.RE4.Weapons) do
                 weapon.isUpdated = false
-                log.info("--------------------- No longer Loading... AWF Data Stopped Updating.")
+                weapon.isCatalogUpdated = false
+                weapon.isCustomCatalogUpdated = false
+                weapon.isInventoryUpdated = false
+                log.info("[AWF] [--------------------- No longer Loading... AWF Data Stopped Updating.]")
+            end
+            if AWFGS then
+                for _, weapon in pairs(AWF.AWF_settings.RE4.Weapons) do
+                    AWFGS.AWFGS_Settings.RE4_Gunsmith[weapon.ID].isUpdated = true
+                    AWFGS.get_MasterMaterialData_RE4(AWF.AWF_settings.RE4.Weapons)
+                    AWFGS.dump_CurrentMaterialParam_json_RE4(AWF.AWF_settings.RE4.Weapons)
+                    AWFGS.cache_AWFGS_json_files_RE4(AWF.AWF_settings.RE4.Weapons)
+                    log.info("[AWF-GS] [--------------------- No longer Loading... AWF-GS Data Updated.]")
+                end
             end
             NowLoading = false
             json.dump_file("AWF/AWF_Settings.json", AWF.AWF_settings)
@@ -211,22 +237,25 @@ local function check_for_inventory_RE4()
         
         if inventory and not AWF_Inventory_Found then
             AWF_Inventory_Found = true
-            log.info("------------------------------------------------------- AWF Inventory found, AWF data updated!")
+            log.info("[AWF] [------------------------------------------------------- AWF Inventory found, AWF data updated!]")
             for _, weapon in pairs(AWF.AWF_settings.RE4.Weapons) do
                 weapon.isUpdated = true
-                AWF.cache_weapon_gameobjects_RE4(AWF.AWF_settings.RE4.Weapons)
+                weapon.isInventoryUpdated = true
+                AWF.get_WeaponData_RE4(AWF.AWF_settings.RE4.Weapons)
             end
         elseif not inventory and AWF_Inventory_Found then
             for _, weapon in pairs(AWF.AWF_settings.RE4.Weapons) do
                 weapon.isUpdated = false
+                weapon.isInventoryUpdated = false
             end
             AWF_Inventory_Found = false
-            log.info("--------------------- Closed AWF Inventory.")
+            log.info("[AWF] [--------------------- Closed AWF Inventory.]")
             json.dump_file("AWF/AWF_Settings.json", AWF.AWF_settings)
         end
     end
 end
-
+--////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+--MARK: RE7
 local function check_for_loading_screen_RE7()
     -- This is the master function for RE7, updates *all* AWF data on loading screens.
     local loading_tip_GameObject_RE7 = func.get_GameObject(scene, AWF_Cache.LoadingTipsGUI_RE7)
@@ -290,7 +319,8 @@ local function check_for_inventory_RE7()
         end
     end
 end
-
+--////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+--MARK: RE8
 local function check_for_loading_screen_RE8()
     -- This is the master function for RE8, updates *all* AWF data on loading screens.
     local loading_screen_GameObject_RE8 = func.get_GameObject(scene, AWF_Cache.LoadingGUI_RE8)
@@ -360,7 +390,8 @@ local function check_for_inventory_RE8()
         end
     end
 end
-
+--////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+--MARK: On Frame
 re.on_frame(function()
     if reframework.get_game_name() == "re7" then
         check_for_inventory_RE7()
@@ -385,6 +416,6 @@ re.on_frame(function()
     if reframework.get_game_name() == "re4" then
         check_for_inventory_RE4()
         check_for_loading_screen_RE4()
-        AWF.update_cached_weapon_gameobjects_RE4()
+        AWF.update_WeaponData_RE4()
     end
 end)

@@ -1,0 +1,142 @@
+local RE2R_MaterialData = {
+    wp0000 = {
+        Presets = {},
+        current_preset_indx = 1,
+        Parts = {},
+        Enabled = {},
+    },
+    wp0100 = {
+        Presets = {},
+        current_preset_indx = 1,
+        Parts = {},
+        Enabled = {},
+    },
+    wp0200 = {
+        Presets = {},
+        current_preset_indx = 1,
+        Parts = {},
+        Enabled = {},
+    },
+    wp0300 = {
+        Presets = {},
+        current_preset_indx = 1,
+        Parts = {},
+        Enabled = {},
+    },
+    wp0600 = {
+        Presets = {},
+        current_preset_indx = 1,
+        Parts = {},
+        Enabled = {},
+    },
+    wp0700 = {
+        Presets = {},
+        current_preset_indx = 1,
+        Parts = {},
+        Enabled = {},
+    },
+    wp0800 = {
+        Presets = {},
+        current_preset_indx = 1,
+        Parts = {},
+        Enabled = {},
+    },
+    wp1000 = {
+        Presets = {},
+        current_preset_indx = 1,
+        Parts = {},
+        Enabled = {},
+    },
+    wp2000 = {
+        Presets = {},
+        current_preset_indx = 1,
+        Parts = {},
+        Enabled = {},
+    },
+    wp2200 = {
+        Presets = {},
+        current_preset_indx = 1,
+        Parts = {},
+        Enabled = {},
+    },
+    wp3000 = {
+        Presets = {},
+        current_preset_indx = 1,
+        Parts = {},
+        Enabled = {},
+    },
+    wp4100 = {
+        Presets = {},
+        current_preset_indx = 1,
+        Parts = {},
+        Enabled = {},
+    },
+    wp4200 = {
+        Presets = {},
+        current_preset_indx = 1,
+        Parts = {},
+        Enabled = {},
+    },
+    wp4300 = {
+        Presets = {},
+        current_preset_indx = 1,
+        Parts = {},
+        Enabled = {},
+    },
+    wp4400 = {
+        Presets = {},
+        current_preset_indx = 1,
+        Parts = {},
+        Enabled = {},
+    },
+    wp4600 = {
+        Presets = {},
+        current_preset_indx = 1,
+        Parts = {},
+        Enabled = {},
+    },
+    wp4700 = {
+        Presets = {},
+        current_preset_indx = 1,
+        Parts = {},
+        Enabled = {},
+    },
+    wp7000 = {
+        Presets = {},
+        current_preset_indx = 1,
+        Parts = {},
+        Enabled = {},
+    },
+    wp7010 = {
+        Presets = {},
+        current_preset_indx = 1,
+        Parts = {},
+        Enabled = {},
+    },
+    wp7020 = {
+        Presets = {},
+        current_preset_indx = 1,
+        Parts = {},
+        Enabled = {},
+    },
+    wp7030 = {
+        Presets = {},
+        current_preset_indx = 1,
+        Parts = {},
+        Enabled = {},
+    },
+    wp8400 = {
+        Presets = {},
+        current_preset_indx = 1,
+        Parts = {},
+        Enabled = {},
+    },
+    wp8700 = {
+        Presets = {},
+        current_preset_indx = 1,
+        Parts = {},
+        Enabled = {},
+    },
+}
+
+return RE2R_MaterialData

@@ -2,35 +2,12 @@
 -- Imgui LUA
 
 -- Author: SilverEzredes
--- Updated: 03/04/2024
--- Version: v1.0.1
--- Special Thanks to: praydog; alphaZomega
+-- Updated: 04/07/2024
+-- Version: v1.0.2
+-- Special Thanks to: praydog; alphaZomega;
 
 --/////////////////////////////////////--
-local DEBUG = false
-local func = require("_SharedCore/Functions")
---TODO
-local function manual_slider(label, value)
-    imgui.button(label)
-    imgui.same_line()
-    imgui.button("-")
-    imgui.same_line()
-    imgui.button(value)
-    imgui.same_line()
-    imgui.button("+")
-end
---TODO
-local function progress_bar(label, level, percentage)
-    imgui.begin_rect()
-    imgui.button(label)
-    imgui.text("LVL:")
-    imgui.same_line()
-    imgui.text(level)
-    imgui.same_line()
-    imgui.text(percentage .. "%")
-    imgui.text("[ " .. "//////////////////////////////////////////////////" .. " ]")
-    imgui.text("[ " .. "============================================" .. " ]")
-end
+local func = require("_SharedCore\\Functions")
 
 local function button_n_colored_txt(label, text, color)
     imgui.button(label)
@@ -39,25 +16,28 @@ local function button_n_colored_txt(label, text, color)
     func.tooltip("Green = Stable | Orange = Mostly Stable | Red = Unstable")
 end
 
-local function utf16(charid)
-    return imgui.load_font("NotoSansJP-Regular.otf", utf8.char(charid))
+local function draw_line(char, n)
+    return string.rep(char, n)
 end
---TODO
-re.on_draw_ui(function()
-	if DEBUG and imgui.tree_node("[IMGUI DEBUG]") then
-        imgui.begin_rect()
-        
-        manual_slider("Lorem Ipsum Borpsum", 10.0)
-        progress_bar("YEEEET", 7, 69.420)
-        button_n_colored_txt("BOOOORPAAA:", "Version", 0xFF00FF00)
 
-        imgui.end_rect(1)
-        imgui.tree_pop()
-    end
-end)
+local function table_vec(func, name, value, args)
+    changed, value = func(name, _G["Vector"..#value.."f"].new(table.unpack(value)), table.unpack(args or {}))
+    value = {value.x, value.y, value.z, value.w} --convert back to table
+    return changed, value
+end  
+
+local function tree_node_colored(key, white_text, color_text, color)
+	local output = imgui.tree_node_str_id(key or 'a', white_text or "")
+	imgui.same_line()
+	imgui.text_colored(color_text or "", color or 0xFFE0853D)
+	return output
+end
 
 ui = {
     button_n_colored_txt = button_n_colored_txt,
+    draw_line = draw_line,
+	table_vec = table_vec,
+	tree_node_colored = tree_node_colored,
 }
 
 return ui
