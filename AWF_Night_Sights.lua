@@ -2,8 +2,8 @@
 local modName =  "Advanced Weapon Framework - Night Sights"
 
 local modAuthor = "SilverEzredes"
-local modUpdated = "08/17/2024"
-local modVersion = "v3.2.0"
+local modUpdated = "08/21/2024"
+local modVersion = "v3.2.5"
 local modCredits = "praydog; alphaZomega"
 
 --/////////////////////////////////////--
@@ -39,7 +39,7 @@ local AWF_NS_default_settings = {
 	},
 }
 
-local AWFWeapons = {  
+local AWFWeapons = {
     RE2_Night_Sights = {},
     RE3_Night_Sights = {},
     RE4_Night_Sights = {},
@@ -503,7 +503,7 @@ local function draw_AWFNS_RE4Editor_GUI(weaponOrder)
         for _, weaponName in ipairs(weaponOrder) do
             local weapon = AWF.AWF_settings.RE4.Weapons[weaponName]
             
-            if weapon then
+            if weapon and weapon.Type ~= "KNF" then
                 local textColor = {255,255,255,255}
 
                 if weapon.Game == "Main" then
@@ -568,8 +568,9 @@ local function draw_AWFNS_RE4Editor_GUI(weaponOrder)
                     imgui.end_rect(2)
                     imgui.tree_pop()
                 end
+
+                imgui.text_colored("  " .. ui.draw_line("-", 100) .."  ", func.convert_rgba_to_AGBR(255,255,255,255))
             end
-            imgui.text_colored("  " .. ui.draw_line("-", 100) .."  ", func.convert_rgba_to_AGBR(255,255,255,255))
         end
         imgui.end_rect(1)
         imgui.end_window()
@@ -1320,7 +1321,7 @@ re.on_draw_ui(function()
 end)
 
 --Functions that are accessible outside of this script
-local AWFNS = {
+AWFNS = {
     AWFNS_Settings = AWF_settings,
     toggle_night_sights_RE2 = toggle_night_sights_RE2,
     toggle_night_sights_RE3 = toggle_night_sights_RE3,

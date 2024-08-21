@@ -2,8 +2,8 @@
 local modName = "Advanced Weapon Framework - Gunsmith"
 
 local modAuthor = "SilverEzredes"
-local modUpdated = "08/19/2024"
-local modVersion = "v3.2.1"
+local modUpdated = "08/21/2024"
+local modVersion = "v3.2.5"
 local modCredits = "praydog; alphaZomega"
 
 --/////////////////////////////////////--
@@ -84,7 +84,7 @@ local function get_MaterialParams_RE4(weaponData, WPM_table)
             WPM_table[weapon.ID].Parts = {}
             WPM_table[weapon.ID].Materials = {}
 
-            if Weapon_GameObject_RE4 then --and Weapon_GameObject_RE4:get_Valid() then
+            if Weapon_GameObject_RE4 and Weapon_GameObject_RE4:get_Valid() then
                 WPM_table[weapon.ID].isInScene = true
                 if AWFGS_settings.isDebug then
                     log.info("[AWF-GS] [ " .. weapon.ID .. " is in the scene AWF-GS data updated]")
@@ -388,20 +388,17 @@ local function update_MaterialParams_RE4(weaponData, WPM_table)
                                             for k = 0, MatParam - 1 do
                                                 local MatParamNames = render_mesh:call("getMaterialVariableName", i, k)
                                                 local MatType = render_mesh:call("getMaterialVariableType", i, k)
-                                                --if AWFGS_MaterialParamUpdateHolder[weapon.ID][MatName][MatParamNames].isMaterialParamUpdated or isLoadingScreenBypass then
-                                                    if MatParamNames then
-                                                        if MatType then
-                                                            if MatType == 1 then
-                                                                render_mesh:call("setMaterialFloat", i, k,WPM_table[weapon.ID].Materials[MatName][MatParamNames][1])
-                                                            end
-                                                            if MatType == 4 then
-                                                                local vec4 = WPM_table[weapon.ID].Materials[MatName][MatParamNames][1]
-                                                                render_mesh:call("setMaterialFloat4", i, k, Vector4f.new(vec4[1], vec4[2], vec4[3], vec4[4]))
-                                                            end
+                                                if MatParamNames then
+                                                    if MatType then
+                                                        if MatType == 1 then
+                                                            render_mesh:call("setMaterialFloat", i, k,WPM_table[weapon.ID].Materials[MatName][MatParamNames][1])
+                                                        end
+                                                        if MatType == 4 then
+                                                            local vec4 = WPM_table[weapon.ID].Materials[MatName][MatParamNames][1]
+                                                            render_mesh:call("setMaterialFloat4", i, k, Vector4f.new(vec4[1], vec4[2], vec4[3], vec4[4]))
                                                         end
                                                     end
-                                                    --AWFGS_MaterialParamUpdateHolder[weapon.ID][MatName][MatParamNames].isMaterialParamUpdated = false
-                                                --end
+                                                end
                                             end
                                         end
                                     end
@@ -425,7 +422,7 @@ local function get_MasterMaterialData_RE4(weaponData)
     check_if_playerIsInScene()
 
     if isPlayerInScene then
-        if not isDefaultsDumped then
+        if NowLoading and not isDefaultsDumped then
             get_MaterialParams_RE4(AWF.AWF_settings.RE4.Weapons, AWF_settings.RE4_Gunsmith)
             dump_DefaultMaterialParam_json_RE4(AWF.AWF_settings.RE4.Weapons)
             cache_AWFGS_json_files_RE4(AWF.AWF_settings.RE4.Weapons)
@@ -452,8 +449,33 @@ local function get_MasterMaterialData_RE4(weaponData)
                 update_MaterialParams_RE4(AWF.AWF_settings.RE4.Weapons, AWF_settings.RE4_Gunsmith)
             end
             
-            log.info("[AWF-GS] [Defaults dumped]")
+            log.info("[AWF-GS] [Master Data defaults dumped.]")
             isDefaultsDumped = true
+        end
+        if NowLoading and isDefaultsDumped then
+            get_MaterialParams_RE4(AWF.AWF_settings.RE4.Weapons, AWF_settings.RE4_Gunsmith)
+            cache_AWFGS_json_files_RE4(AWF.AWF_settings.RE4.Weapons)
+
+            for _, weapon in pairs(weaponData) do
+                AWF_settings.RE4_Gunsmith[weapon.ID].isUpdated = true
+
+                local selected_preset = AWF_settings.RE4_Gunsmith[weapon.ID].Presets[AWF_settings.RE4_Gunsmith[weapon.ID].current_preset_indx]
+                if selected_preset ~= weapon.Name .. " Default" and selected_preset ~= nil then
+                    wc = true
+                    local json_filepath = [[AWF\\AWF_Gunsmith\\]] .. weapon.Name .. [[\\]] .. selected_preset .. [[.json]]
+                    local temp_parts = json.load_file(json_filepath)
+            
+                    temp_parts.Presets = nil
+                    temp_parts.current_preset_indx = nil
+
+                    for key, value in pairs(temp_parts) do
+                        AWF_settings.RE4_Gunsmith[weapon.ID][key] = value
+                    end
+                elseif selected_preset == nil or {} then
+                    AWF_settings.RE4_Gunsmith[weapon.ID].current_preset_indx = 1
+                end
+                update_MaterialParams_RE4(AWF.AWF_settings.RE4.Weapons, AWF_settings.RE4_Gunsmith)
+            end
         end
     end
 end
@@ -858,7 +880,7 @@ local function draw_AWFGS_GUI_RE4()
                 update_MaterialParams_RE4(AWF.AWF_settings.RE4.Weapons, AWF_settings.RE4_Gunsmith)
                 
             end
-            ui.button_n_colored_txt("Current Version:", modVersion .. " | " .. modUpdated, func.convert_rgba_to_AGBR(0, 255, 0, 255))
+            ui.button_n_colored_txt("Current Version:", modVersion .. " | " .. modUpdated, func.convert_rgba_to_AGBR(255, 155, 0, 255))
             imgui.same_line()
             imgui.text("| by " .. modAuthor .. " ")
             
@@ -888,7 +910,7 @@ re.on_draw_ui(function()
     end
 end)
 
-local AWFGS = {
+AWFGS = {
     AWFGS_Settings = AWF_settings,
     get_MaterialParams_RE4 = get_MaterialParams_RE4,
     cache_AWFGS_json_files_RE4 = cache_AWFGS_json_files_RE4,

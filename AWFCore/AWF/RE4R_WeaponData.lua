@@ -1,39 +1,44 @@
 local RE4R_WeaponData = {
     Weapons = {
-        SG09R   =   {ID = "wp4000",     Enum = 4000,    Name = "SG-09 R",                       Type = "HG",    Game = "Main",  isUseCustom = true,  isUseCustomPart = true},
-        PUN     =   {ID = "wp4001",     Enum = 4001,    Name = "Punisher",                      Type = "HG",    Game = "Main",  isUseCustom = true,  isUseCustomPart = true},
-        RED9    =   {ID = "wp4002",     Enum = 4002,    Name = "Red9",                          Type = "HG",    Game = "Main",  isUseCustom = true,  isUseCustomPart = true},
-        BT      =   {ID = "wp4003",     Enum = 4003,    Name = "Blacktail",                     Type = "HG",    Game = "Main",  isUseCustom = true,  isUseCustomPart = true},
-        VP70    =   {ID = "wp4004",     Enum = 4004,    Name = "Matilda",                       Type = "HG",    Game = "Main",  isUseCustom = true,  isUseCustomPart = true},
-        W870    =   {ID = "wp4100",     Enum = 4100,    Name = "W-870",                         Type = "SG",    Game = "Main",  isUseCustom = true,  isUseCustomPart = false},
-        BM4     =   {ID = "wp4101",     Enum = 4101,    Name = "Riot Gun",                      Type = "SG",    Game = "Main",  isUseCustom = true,  isUseCustomPart = false},
-        STKR    =   {ID = "wp4102",     Enum = 4102,    Name = "Striker",                       Type = "SG",    Game = "Main",  isUseCustom = true,  isUseCustomPart = false},
-        TMP     =   {ID = "wp4200",     Enum = 4200,    Name = "TMP",                           Type = "SMG",   Game = "Main",  isUseCustom = true,  isUseCustomPart = true},
-        CTW     =   {ID = "wp4201",     Enum = 4201,    Name = "Chicago Sweeper",               Type = "SMG",   Game = "Main",  isUseCustom = true,  isUseCustomPart = false},
-        LE5     =   {ID = "wp4202",     Enum = 4202,    Name = "LE 5",                          Type = "SMG",   Game = "Main",  isUseCustom = true,  isUseCustomPart = false},
-        M1903   =   {ID = "wp4400",     Enum = 4400,    Name = "SR M1903",                      Type = "SR",    Game = "Main",  isUseCustom = true,  isUseCustomPart = false},
-        STRAY   =   {ID = "wp4401",     Enum = 4401,    Name = "Stingray",                      Type = "SR",    Game = "Main",  isUseCustom = true,  isUseCustomPart = false},
-        CQBR    =   {ID = "wp4402",     Enum = 4402,    Name = "CQBR Assault Rifle",            Type = "SR",    Game = "Main",  isUseCustom = true,  isUseCustomPart = false},
-        BRB     =   {ID = "wp4500",     Enum = 4500,    Name = "Broken Butterfly",              Type = "MAG",   Game = "Main",  isUseCustom = true,  isUseCustomPart = false},
-        KIL7    =   {ID = "wp4501",     Enum = 4501,    Name = "Killer7",                       Type = "MAG",   Game = "Main",  isUseCustom = true,  isUseCustomPart = false},
-        HNDC    =   {ID = "wp4502",     Enum = 4502,    Name = "Handcannon",                    Type = "MAG",   Game = "Main",  isUseCustom = true,  isUseCustomPart = false},
-        BOLT    =   {ID = "wp4600",     Enum = 4600,    Name = "Bolt Thrower",                  Type = "XBOW",  Game = "Main",  isUseCustom = true,  isUseCustomPart = false},
-        RPG7    =   {ID = "wp4900",     Enum = 4900,    Name = "Rocket Launcher",               Type = "GL",    Game = "Main",  isUseCustom = false,  isUseCustomPart = false},
-        RPGI    =   {ID = "wp4902",     Enum = 4902,    Name = "Infinite Rocket Launcher",      Type = "GL",    Game = "Main",  isUseCustom = false,  isUseCustomPart = false},
-        SEN9    =   {ID = "wp6000",     Enum = 6000,    Name = "Sentinel Nine",                 Type = "HG",    Game = "Main",  isUseCustom = true,  isUseCustomPart = true},
-        SKUL    =   {ID = "wp6001",     Enum = 6001,    Name = "Skull Shaker",                  Type = "SG",    Game = "Main",  isUseCustom = true,  isUseCustomPart = false},
+        SG09R   =   {ID = "wp4000",     Enum = 4000,    Name = "SG-09 R",                       Type = "HG",    Game = "Main",  isUseCustom = true,     isUseCustomPart = true},
+        PUN     =   {ID = "wp4001",     Enum = 4001,    Name = "Punisher",                      Type = "HG",    Game = "Main",  isUseCustom = true,     isUseCustomPart = true},
+        RED9    =   {ID = "wp4002",     Enum = 4002,    Name = "Red9",                          Type = "HG",    Game = "Main",  isUseCustom = true,     isUseCustomPart = true},
+        BT      =   {ID = "wp4003",     Enum = 4003,    Name = "Blacktail",                     Type = "HG",    Game = "Main",  isUseCustom = true,     isUseCustomPart = true},
+        VP70    =   {ID = "wp4004",     Enum = 4004,    Name = "Matilda",                       Type = "HG",    Game = "Main",  isUseCustom = true,     isUseCustomPart = true},
+        W870    =   {ID = "wp4100",     Enum = 4100,    Name = "W-870",                         Type = "SG",    Game = "Main",  isUseCustom = true,     isUseCustomPart = false},
+        BM4     =   {ID = "wp4101",     Enum = 4101,    Name = "Riot Gun",                      Type = "SG",    Game = "Main",  isUseCustom = true,     isUseCustomPart = false},
+        STKR    =   {ID = "wp4102",     Enum = 4102,    Name = "Striker",                       Type = "SG",    Game = "Main",  isUseCustom = true,     isUseCustomPart = false},
+        TMP     =   {ID = "wp4200",     Enum = 4200,    Name = "TMP",                           Type = "SMG",   Game = "Main",  isUseCustom = true,     isUseCustomPart = true},
+        CTW     =   {ID = "wp4201",     Enum = 4201,    Name = "Chicago Sweeper",               Type = "SMG",   Game = "Main",  isUseCustom = true,     isUseCustomPart = false},
+        LE5     =   {ID = "wp4202",     Enum = 4202,    Name = "LE 5",                          Type = "SMG",   Game = "Main",  isUseCustom = true,     isUseCustomPart = false},
+        M1903   =   {ID = "wp4400",     Enum = 4400,    Name = "SR M1903",                      Type = "SR",    Game = "Main",  isUseCustom = true,     isUseCustomPart = false},
+        STRAY   =   {ID = "wp4401",     Enum = 4401,    Name = "Stingray",                      Type = "SR",    Game = "Main",  isUseCustom = true,     isUseCustomPart = false},
+        CQBR    =   {ID = "wp4402",     Enum = 4402,    Name = "CQBR Assault Rifle",            Type = "SR",    Game = "Main",  isUseCustom = true,     isUseCustomPart = false},
+        BRB     =   {ID = "wp4500",     Enum = 4500,    Name = "Broken Butterfly",              Type = "MAG",   Game = "Main",  isUseCustom = true,     isUseCustomPart = false},
+        KIL7    =   {ID = "wp4501",     Enum = 4501,    Name = "Killer7",                       Type = "MAG",   Game = "Main",  isUseCustom = true,     isUseCustomPart = false},
+        HNDC    =   {ID = "wp4502",     Enum = 4502,    Name = "Handcannon",                    Type = "MAG",   Game = "Main",  isUseCustom = true,     isUseCustomPart = false},
+        BOLT    =   {ID = "wp4600",     Enum = 4600,    Name = "Bolt Thrower",                  Type = "XBOW",  Game = "Main",  isUseCustom = true,     isUseCustomPart = false},
+        RPG7    =   {ID = "wp4900",     Enum = 4900,    Name = "Rocket Launcher",               Type = "GL",    Game = "Main",  isUseCustom = false,    isUseCustomPart = false},
+        RPGI    =   {ID = "wp4902",     Enum = 4902,    Name = "Infinite Rocket Launcher",      Type = "GL",    Game = "Main",  isUseCustom = false,    isUseCustomPart = false},
+        CKNF    =   {ID = "wp5000",     Enum = 5000,    Name = "Combat Knife",                  Type = "KNF",   Game = "Main",  isUseCustom = true,     isUseCustomPart = false},
+        FKNF    =   {ID = "wp5001",     Enum = 5001,    Name = "Fighting Knife",                Type = "KNF",   Game = "Main",  isUseCustom = true,     isUseCustomPart = false},
+        PKNF    =   {ID = "wp5006",     Enum = 5006,    Name = "Primal Knife",                  Type = "KNF",   Game = "Main",  isUseCustom = true,     isUseCustomPart = false},
+        SEN9    =   {ID = "wp6000",     Enum = 6000,    Name = "Sentinel Nine",                 Type = "HG",    Game = "Main",  isUseCustom = true,     isUseCustomPart = true},
+        SKUL    =   {ID = "wp6001",     Enum = 6001,    Name = "Skull Shaker",                  Type = "SG",    Game = "Main",  isUseCustom = true,     isUseCustomPart = false},
         ----------------------------------------------------------------------------------------------------------------------------------------------------------------------SW
-        SW870AO =   {ID = "wp6100",     Enum = 6100,    Name = "Sawed-off W-870",               Type = "SG",    Game = "SW",  isUseCustom = true,  isUseCustomPart = false},
-        CTWAO   =   {ID = "wp6101",     Enum = 6101,    Name = "Chicago Sweeper SW",            Type = "SMG",   Game = "SW",  isUseCustom = true,  isUseCustomPart = false},
-        XBOW    =   {ID = "wp6102",     Enum = 6102,    Name = "Blast Crossbow",                Type = "XBOW",  Game = "SW",  isUseCustom = true,  isUseCustomPart = false},
-        BTAO    =   {ID = "wp6103",     Enum = 6103,    Name = "Blacktail AC",                  Type = "HG",    Game = "SW",  isUseCustom = true,  isUseCustomPart = true},
-        TMPAO   =   {ID = "wp6104",     Enum = 6104,    Name = "TMP SW",                        Type = "SMG",   Game = "SW",  isUseCustom = true,  isUseCustomPart = true},
-        STRAYAO =   {ID = "wp6105",     Enum = 6105,    Name = "Stingray SW",                   Type = "SR",    Game = "SW",  isUseCustom = true,  isUseCustomPart = false},
-        RPG7AO  =   {ID = "wp6106",     Enum = 6106,    Name = "Rocket Launcher SW",            Type = "GL",    Game = "SW",  isUseCustom = false,  isUseCustomPart = false},
-        RPGIAO  =   {ID = "wp6111",     Enum = 6111,    Name = "Infinite Rocket Launcher SW",   Type = "GL",    Game = "SW",  isUseCustom = false,  isUseCustomPart = false},
-        PUNAO   =   {ID = "wp6112_AO",  Enum = 6112,    Name = "Punisher MC",                   Type = "HG",    Game = "SW",  isUseCustom = true,  isUseCustomPart = true},
-        RED9AO  =   {ID = "wp6113_AO",  Enum = 6113,    Name = "Red9 SW",                       Type = "HG",    Game = "SW",  isUseCustom = true,  isUseCustomPart = true},
-        M1903AO =   {ID = "wp6114",     Enum = 6114,    Name = "SR M1903 SW",                   Type = "SR",    Game = "SW",  isUseCustom = true,  isUseCustomPart = false},
+        SW870AO =   {ID = "wp6100",     Enum = 6100,    Name = "Sawed-off W-870",               Type = "SG",    Game = "SW",    isUseCustom = true,     isUseCustomPart = false},
+        CTWAO   =   {ID = "wp6101",     Enum = 6101,    Name = "Chicago Sweeper SW",            Type = "SMG",   Game = "SW",    isUseCustom = true,     isUseCustomPart = false},
+        XBOW    =   {ID = "wp6102",     Enum = 6102,    Name = "Blast Crossbow",                Type = "XBOW",  Game = "SW",    isUseCustom = true,     isUseCustomPart = false},
+        BTAO    =   {ID = "wp6103",     Enum = 6103,    Name = "Blacktail AC",                  Type = "HG",    Game = "SW",    isUseCustom = true,     isUseCustomPart = true},
+        TMPAO   =   {ID = "wp6104",     Enum = 6104,    Name = "TMP SW",                        Type = "SMG",   Game = "SW",    isUseCustom = true,     isUseCustomPart = true},
+        STRAYAO =   {ID = "wp6105",     Enum = 6105,    Name = "Stingray SW",                   Type = "SR",    Game = "SW",    isUseCustom = true,     isUseCustomPart = false},
+        RPG7AO  =   {ID = "wp6106",     Enum = 6106,    Name = "Rocket Launcher SW",            Type = "GL",    Game = "SW",    isUseCustom = false,    isUseCustomPart = false},
+        TKNF    =   {ID = "wp6107",     Enum = 6107,    Name = "Tactical Knife",                Type = "KNF",   Game = "SW",    isUseCustom = true,     isUseCustomPart = false},
+        EKNF    =   {ID = "wp6108",     Enum = 6108,    Name = "Elite Knife",                   Type = "KNF",   Game = "SW",    isUseCustom = true,     isUseCustomPart = false},
+        RPGIAO  =   {ID = "wp6111",     Enum = 6111,    Name = "Infinite Rocket Launcher SW",   Type = "GL",    Game = "SW",    isUseCustom = false,    isUseCustomPart = false},
+        PUNAO   =   {ID = "wp6112_AO",  Enum = 6112,    Name = "Punisher MC",                   Type = "HG",    Game = "SW",    isUseCustom = true,     isUseCustomPart = true},
+        RED9AO  =   {ID = "wp6113_AO",  Enum = 6113,    Name = "Red9 SW",                       Type = "HG",    Game = "SW",    isUseCustom = true,     isUseCustomPart = true},
+        M1903AO =   {ID = "wp6114",     Enum = 6114,    Name = "SR M1903 SW",                   Type = "SR",    Game = "SW",    isUseCustom = true,     isUseCustomPart = false},
     },
     Weapon_Params = {
         wp4000 = {
@@ -5100,6 +5105,309 @@ local RE4R_WeaponData = {
                 },
             },
         },
+        wp5000 = {
+            Weapon_Presets = {},
+            current_param_indx = 1,
+            LevelTracker = {
+                CurrentLevel = {
+                    DMG = 0,
+                },
+                CurrentStats = {
+                    DMG = 0.0,
+                }
+            },
+            BaseStats = {
+                MeleeParam = {
+                    AttackInfo = {
+                        Combat = {
+                            _ReducePoint = 6,
+                            _CriticalRate = 5,
+                        },
+                        CombatCombo = {
+                            _ReducePoint = 12,
+                            _CriticalRate = 5,
+                        },
+                    },
+                },
+                ThinkPlayerParam = {
+                    RangeDistance = 0.750
+                },
+                ReticleFitParam = {
+                    PointRange = {
+                        s = 0.0,
+                        r = 100.0,
+                    },
+                    _HoldAddPoint = 0.0,
+                    _MoveSubPoint = 0.0,
+                    _CameraSubPoint = 0.0,
+                    _KeepFitLimitPoint = 100.0,
+                    _ShootSubPoint = 0.0,
+                },
+            },
+            Catalog = {
+                ReticleFitParamTable = {
+                    _ReticleShape = 1001,
+                },
+                KnifeCombatSpeedParam = {
+                    _KnifeCombatSpeed = 1.1,
+                },
+            },
+            CustomCatalog = {
+                Level_1 = {
+                    LVL1_DMG =  {_BaseValue = 1.20, _Cost = 0, _Info = "0.60"},
+                    LVL1_DUR =  {_BaseValue = 1000, _Cost = 0, _Info = "1.00"},
+                    LVL1_WIN =  {_BaseValue = 1.50},
+                    LVL1_BRK =  {_BaseValue = 1.20},
+                    LVL1_STP =  {_BaseValue = 1.20},
+                },
+                Level_2 = {
+                    LVL2_DMG =  {_BaseValue = 1.40, _Cost = 10000, _Info = "0.70"},
+                    LVL2_DUR =  {_BaseValue = 1200, _Cost = 5000, _Info = "1.20"},
+                    LVL2_WIN =  {_BaseValue = 1.80},
+                    LVL2_BRK =  {_BaseValue = 1.40},
+                    LVL2_STP =  {_BaseValue = 1.40},
+                },
+                Level_3 = {
+                    LVL3_DMG =  {_BaseValue = 1.60, _Cost = 14000, _Info = "0.80"},
+                    LVL3_DUR =  {_BaseValue = 1500, _Cost = 10000, _Info = "1.50"},
+                    LVL3_WIN =  {_BaseValue = 2.10},
+                    LVL3_BRK =  {_BaseValue = 1.60},
+                    LVL3_STP =  {_BaseValue = 1.60},
+                },
+                Level_4 = {
+                    LVL4_DMG =  {_BaseValue = 1.80, _Cost = 22000, _Info = "0.90"},
+                    LVL4_DUR =  {_BaseValue = 1800, _Cost = 20000, _Info = "1.80"},
+                    LVL4_WIN =  {_BaseValue = 2.50},
+                    LVL4_BRK =  {_BaseValue = 1.80},
+                    LVL4_STP =  {_BaseValue = 1.80},
+                },
+                Level_5 = {
+                    LVL5_DMG =  {_BaseValue = 2.00, _Cost = 34000, _Info = "1.00"},
+                    LVL5_DUR =  {_BaseValue = 2200, _Cost = 35000, _Info = "2.20"},
+                    LVL5_WIN =  {_BaseValue = 2.80},
+                    LVL5_BRK =  {_BaseValue = 2.00},
+                    LVL5_STP =  {_BaseValue = 2.00},
+                },
+                Level_EX = {
+                    EXSPD  =   {_CombatSpeed = 1.5, _Cost = 60000, _Info = ""}
+                },
+                CustomParts = {},
+            },
+            Inventory = {
+                _CurrentAmmo = -1,
+                Define = {
+                    _AmmoMax = 0,
+                    _AmmoCost = 0,
+                    DefaultDurabilityMaxValue = 1000,
+                    _SliderDurabilityMaxValue = 2000,
+                    _DefaultDurabilityMax = 1000,
+                    _ItemSize = 14,
+                    _StackMax = 1,
+                },
+            },
+        },
+        wp5001 = {
+            Weapon_Presets = {},
+            current_param_indx = 1,
+            LevelTracker = {
+                CurrentLevel = {
+                    DMG = 0,
+                },
+                CurrentStats = {
+                    DMG = 0.0,
+                }
+            },
+            BaseStats = {
+                MeleeParam = {
+                    AttackInfo = {
+                        Combat = {
+                            _ReducePoint = 6,
+                            _CriticalRate = 5,
+                        },
+                        CombatCombo = {
+                            _ReducePoint = 12,
+                            _CriticalRate = 5,
+                        },
+                    },
+                },
+                ThinkPlayerParam = {
+                    RangeDistance = 0.750
+                },
+                ReticleFitParam = {
+                    PointRange = {
+                        s = 0.0,
+                        r = 100.0,
+                    },
+                    _HoldAddPoint = 0.0,
+                    _MoveSubPoint = 0.0,
+                    _CameraSubPoint = 0.0,
+                    _KeepFitLimitPoint = 100.0,
+                    _ShootSubPoint = 0.0,
+                },
+            },
+            Catalog = {
+                ReticleFitParamTable = {
+                    _ReticleShape = 1001,
+                },
+                KnifeCombatSpeedParam = {
+                    _KnifeCombatSpeed = 1.0,
+                },
+            },
+            CustomCatalog = {
+                Level_1 = {
+                    LVL1_DMG =  {_BaseValue = 2.00, _Cost = 0, _Info = "1.00"},
+                    LVL1_DUR =  {_BaseValue = 1400, _Cost = 0, _Info = "1.40"},
+                    LVL1_WIN =  {_BaseValue = 1.60},
+                    LVL1_BRK =  {_BaseValue = 2.00},
+                    LVL1_STP =  {_BaseValue = 1.60},
+                },
+                Level_2 = {
+                    LVL2_DMG =  {_BaseValue = 2.40, _Cost = 14000, _Info = "1.20"},
+                    LVL2_DUR =  {_BaseValue = 1500, _Cost = 8000, _Info = "1.50"},
+                    LVL2_WIN =  {_BaseValue = 1.90},
+                    LVL2_BRK =  {_BaseValue = 2.20},
+                    LVL2_STP =  {_BaseValue = 1.90},
+                },
+                Level_3 = {
+                    LVL3_DMG =  {_BaseValue = 2.80, _Cost = 18000, _Info = "1.40"},
+                    LVL3_DUR =  {_BaseValue = 1600, _Cost = 13000, _Info = "1.60"},
+                    LVL3_WIN =  {_BaseValue = 2.20},
+                    LVL3_BRK =  {_BaseValue = 2.40},
+                    LVL3_STP =  {_BaseValue = 2.20},
+                },
+                Level_4 = {
+                    LVL4_DMG =  {_BaseValue = 3.20, _Cost = 26000, _Info = "1.60"},
+                    LVL4_DUR =  {_BaseValue = 1700, _Cost = 24000, _Info = "1.70"},
+                    LVL4_WIN =  {_BaseValue = 2.60},
+                    LVL4_BRK =  {_BaseValue = 2.80},
+                    LVL4_STP =  {_BaseValue = 2.50},
+                },
+                Level_5 = {
+                    LVL5_DMG =  {_BaseValue = 3.60, _Cost = 42000, _Info = "1.80"},
+                    LVL5_DUR =  {_BaseValue = 1800, _Cost = 38000, _Info = "1.80"},
+                    LVL5_WIN =  {_BaseValue = 2.90},
+                    LVL5_BRK =  {_BaseValue = 3.00},
+                    LVL5_STP =  {_BaseValue = 2.80},
+                },
+                Level_EX = {
+                    EXDMG  =   {_DamageRateScale = 2.0, _WinceRateScale = 2.0, _BreakRateScale = 2.0, _StoppingRateScale = 2.0, _Cost = 80000, _Info = ""}
+                },
+                CustomParts = {},
+            },
+            Inventory = {
+                _CurrentAmmo = -1,
+                Define = {
+                    _AmmoMax = 0,
+                    _AmmoCost = 0,
+                    DefaultDurabilityMaxValue = 1000,
+                    _SliderDurabilityMaxValue = 2000,
+                    _DefaultDurabilityMax = 1400,
+                    _ItemSize = 17,
+                    _StackMax = 1,
+                },
+            },
+        },
+        wp5006 = {
+            Weapon_Presets = {},
+            current_param_indx = 1,
+            LevelTracker = {
+                CurrentLevel = {
+                    DMG = 0,
+                },
+                CurrentStats = {
+                    DMG = 0.0,
+                }
+            },
+            BaseStats = {
+                MeleeParam = {
+                    AttackInfo = {
+                        Combat = {
+                            _ReducePoint = 6,
+                            _CriticalRate = 5,
+                        },
+                        CombatCombo = {
+                            _ReducePoint = 12,
+                            _CriticalRate = 5,
+                        },
+                    },
+                },
+                ThinkPlayerParam = {
+                    RangeDistance = 0.750
+                },
+                ReticleFitParam = {
+                    PointRange = {
+                        s = 0.0,
+                        r = 100.0,
+                    },
+                    _HoldAddPoint = 0.0,
+                    _MoveSubPoint = 0.0,
+                    _CameraSubPoint = 0.0,
+                    _KeepFitLimitPoint = 100.0,
+                    _ShootSubPoint = 0.0,
+                },
+            },
+            Catalog = {
+                ReticleFitParamTable = {
+                    _ReticleShape = 1001,
+                },
+                KnifeCombatSpeedParam = {
+                    _KnifeCombatSpeed = 1.05,
+                },
+            },
+            CustomCatalog = {
+                Level_1 = {
+                    LVL1_DMG =  {_BaseValue = 1.60, _Cost = 0, _Info = "0.80"},
+                    LVL1_DUR =  {_BaseValue = 1600, _Cost = 0, _Info = "1.60"},
+                    LVL1_WIN =  {_BaseValue = 1.50},
+                    LVL1_BRK =  {_BaseValue = 1.20},
+                    LVL1_STP =  {_BaseValue = 1.20},
+                },
+                Level_2 = {
+                    LVL2_DMG =  {_BaseValue = 1.80, _Cost = 20000, _Info = "0.90"},
+                    LVL2_DUR =  {_BaseValue = 1800, _Cost = 10000, _Info = "1.80"},
+                    LVL2_WIN =  {_BaseValue = 1.80},
+                    LVL2_BRK =  {_BaseValue = 1.40},
+                    LVL2_STP =  {_BaseValue = 1.40},
+                },
+                Level_3 = {
+                    LVL3_DMG =  {_BaseValue = 2.00, _Cost = 35000, _Info = "1.00"},
+                    LVL3_DUR =  {_BaseValue = 2000, _Cost = 15000, _Info = "2.00"},
+                    LVL3_WIN =  {_BaseValue = 2.10},
+                    LVL3_BRK =  {_BaseValue = 1.60},
+                    LVL3_STP =  {_BaseValue = 1.60},
+                },
+                Level_4 = {
+                    LVL4_DMG =  {_BaseValue = 2.20, _Cost = 50000, _Info = "1.10"},
+                    LVL4_DUR =  {_BaseValue = 2200, _Cost = 25000, _Info = "2.20"},
+                    LVL4_WIN =  {_BaseValue = 2.50},
+                    LVL4_BRK =  {_BaseValue = 1.80},
+                    LVL4_STP =  {_BaseValue = 1.80},
+                },
+                Level_5 = {
+                    LVL5_DMG =  {_BaseValue = 2.40, _Cost = 65000, _Info = "1.20"},
+                    LVL5_DUR =  {_BaseValue = 2400, _Cost = 30000, _Info = "2.40"},
+                    LVL5_WIN =  {_BaseValue = 2.80},
+                    LVL5_BRK =  {_BaseValue = 2.00},
+                    LVL5_STP =  {_BaseValue = 2.00},
+                },
+                Level_EX = {
+                    EXUNBRK  =   {_IsUnbreakable = true, _Cost = 10000, _Info = ""}
+                },
+                CustomParts = {},
+            },
+            Inventory = {
+                _CurrentAmmo = -1,
+                Define = {
+                    _AmmoMax = 0,
+                    _AmmoCost = 0,
+                    DefaultDurabilityMaxValue = 1000,
+                    _SliderDurabilityMaxValue = 2000,
+                    _DefaultDurabilityMax = 1600,
+                    _ItemSize = 14,
+                    _StackMax = 1,
+                },
+            },
+        },
         wp6000 = {
             Weapon_Presets = {},
             current_param_indx = 1,
@@ -7438,6 +7746,203 @@ local RE4R_WeaponData = {
                 },
             },
         },
+        wp6107 = {
+            Weapon_Presets = {},
+            current_param_indx = 1,
+            LevelTracker = {
+                CurrentLevel = {
+                    DMG = 0,
+                },
+                CurrentStats = {
+                    DMG = 0.0,
+                }
+            },
+            BaseStats = {
+                MeleeParam = {
+                    AttackInfo = {
+                        Combat = {
+                            _ReducePoint = 6,
+                            _CriticalRate = 5,
+                        },
+                        CombatCombo = {
+                            _ReducePoint = 12,
+                            _CriticalRate = 5,
+                        },
+                    },
+                },
+                ThinkPlayerParam = {
+                    RangeDistance = 0.750
+                },
+                ReticleFitParam = {
+                    PointRange = {
+                        s = 0.0,
+                        r = 100.0,
+                    },
+                    _HoldAddPoint = 0.0,
+                    _MoveSubPoint = 0.0,
+                    _CameraSubPoint = 0.0,
+                    _KeepFitLimitPoint = 100.0,
+                    _ShootSubPoint = 0.0,
+                },
+            },
+            Catalog = {
+                ReticleFitParamTable = {
+                    _ReticleShape = 1001,
+                },
+                KnifeCombatSpeedParam = {
+                    _KnifeCombatSpeed = 1.1,
+                },
+            },
+            CustomCatalog = {
+                Level_1 = {
+                    LVL1_DMG =  {_BaseValue = 1.20, _Cost = 0, _Info = "0.60"},
+                    LVL1_DUR =  {_BaseValue = 1000, _Cost = 0, _Info = "1.00"},
+                    LVL1_WIN =  {_BaseValue = 1.50},
+                    LVL1_BRK =  {_BaseValue = 1.20},
+                    LVL1_STP =  {_BaseValue = 1.20},
+                },
+                Level_2 = {
+                    LVL2_DMG =  {_BaseValue = 1.40, _Cost = 10000, _Info = "0.70"},
+                    LVL2_DUR =  {_BaseValue = 1200, _Cost = 5000, _Info = "1.20"},
+                    LVL2_WIN =  {_BaseValue = 1.80},
+                    LVL2_BRK =  {_BaseValue = 1.40},
+                    LVL2_STP =  {_BaseValue = 1.40},
+                },
+                Level_3 = {
+                    LVL3_DMG =  {_BaseValue = 1.60, _Cost = 14000, _Info = "0.80"},
+                    LVL3_DUR =  {_BaseValue = 1500, _Cost = 10000, _Info = "1.50"},
+                    LVL3_WIN =  {_BaseValue = 2.10},
+                    LVL3_BRK =  {_BaseValue = 1.60},
+                    LVL3_STP =  {_BaseValue = 1.60},
+                },
+                Level_4 = {
+                    LVL4_DMG =  {_BaseValue = 1.80, _Cost = 18000, _Info = "0.90"},
+                    LVL4_DUR =  {_BaseValue = 1800, _Cost = 15000, _Info = "1.80"},
+                    LVL4_WIN =  {_BaseValue = 2.50},
+                    LVL4_BRK =  {_BaseValue = 1.80},
+                    LVL4_STP =  {_BaseValue = 1.80},
+                },
+                Level_5 = {
+                    LVL5_DMG =  {_BaseValue = 2.00, _Cost = 22000, _Info = "1.00"},
+                    LVL5_DUR =  {_BaseValue = 2200, _Cost = 20000, _Info = "2.20"},
+                    LVL5_WIN =  {_BaseValue = 2.80},
+                    LVL5_BRK =  {_BaseValue = 2.00},
+                    LVL5_STP =  {_BaseValue = 2.00},
+                },
+                Level_EX = {
+                    EXSPD  =   {_CombatSpeed = 1.5, _Cost = 40000, _Info = ""}
+                },
+                CustomParts = {},
+            },
+            Inventory = {
+                _CurrentAmmo = -1,
+                Define = {
+                    _AmmoMax = 1,
+                    _AmmoCost = 1,
+                    DefaultDurabilityMaxValue = 1000,
+                    _SliderDurabilityMaxValue = 2000,
+                    _DefaultDurabilityMax = 1000,
+                    _ItemSize = 14,
+                    _StackMax = 1,
+                },
+            },
+        },
+        wp6108 = {
+            Weapon_Presets = {},
+            current_param_indx = 1,
+            LevelTracker = {
+                CurrentLevel = {
+                    DMG = 0,
+                },
+                CurrentStats = {
+                    DMG = 0.0,
+                }
+            },
+            BaseStats = {
+                MeleeParam = {
+                    AttackInfo = {
+                        Combat = {
+                            _ReducePoint = 6,
+                            _CriticalRate = 5,
+                        },
+                        CombatCombo = {
+                            _ReducePoint = 12,
+                            _CriticalRate = 5,
+                        },
+                    },
+                },
+                ThinkPlayerParam = {
+                    RangeDistance = 0.750
+                },
+                ReticleFitParam = {
+                    PointRange = {
+                        s = 0.0,
+                        r = 100.0,
+                    },
+                    _HoldAddPoint = 0.0,
+                    _MoveSubPoint = 0.0,
+                    _CameraSubPoint = 0.0,
+                    _KeepFitLimitPoint = 100.0,
+                    _ShootSubPoint = 0.0,
+                },
+            },
+            Catalog = {
+                ReticleFitParamTable = {
+                    _ReticleShape = 1001,
+                },
+                KnifeCombatSpeedParam = {
+                    _KnifeCombatSpeed = 1.05,
+                },
+            },
+            CustomCatalog = {
+                Level_1 = {
+                    LVL1_DMG =  {_BaseValue = 1.10, _Cost = 0, _Info = "0.55"},
+                    LVL1_WIN =  {_BaseValue = 1.10},
+                    LVL1_BRK =  {_BaseValue = 1.10},
+                    LVL1_STP =  {_BaseValue = 1.10},
+                },
+                Level_2 = {
+                    LVL2_DMG =  {_BaseValue = 1.20, _Cost = 50000, _Info = "0.60"},
+                    LVL2_WIN =  {_BaseValue = 1.20},
+                    LVL2_BRK =  {_BaseValue = 1.20},
+                    LVL2_STP =  {_BaseValue = 1.20},
+                },
+                Level_3 = {
+                    LVL3_DMG =  {_BaseValue = 1.30, _Cost = 60000, _Info = "0.65"},
+                    LVL3_WIN =  {_BaseValue = 1.30},
+                    LVL3_BRK =  {_BaseValue = 1.30},
+                    LVL3_STP =  {_BaseValue = 1.30},
+                },
+                Level_4 = {
+                    LVL4_DMG =  {_BaseValue = 1.40, _Cost = 70000, _Info = "0.70"},
+                    LVL4_WIN =  {_BaseValue = 1.40},
+                    LVL4_BRK =  {_BaseValue = 1.40},
+                    LVL4_STP =  {_BaseValue = 1.40},
+                },
+                Level_5 = {
+                    LVL5_DMG =  {_BaseValue = 1.50, _Cost = 80000, _Info = "0.75"},
+                    LVL5_WIN =  {_BaseValue = 1.50},
+                    LVL5_BRK =  {_BaseValue = 1.50},
+                    LVL5_STP =  {_BaseValue = 1.50},
+                },
+                Level_EX = {
+                    EXDMG  =   {_DamageRateScale = 2.0, _WinceRateScale = 2.0, _BreakRateScale = 2.0, _StoppingRateScale = 2.0, _Cost = 60000, _Info = ""}
+                },
+                CustomParts = {},
+            },
+            Inventory = {
+                _CurrentAmmo = -1,
+                Define = {
+                    _AmmoMax = 1,
+                    _AmmoCost = 1,
+                    DefaultDurabilityMaxValue = 1000,
+                    _SliderDurabilityMaxValue = 2000,
+                    _DefaultDurabilityMax = 1000,
+                    _ItemSize = 17,
+                    _StackMax = 1,
+                },
+            },
+        },
         wp6111 = {
             Weapon_Presets = {},
             current_param_indx = 1,
@@ -8491,6 +8996,10 @@ local RE4R_WeaponData = {
         "BOLT",
         "RPG7",
         "RPGI",
+        "CKNF",
+        "FKNF",
+        "PKNF",
+        ----------SW
         "BTAO",
         "PUNAO",
         "RED9AO",
@@ -8502,6 +9011,8 @@ local RE4R_WeaponData = {
         "XBOW",
         "RPG7AO",
         "RPGIAO",
+        "TKNF",
+        "EKNF",
     },
 }
 

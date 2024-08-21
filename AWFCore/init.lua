@@ -2,8 +2,8 @@
 local modName = "Advanced Weapon Framework Core"
 
 local modAuthor = "SilverEzredes"
-local modUpdated = "08/19/2024"
-local modVersion = "v3.2.1"
+local modUpdated = "08/21/2024"
+local modVersion = "v3.2.5"
 local modCredits = "praydog; alphaZomega; MrBoobieBuyer; Lotiuss"
 
 --/////////////////////////////////////--
@@ -21,6 +21,47 @@ AWF_Weapons_Found = false
 local AWF_default_settings = {
     isDebug = true,
     isInheritPresetName = false,
+    isHideReticle = false,
+    RE4 = {
+        wp4000 = true,
+        wp4001 = true,
+        wp4002 = true,
+        wp4003 = true,
+        wp4004 = true,
+        wp4100 = true,
+        wp4101 = true,
+        wp4102 = true,
+        wp4200 = true,
+        wp4201 = true,
+        wp4202 = true,
+        wp4400 = true,
+        wp4401 = true,
+        wp4402 = true,
+        wp4500 = true,
+        wp4501 = true,
+        wp4502 = true,
+        wp4600 = true,
+        wp4900 = true,
+        wp4902 = true,
+        wp5000 = true,
+        wp5001 = true,
+        wp5006 = true,
+        wp6000 = true,
+        wp6001 = true,
+        wp6100 = true,
+        wp6101 = true,
+        wp6102 = true,
+        wp6103 = true,
+        wp6104 = true,
+        wp6105 = true,
+        wp6106 = true,
+        wp6107 = true,
+        wp6108 = true,
+        wp6111 = true,
+        wp6112_AO = true,
+        wp6113_AO = true,
+        wp6114 = true,
+    }
 }
 
 --The AWF Master Table, includes all weapon data for RE2R, RE3R, RE4R, RE7 and RE8.
@@ -2617,6 +2658,8 @@ local RE4_Cache = {
         [800] = "X-BOW (Type-800)",
         [801] = "X-BOW (Type-801)",
         [901] = "RPG (Type-901)",
+        [1001] = "Knife (Type-1001)",
+        [100000] = "None (100000)",
     },
     ammoTypes = {
         [-1] = "Invalid",
@@ -2682,9 +2725,13 @@ local function get_WeaponData_RE4(weaponData)
             if Weapon_GameObject_RE4 then
                 cached_weapon_GameObjects_RE4[weapon.ID] = Weapon_GameObject_RE4
                 log.info("[AWF] [ " .. weapon.ID .. " Base data updated.]")
-
+                
                 local Weapon_Stats_RE4 = Weapon_GameObject_RE4:call("getComponent(System.Type)", sdk.typeof("chainsaw.Gun"))
 
+                if not Weapon_Stats_RE4 then
+                    Weapon_Stats_RE4 = Weapon_GameObject_RE4:call("getComponent(System.Type)", sdk.typeof("chainsaw.Melee"))
+                end
+                
                 if Weapon_Stats_RE4 then
                     local weaponParams = AWF_settings.RE4.Weapon_Params[weapon.ID]
 
@@ -2692,333 +2739,383 @@ local function get_WeaponData_RE4(weaponData)
                         for paramName, paramValue in pairs(weaponParams) do
                             if paramName == "BaseStats" then
                                 for subParamName, subParamValue in pairs(paramValue) do
-                                    if subParamName == "ShellGenerator" then
-                                        for subParamName_2nd, subParamValue_2nd in pairs(subParamValue) do                         
-                                            local Weapon_ShellGenerator_RE4 = Weapon_Stats_RE4:get_field("<ShellGenerator>k__BackingField")
+                                    if weapon.Type ~= "KNF" then
+                                        if subParamName == "ShellGenerator" then
+                                            for subParamName_2nd, subParamValue_2nd in pairs(subParamValue) do                         
+                                                local Weapon_ShellGenerator_RE4 = Weapon_Stats_RE4:get_field("<ShellGenerator>k__BackingField")
 
-                                            if Weapon_ShellGenerator_RE4 then
-                                                local Weapon_ShellGenerator_UserData_RE4 = Weapon_ShellGenerator_RE4:get_field("_UserData")
+                                                if Weapon_ShellGenerator_RE4 then
+                                                    local Weapon_ShellGenerator_UserData_RE4 = Weapon_ShellGenerator_RE4:get_field("_UserData")
 
-                                                if Weapon_ShellGenerator_UserData_RE4 then
-                                                    local Weapon_ShellInfoUserData_RE4 = Weapon_ShellGenerator_UserData_RE4:get_field("_ShellInfoUserData")
-                                                    
-                                                    if Weapon_ShellInfoUserData_RE4 then
-                                                        local Weapon_LifeInfo_RE4 = Weapon_ShellInfoUserData_RE4:get_field("_LifeInfo")
-                                                        local Weapon_MoveInfo_RE4 = Weapon_ShellInfoUserData_RE4:get_field("_MoveInfo")
-                                                        local Weapon_AttackInfo_RE4 = Weapon_ShellInfoUserData_RE4:get_field("_AttackInfo")
-
-                                                        if subParamName_2nd == "LifeInfo" then
-                                                            for subParamName_3rd, subParamValue_3rd in pairs(subParamValue_2nd) do
-                                                                Weapon_LifeInfo_RE4[subParamName_3rd] = subParamValue_3rd
-                                                            end 
-                                                        end
-                                                        if subParamName_2nd == "MoveInfo" then
-                                                            for subParamName_3rd, subParamValue_3rd in pairs(subParamValue_2nd) do
-                                                                Weapon_MoveInfo_RE4[subParamName_3rd] = subParamValue_3rd
-                                                            end 
-                                                        end
-                                                        if subParamName_2nd == "AttackInfo" then
-                                                            for subParamName_3rd, subParamValue_3rd in pairs(subParamValue_2nd) do
-                                                                local Weapon_AttackInfo_DamageRate_RE4 = Weapon_AttackInfo_RE4:get_field("_DamageRate")
-                                                                local Weapon_AttackInfo_WinceRate_RE4 = Weapon_AttackInfo_RE4:get_field("_WinceRate")
-                                                                local Weapon_AttackInfo_BreakRate_RE4 = Weapon_AttackInfo_RE4:get_field("_BreakRate")
-                                                                local Weapon_AttackInfo_StoppingRate_RE4 = Weapon_AttackInfo_RE4:get_field("_StoppingRate")
-                                                                
-                                                                if subParamName_3rd == "_ColliderRadius" or subParamName_3rd == "_CriticalRate" or subParamName_3rd == "_CriticalRate_Fit" then
-                                                                    Weapon_AttackInfo_RE4[subParamName_3rd] = subParamValue_3rd
-                                                                end
-
-                                                                if subParamName_3rd == "DamageRate" then
-                                                                    for subParamName_4th, subParamValue_4th in pairs(subParamValue_3rd) do
-                                                                        Weapon_AttackInfo_DamageRate_RE4[subParamName_4th] = subParamValue_4th
-                                                                    end
-                                                                end
-                                                                if subParamName_3rd == "WinceRate" then
-                                                                    for subParamName_4th, subParamValue_4th in pairs(subParamValue_3rd) do
-                                                                        Weapon_AttackInfo_WinceRate_RE4[subParamName_4th] = subParamValue_4th
-                                                                    end
-                                                                end
-                                                                if subParamName_3rd == "BreakRate" then
-                                                                    for subParamName_4th, subParamValue_4th in pairs(subParamValue_3rd) do
-                                                                        Weapon_AttackInfo_BreakRate_RE4[subParamName_4th] = subParamValue_4th
-                                                                    end
-                                                                end
-                                                                if subParamName_3rd == "StoppingRate" then
-                                                                    for subParamName_4th, subParamValue_4th in pairs(subParamValue_3rd) do
-                                                                        Weapon_AttackInfo_StoppingRate_RE4[subParamName_4th] = subParamValue_4th
-                                                                    end
-                                                                end
-                                                            end
-                                                        end
-                                                    end
-                                                    if weapon.Type == "SG" then
-                                                        local Weapon_CenterShellUserData_RE4 = Weapon_ShellGenerator_UserData_RE4:get_field("_CenterShellInfoUserData")
-                                                        local Weapon_AroundShellUserData_RE4 = Weapon_ShellGenerator_UserData_RE4:get_field("_AroundShellInfoUserData")
-                                                        local Weapon_AroundShellSetting_RE4 = Weapon_ShellGenerator_UserData_RE4:get_field("_AroundShellSetting")
+                                                    if Weapon_ShellGenerator_UserData_RE4 then
+                                                        local Weapon_ShellInfoUserData_RE4 = Weapon_ShellGenerator_UserData_RE4:get_field("_ShellInfoUserData")
                                                         
-                                                        if Weapon_CenterShellUserData_RE4 then
-                                                            if subParamName_2nd == "Center" then    
-                                                                for subParamName_3rd, subParamValue_3rd in pairs(subParamValue_2nd) do
-                                                                    local Weapon_LifeInfo_RE4 = Weapon_CenterShellUserData_RE4:get_field("_LifeInfo")
-                                                                    local Weapon_MoveInfo_RE4 = Weapon_CenterShellUserData_RE4:get_field("_MoveInfo")
-                                                                    local Weapon_AttackInfo_RE4 = Weapon_CenterShellUserData_RE4:get_field("_AttackInfo")
-                                                            
-                                                                    if subParamName_3rd == "LifeInfo" then
-                                                                        for subParamName_4th, subParamValue_4th in pairs(subParamValue_3rd) do
-                                                                            Weapon_LifeInfo_RE4[subParamName_4th] = subParamValue_4th
-                                                                        end 
-                                                                    end
-                                                                    if subParamName_3rd == "MoveInfo" then
-                                                                        for subParamName_4th, subParamValue_4th in pairs(subParamValue_3rd) do
-                                                                            Weapon_MoveInfo_RE4[subParamName_4th] = subParamValue_4th
-                                                                        end 
-                                                                    end
-                                                                    if subParamName_3rd == "AttackInfo" then
-                                                                        
-                                                                        for subParamName_4th, subParamValue_4th in pairs(subParamValue_3rd) do
-                                                                            local Weapon_AttackInfo_DamageRate_RE4 = Weapon_AttackInfo_RE4:get_field("_DamageRate")
-                                                                            local Weapon_AttackInfo_WinceRate_RE4 = Weapon_AttackInfo_RE4:get_field("_WinceRate")
-                                                                            local Weapon_AttackInfo_BreakRate_RE4 = Weapon_AttackInfo_RE4:get_field("_BreakRate")
-                                                                            local Weapon_AttackInfo_StoppingRate_RE4 = Weapon_AttackInfo_RE4:get_field("_StoppingRate")
-                                                                            
-                                                                            if subParamName_4th == "_ColliderRadius" or subParamName_4th == "_CriticalRate" or subParamName_4th == "_CriticalRate_Fit" then
-                                                                                Weapon_AttackInfo_RE4[subParamName_4th] = subParamValue_4th
-                                                                            end
+                                                        if Weapon_ShellInfoUserData_RE4 then
+                                                            local Weapon_LifeInfo_RE4 = Weapon_ShellInfoUserData_RE4:get_field("_LifeInfo")
+                                                            local Weapon_MoveInfo_RE4 = Weapon_ShellInfoUserData_RE4:get_field("_MoveInfo")
+                                                            local Weapon_AttackInfo_RE4 = Weapon_ShellInfoUserData_RE4:get_field("_AttackInfo")
 
-                                                                            if subParamName_4th == "DamageRate" then
-                                                                                for subParamName_5th, subParamValue_5th in pairs(subParamValue_4th) do
-                                                                                    Weapon_AttackInfo_DamageRate_RE4[subParamName_5th] = subParamValue_5th
-                                                                                end
-                                                                            end
-                                                                            if subParamName_4th == "WinceRate" then
-                                                                                for subParamName_5th, subParamValue_5th in pairs(subParamValue_4th) do
-                                                                                    Weapon_AttackInfo_WinceRate_RE4[subParamName_5th] = subParamValue_5th
-                                                                                end
-                                                                            end
-                                                                            if subParamName_4th == "BreakRate" then
-                                                                                for subParamName_5th, subParamValue_5th in pairs(subParamValue_4th) do
-                                                                                    Weapon_AttackInfo_BreakRate_RE4[subParamName_5th] = subParamValue_5th
-                                                                                end
-                                                                            end
-                                                                            if subParamName_4th == "StoppingRate" then
-                                                                                for subParamName_5th, subParamValue_5th in pairs(subParamValue_4th) do
-                                                                                    Weapon_AttackInfo_StoppingRate_RE4[subParamName_5th] = subParamValue_5th
-                                                                                end
-                                                                            end
+                                                            if subParamName_2nd == "LifeInfo" then
+                                                                for subParamName_3rd, subParamValue_3rd in pairs(subParamValue_2nd) do
+                                                                    Weapon_LifeInfo_RE4[subParamName_3rd] = subParamValue_3rd
+                                                                end 
+                                                            end
+                                                            if subParamName_2nd == "MoveInfo" then
+                                                                for subParamName_3rd, subParamValue_3rd in pairs(subParamValue_2nd) do
+                                                                    Weapon_MoveInfo_RE4[subParamName_3rd] = subParamValue_3rd
+                                                                end 
+                                                            end
+                                                            if subParamName_2nd == "AttackInfo" then
+                                                                for subParamName_3rd, subParamValue_3rd in pairs(subParamValue_2nd) do
+                                                                    local Weapon_AttackInfo_DamageRate_RE4 = Weapon_AttackInfo_RE4:get_field("_DamageRate")
+                                                                    local Weapon_AttackInfo_WinceRate_RE4 = Weapon_AttackInfo_RE4:get_field("_WinceRate")
+                                                                    local Weapon_AttackInfo_BreakRate_RE4 = Weapon_AttackInfo_RE4:get_field("_BreakRate")
+                                                                    local Weapon_AttackInfo_StoppingRate_RE4 = Weapon_AttackInfo_RE4:get_field("_StoppingRate")
+                                                                    
+                                                                    if subParamName_3rd == "_ColliderRadius" or subParamName_3rd == "_CriticalRate" or subParamName_3rd == "_CriticalRate_Fit" then
+                                                                        Weapon_AttackInfo_RE4[subParamName_3rd] = subParamValue_3rd
+                                                                    end
+
+                                                                    if subParamName_3rd == "DamageRate" then
+                                                                        for subParamName_4th, subParamValue_4th in pairs(subParamValue_3rd) do
+                                                                            Weapon_AttackInfo_DamageRate_RE4[subParamName_4th] = subParamValue_4th
+                                                                        end
+                                                                    end
+                                                                    if subParamName_3rd == "WinceRate" then
+                                                                        for subParamName_4th, subParamValue_4th in pairs(subParamValue_3rd) do
+                                                                            Weapon_AttackInfo_WinceRate_RE4[subParamName_4th] = subParamValue_4th
+                                                                        end
+                                                                    end
+                                                                    if subParamName_3rd == "BreakRate" then
+                                                                        for subParamName_4th, subParamValue_4th in pairs(subParamValue_3rd) do
+                                                                            Weapon_AttackInfo_BreakRate_RE4[subParamName_4th] = subParamValue_4th
+                                                                        end
+                                                                    end
+                                                                    if subParamName_3rd == "StoppingRate" then
+                                                                        for subParamName_4th, subParamValue_4th in pairs(subParamValue_3rd) do
+                                                                            Weapon_AttackInfo_StoppingRate_RE4[subParamName_4th] = subParamValue_4th
                                                                         end
                                                                     end
                                                                 end
                                                             end
                                                         end
-                                                        if Weapon_AroundShellUserData_RE4 then
-                                                            if subParamName_2nd == "Around" then    
-                                                                for subParamName_3rd, subParamValue_3rd in pairs(subParamValue_2nd) do
-                                                                    local Weapon_LifeInfo_RE4 = Weapon_AroundShellUserData_RE4:get_field("_LifeInfo")
-                                                                    local Weapon_MoveInfo_RE4 = Weapon_AroundShellUserData_RE4:get_field("_MoveInfo")
-                                                                    local Weapon_AttackInfo_RE4 = Weapon_AroundShellUserData_RE4:get_field("_AttackInfo")
+                                                        if weapon.Type == "SG" then
+                                                            local Weapon_CenterShellUserData_RE4 = Weapon_ShellGenerator_UserData_RE4:get_field("_CenterShellInfoUserData")
+                                                            local Weapon_AroundShellUserData_RE4 = Weapon_ShellGenerator_UserData_RE4:get_field("_AroundShellInfoUserData")
+                                                            local Weapon_AroundShellSetting_RE4 = Weapon_ShellGenerator_UserData_RE4:get_field("_AroundShellSetting")
                                                             
-                                                                    if subParamName_3rd == "LifeInfo" then
-                                                                        for subParamName_4th, subParamValue_4th in pairs(subParamValue_3rd) do
-                                                                            Weapon_LifeInfo_RE4[subParamName_4th] = subParamValue_4th
-                                                                        end 
-                                                                    end
-                                                                    if subParamName_3rd == "MoveInfo" then
-                                                                        for subParamName_4th, subParamValue_4th in pairs(subParamValue_3rd) do
-                                                                            Weapon_MoveInfo_RE4[subParamName_4th] = subParamValue_4th
-                                                                        end 
-                                                                    end
-                                                                    if subParamName_3rd == "AttackInfo" then
-                                                                        
-                                                                        for subParamName_4th, subParamValue_4th in pairs(subParamValue_3rd) do
-                                                                            local Weapon_AttackInfo_DamageRate_RE4 = Weapon_AttackInfo_RE4:get_field("_DamageRate")
-                                                                            local Weapon_AttackInfo_WinceRate_RE4 = Weapon_AttackInfo_RE4:get_field("_WinceRate")
-                                                                            local Weapon_AttackInfo_BreakRate_RE4 = Weapon_AttackInfo_RE4:get_field("_BreakRate")
-                                                                            local Weapon_AttackInfo_StoppingRate_RE4 = Weapon_AttackInfo_RE4:get_field("_StoppingRate")
-                                                                            
-                                                                            if subParamName_4th == "_ColliderRadius" or subParamName_4th == "_CriticalRate" or subParamName_4th == "_CriticalRate_Fit" then
-                                                                                Weapon_AttackInfo_RE4[subParamName_4th] = subParamValue_4th
-                                                                            end
-
-                                                                            if subParamName_4th == "DamageRate" then
-                                                                                for subParamName_5th, subParamValue_5th in pairs(subParamValue_4th) do
-                                                                                    Weapon_AttackInfo_DamageRate_RE4[subParamName_5th] = subParamValue_5th
-                                                                                end
-                                                                            end
-                                                                            if subParamName_4th == "WinceRate" then
-                                                                                for subParamName_5th, subParamValue_5th in pairs(subParamValue_4th) do
-                                                                                    Weapon_AttackInfo_WinceRate_RE4[subParamName_5th] = subParamValue_5th
-                                                                                end
-                                                                            end
-                                                                            if subParamName_4th == "BreakRate" then
-                                                                                for subParamName_5th, subParamValue_5th in pairs(subParamValue_4th) do
-                                                                                    Weapon_AttackInfo_BreakRate_RE4[subParamName_5th] = subParamValue_5th
-                                                                                end
-                                                                            end
-                                                                            if subParamName_4th == "StoppingRate" then
-                                                                                for subParamName_5th, subParamValue_5th in pairs(subParamValue_4th) do
-                                                                                    Weapon_AttackInfo_StoppingRate_RE4[subParamName_5th] = subParamValue_5th
-                                                                                end
-                                                                            end
-                                                                        end
-                                                                    end
-                                                                end
-                                                            end
-                                                        end
-                                                        if Weapon_AroundShellSetting_RE4 then
-                                                            if subParamName_2nd == "AroundSetting" then 
-                                                                for subParamName_3rd, subParamValue_3rd in pairs(subParamValue_2nd) do
-                                                                    if (subParamName_3rd ~= "CenterScatter") and (subParamName_3rd ~= "AroundScatter") then
-                                                                        Weapon_AroundShellSetting_RE4[subParamName_3rd] = subParamValue_3rd
-                                                                    end
-                                                                    if subParamName_3rd == "CenterScatter" then
-                                                                        local Weapon_AroundShellSetting_Center_RE4 = Weapon_AroundShellSetting_RE4:get_field("_CenterScatterParam")
-
-                                                                        if Weapon_AroundShellSetting_Center_RE4 then
-                                                                            for subParamName_4th, subParamValue_4th in pairs(subParamValue_3rd) do
-                                                                                local Weapon_AroundShellSetting_CenterVertical_RE4 = Weapon_AroundShellSetting_Center_RE4:get_field("_VerticalScatterDegreeRange")
-                                                                                local Weapon_AroundShellSetting_CenterHorizontal_RE4 = Weapon_AroundShellSetting_Center_RE4:get_field("_HorizontalScatterDegreeRange")
-
-                                                                                if subParamName_4th == "Vertical" then
-                                                                                    if Weapon_AroundShellSetting_CenterVertical_RE4 then
-                                                                                        for subParamName_5th, subParamValue_5th in pairs(subParamValue_4th) do
-                                                                                            Weapon_AroundShellSetting_CenterVertical_RE4[subParamName_5th] = subParamValue_5th
-                                                                                            func.write_valuetype(Weapon_AroundShellSetting_Center_RE4, 0x10, Weapon_AroundShellSetting_CenterVertical_RE4)
-                                                                                        end
-                                                                                    end
-                                                                                end
-                                                                                if subParamName_4th == "Horizontal" then
-                                                                                    if Weapon_AroundShellSetting_CenterHorizontal_RE4 then
-                                                                                        for subParamName_5th, subParamValue_5th in pairs(subParamValue_4th) do
-                                                                                            Weapon_AroundShellSetting_CenterHorizontal_RE4[subParamName_5th] = subParamValue_5th
-                                                                                            func.write_valuetype(Weapon_AroundShellSetting_Center_RE4, 0x18, Weapon_AroundShellSetting_CenterHorizontal_RE4)
-                                                                                        end
-                                                                                    end
-                                                                                end
-                                                                            end
-                                                                        end                                                                            
-                                                                    end
-                                                                    if subParamName_3rd == "AroundScatter" then
-                                                                        local Weapon_AroundShellSetting_Around_RE4 = Weapon_AroundShellSetting_RE4:get_field("_AroundScatterParam")
-
-                                                                        if Weapon_AroundShellSetting_Around_RE4 then
-                                                                            for subParamName_4th, subParamValue_4th in pairs(subParamValue_3rd) do
-                                                                                local Weapon_AroundShellSetting_AroundVertical_RE4 = Weapon_AroundShellSetting_Around_RE4:get_field("_VerticalScatterDegreeRange")
-                                                                                local Weapon_AroundShellSetting_AroundHorizontal_RE4 = Weapon_AroundShellSetting_Around_RE4:get_field("_HorizontalScatterDegreeRange")
-
-                                                                                if subParamName_4th == "Vertical" then
-                                                                                    if Weapon_AroundShellSetting_AroundVertical_RE4 then
-                                                                                        for subParamName_5th, subParamValue_5th in pairs(subParamValue_4th) do
-                                                                                            Weapon_AroundShellSetting_AroundVertical_RE4[subParamName_5th] = subParamValue_5th
-                                                                                            func.write_valuetype(Weapon_AroundShellSetting_Around_RE4, 0x10, Weapon_AroundShellSetting_AroundVertical_RE4)
-                                                                                        end
-                                                                                    end
-                                                                                end
-                                                                                if subParamName_4th == "Horizontal" then
-                                                                                    if Weapon_AroundShellSetting_AroundHorizontal_RE4 then
-                                                                                        for subParamName_5th, subParamValue_5th in pairs(subParamValue_4th) do
-                                                                                            Weapon_AroundShellSetting_AroundHorizontal_RE4[subParamName_5th] = subParamValue_5th
-                                                                                            func.write_valuetype(Weapon_AroundShellSetting_Around_RE4, 0x18, Weapon_AroundShellSetting_AroundHorizontal_RE4)
-                                                                                        end
-                                                                                    end
-                                                                                end
-                                                                            end
-                                                                        end                                                                            
-                                                                    end
-                                                                end
-                                                            end
-                                                        end
-                                                    end
-                                                end
-                                                if weapon.Type == "GL" then
-                                                    local Weapon_RocketLauncherShellInfoUserData_RE4 = Weapon_ShellGenerator_UserData_RE4:get_field("_RocketLauncherShellInfoUserData")
-
-                                                    if Weapon_RocketLauncherShellInfoUserData_RE4 then
-                                                        local Weapon_LifeInfo_RE4 = Weapon_RocketLauncherShellInfoUserData_RE4:get_field("_LifeInfo")
-                                                        local Weapon_MoveInfo_RE4 = Weapon_RocketLauncherShellInfoUserData_RE4:get_field("_MoveInfo")
-                                                        local Weapon_AttackInfo_RE4 = Weapon_RocketLauncherShellInfoUserData_RE4:get_field("_AttackInfo")
-
-                                                        if subParamName_2nd == "LifeInfo" then
-                                                            for subParamName_3rd, subParamValue_3rd in pairs(subParamValue_2nd) do
-                                                                Weapon_LifeInfo_RE4[subParamName_3rd] = subParamValue_3rd
-                                                            end 
-                                                        end
-                                                        if subParamName_2nd == "MoveInfo" then
-                                                            for subParamName_3rd, subParamValue_3rd in pairs(subParamValue_2nd) do
-                                                                Weapon_MoveInfo_RE4[subParamName_3rd] = subParamValue_3rd
-                                                            end 
-                                                        end
-                                                        if subParamName_2nd == "AttackInfo" then
-                                                            for subParamName_3rd, subParamValue_3rd in pairs(subParamValue_2nd) do
-                                                                local Weapon_AttackInfo_DamageRate_RE4 = Weapon_AttackInfo_RE4:get_field("_DamageRate")
-                                                                local Weapon_AttackInfo_WinceRate_RE4 = Weapon_AttackInfo_RE4:get_field("_WinceRate")
-                                                                local Weapon_AttackInfo_BreakRate_RE4 = Weapon_AttackInfo_RE4:get_field("_BreakRate")
-                                                                local Weapon_AttackInfo_StoppingRate_RE4 = Weapon_AttackInfo_RE4:get_field("_StoppingRate")
+                                                            if Weapon_CenterShellUserData_RE4 then
+                                                                if subParamName_2nd == "Center" then    
+                                                                    for subParamName_3rd, subParamValue_3rd in pairs(subParamValue_2nd) do
+                                                                        local Weapon_LifeInfo_RE4 = Weapon_CenterShellUserData_RE4:get_field("_LifeInfo")
+                                                                        local Weapon_MoveInfo_RE4 = Weapon_CenterShellUserData_RE4:get_field("_MoveInfo")
+                                                                        local Weapon_AttackInfo_RE4 = Weapon_CenterShellUserData_RE4:get_field("_AttackInfo")
                                                                 
-                                                                if subParamName_3rd == "_ColliderRadius" then
-                                                                    Weapon_AttackInfo_RE4[subParamName_3rd] = subParamValue_3rd
-                                                                end
+                                                                        if subParamName_3rd == "LifeInfo" then
+                                                                            for subParamName_4th, subParamValue_4th in pairs(subParamValue_3rd) do
+                                                                                Weapon_LifeInfo_RE4[subParamName_4th] = subParamValue_4th
+                                                                            end 
+                                                                        end
+                                                                        if subParamName_3rd == "MoveInfo" then
+                                                                            for subParamName_4th, subParamValue_4th in pairs(subParamValue_3rd) do
+                                                                                Weapon_MoveInfo_RE4[subParamName_4th] = subParamValue_4th
+                                                                            end 
+                                                                        end
+                                                                        if subParamName_3rd == "AttackInfo" then
+                                                                            
+                                                                            for subParamName_4th, subParamValue_4th in pairs(subParamValue_3rd) do
+                                                                                local Weapon_AttackInfo_DamageRate_RE4 = Weapon_AttackInfo_RE4:get_field("_DamageRate")
+                                                                                local Weapon_AttackInfo_WinceRate_RE4 = Weapon_AttackInfo_RE4:get_field("_WinceRate")
+                                                                                local Weapon_AttackInfo_BreakRate_RE4 = Weapon_AttackInfo_RE4:get_field("_BreakRate")
+                                                                                local Weapon_AttackInfo_StoppingRate_RE4 = Weapon_AttackInfo_RE4:get_field("_StoppingRate")
+                                                                                
+                                                                                if subParamName_4th == "_ColliderRadius" or subParamName_4th == "_CriticalRate" or subParamName_4th == "_CriticalRate_Fit" then
+                                                                                    Weapon_AttackInfo_RE4[subParamName_4th] = subParamValue_4th
+                                                                                end
 
-                                                                if subParamName_3rd == "DamageRate" then
-                                                                    for subParamName_4th, subParamValue_4th in pairs(subParamValue_3rd) do
-                                                                        Weapon_AttackInfo_DamageRate_RE4[subParamName_4th] = subParamValue_4th
+                                                                                if subParamName_4th == "DamageRate" then
+                                                                                    for subParamName_5th, subParamValue_5th in pairs(subParamValue_4th) do
+                                                                                        Weapon_AttackInfo_DamageRate_RE4[subParamName_5th] = subParamValue_5th
+                                                                                    end
+                                                                                end
+                                                                                if subParamName_4th == "WinceRate" then
+                                                                                    for subParamName_5th, subParamValue_5th in pairs(subParamValue_4th) do
+                                                                                        Weapon_AttackInfo_WinceRate_RE4[subParamName_5th] = subParamValue_5th
+                                                                                    end
+                                                                                end
+                                                                                if subParamName_4th == "BreakRate" then
+                                                                                    for subParamName_5th, subParamValue_5th in pairs(subParamValue_4th) do
+                                                                                        Weapon_AttackInfo_BreakRate_RE4[subParamName_5th] = subParamValue_5th
+                                                                                    end
+                                                                                end
+                                                                                if subParamName_4th == "StoppingRate" then
+                                                                                    for subParamName_5th, subParamValue_5th in pairs(subParamValue_4th) do
+                                                                                        Weapon_AttackInfo_StoppingRate_RE4[subParamName_5th] = subParamValue_5th
+                                                                                    end
+                                                                                end
+                                                                            end
+                                                                        end
                                                                     end
                                                                 end
-                                                                if subParamName_3rd == "WinceRate" then
-                                                                    for subParamName_4th, subParamValue_4th in pairs(subParamValue_3rd) do
-                                                                        Weapon_AttackInfo_WinceRate_RE4[subParamName_4th] = subParamValue_4th
+                                                            end
+                                                            if Weapon_AroundShellUserData_RE4 then
+                                                                if subParamName_2nd == "Around" then    
+                                                                    for subParamName_3rd, subParamValue_3rd in pairs(subParamValue_2nd) do
+                                                                        local Weapon_LifeInfo_RE4 = Weapon_AroundShellUserData_RE4:get_field("_LifeInfo")
+                                                                        local Weapon_MoveInfo_RE4 = Weapon_AroundShellUserData_RE4:get_field("_MoveInfo")
+                                                                        local Weapon_AttackInfo_RE4 = Weapon_AroundShellUserData_RE4:get_field("_AttackInfo")
+                                                                
+                                                                        if subParamName_3rd == "LifeInfo" then
+                                                                            for subParamName_4th, subParamValue_4th in pairs(subParamValue_3rd) do
+                                                                                Weapon_LifeInfo_RE4[subParamName_4th] = subParamValue_4th
+                                                                            end 
+                                                                        end
+                                                                        if subParamName_3rd == "MoveInfo" then
+                                                                            for subParamName_4th, subParamValue_4th in pairs(subParamValue_3rd) do
+                                                                                Weapon_MoveInfo_RE4[subParamName_4th] = subParamValue_4th
+                                                                            end 
+                                                                        end
+                                                                        if subParamName_3rd == "AttackInfo" then
+                                                                            
+                                                                            for subParamName_4th, subParamValue_4th in pairs(subParamValue_3rd) do
+                                                                                local Weapon_AttackInfo_DamageRate_RE4 = Weapon_AttackInfo_RE4:get_field("_DamageRate")
+                                                                                local Weapon_AttackInfo_WinceRate_RE4 = Weapon_AttackInfo_RE4:get_field("_WinceRate")
+                                                                                local Weapon_AttackInfo_BreakRate_RE4 = Weapon_AttackInfo_RE4:get_field("_BreakRate")
+                                                                                local Weapon_AttackInfo_StoppingRate_RE4 = Weapon_AttackInfo_RE4:get_field("_StoppingRate")
+                                                                                
+                                                                                if subParamName_4th == "_ColliderRadius" or subParamName_4th == "_CriticalRate" or subParamName_4th == "_CriticalRate_Fit" then
+                                                                                    Weapon_AttackInfo_RE4[subParamName_4th] = subParamValue_4th
+                                                                                end
+
+                                                                                if subParamName_4th == "DamageRate" then
+                                                                                    for subParamName_5th, subParamValue_5th in pairs(subParamValue_4th) do
+                                                                                        Weapon_AttackInfo_DamageRate_RE4[subParamName_5th] = subParamValue_5th
+                                                                                    end
+                                                                                end
+                                                                                if subParamName_4th == "WinceRate" then
+                                                                                    for subParamName_5th, subParamValue_5th in pairs(subParamValue_4th) do
+                                                                                        Weapon_AttackInfo_WinceRate_RE4[subParamName_5th] = subParamValue_5th
+                                                                                    end
+                                                                                end
+                                                                                if subParamName_4th == "BreakRate" then
+                                                                                    for subParamName_5th, subParamValue_5th in pairs(subParamValue_4th) do
+                                                                                        Weapon_AttackInfo_BreakRate_RE4[subParamName_5th] = subParamValue_5th
+                                                                                    end
+                                                                                end
+                                                                                if subParamName_4th == "StoppingRate" then
+                                                                                    for subParamName_5th, subParamValue_5th in pairs(subParamValue_4th) do
+                                                                                        Weapon_AttackInfo_StoppingRate_RE4[subParamName_5th] = subParamValue_5th
+                                                                                    end
+                                                                                end
+                                                                            end
+                                                                        end
                                                                     end
                                                                 end
-                                                                if subParamName_3rd == "BreakRate" then
-                                                                    for subParamName_4th, subParamValue_4th in pairs(subParamValue_3rd) do
-                                                                        Weapon_AttackInfo_BreakRate_RE4[subParamName_4th] = subParamValue_4th
-                                                                    end
-                                                                end
-                                                                if subParamName_3rd == "StoppingRate" then
-                                                                    for subParamName_4th, subParamValue_4th in pairs(subParamValue_3rd) do
-                                                                        Weapon_AttackInfo_StoppingRate_RE4[subParamName_4th] = subParamValue_4th
+                                                            end
+                                                            if Weapon_AroundShellSetting_RE4 then
+                                                                if subParamName_2nd == "AroundSetting" then 
+                                                                    for subParamName_3rd, subParamValue_3rd in pairs(subParamValue_2nd) do
+                                                                        if (subParamName_3rd ~= "CenterScatter") and (subParamName_3rd ~= "AroundScatter") then
+                                                                            Weapon_AroundShellSetting_RE4[subParamName_3rd] = subParamValue_3rd
+                                                                        end
+                                                                        if subParamName_3rd == "CenterScatter" then
+                                                                            local Weapon_AroundShellSetting_Center_RE4 = Weapon_AroundShellSetting_RE4:get_field("_CenterScatterParam")
+
+                                                                            if Weapon_AroundShellSetting_Center_RE4 then
+                                                                                for subParamName_4th, subParamValue_4th in pairs(subParamValue_3rd) do
+                                                                                    local Weapon_AroundShellSetting_CenterVertical_RE4 = Weapon_AroundShellSetting_Center_RE4:get_field("_VerticalScatterDegreeRange")
+                                                                                    local Weapon_AroundShellSetting_CenterHorizontal_RE4 = Weapon_AroundShellSetting_Center_RE4:get_field("_HorizontalScatterDegreeRange")
+
+                                                                                    if subParamName_4th == "Vertical" then
+                                                                                        if Weapon_AroundShellSetting_CenterVertical_RE4 then
+                                                                                            for subParamName_5th, subParamValue_5th in pairs(subParamValue_4th) do
+                                                                                                Weapon_AroundShellSetting_CenterVertical_RE4[subParamName_5th] = subParamValue_5th
+                                                                                                func.write_valuetype(Weapon_AroundShellSetting_Center_RE4, 0x10, Weapon_AroundShellSetting_CenterVertical_RE4)
+                                                                                            end
+                                                                                        end
+                                                                                    end
+                                                                                    if subParamName_4th == "Horizontal" then
+                                                                                        if Weapon_AroundShellSetting_CenterHorizontal_RE4 then
+                                                                                            for subParamName_5th, subParamValue_5th in pairs(subParamValue_4th) do
+                                                                                                Weapon_AroundShellSetting_CenterHorizontal_RE4[subParamName_5th] = subParamValue_5th
+                                                                                                func.write_valuetype(Weapon_AroundShellSetting_Center_RE4, 0x18, Weapon_AroundShellSetting_CenterHorizontal_RE4)
+                                                                                            end
+                                                                                        end
+                                                                                    end
+                                                                                end
+                                                                            end                                                                            
+                                                                        end
+                                                                        if subParamName_3rd == "AroundScatter" then
+                                                                            local Weapon_AroundShellSetting_Around_RE4 = Weapon_AroundShellSetting_RE4:get_field("_AroundScatterParam")
+
+                                                                            if Weapon_AroundShellSetting_Around_RE4 then
+                                                                                for subParamName_4th, subParamValue_4th in pairs(subParamValue_3rd) do
+                                                                                    local Weapon_AroundShellSetting_AroundVertical_RE4 = Weapon_AroundShellSetting_Around_RE4:get_field("_VerticalScatterDegreeRange")
+                                                                                    local Weapon_AroundShellSetting_AroundHorizontal_RE4 = Weapon_AroundShellSetting_Around_RE4:get_field("_HorizontalScatterDegreeRange")
+
+                                                                                    if subParamName_4th == "Vertical" then
+                                                                                        if Weapon_AroundShellSetting_AroundVertical_RE4 then
+                                                                                            for subParamName_5th, subParamValue_5th in pairs(subParamValue_4th) do
+                                                                                                Weapon_AroundShellSetting_AroundVertical_RE4[subParamName_5th] = subParamValue_5th
+                                                                                                func.write_valuetype(Weapon_AroundShellSetting_Around_RE4, 0x10, Weapon_AroundShellSetting_AroundVertical_RE4)
+                                                                                            end
+                                                                                        end
+                                                                                    end
+                                                                                    if subParamName_4th == "Horizontal" then
+                                                                                        if Weapon_AroundShellSetting_AroundHorizontal_RE4 then
+                                                                                            for subParamName_5th, subParamValue_5th in pairs(subParamValue_4th) do
+                                                                                                Weapon_AroundShellSetting_AroundHorizontal_RE4[subParamName_5th] = subParamValue_5th
+                                                                                                func.write_valuetype(Weapon_AroundShellSetting_Around_RE4, 0x18, Weapon_AroundShellSetting_AroundHorizontal_RE4)
+                                                                                            end
+                                                                                        end
+                                                                                    end
+                                                                                end
+                                                                            end                                                                            
+                                                                        end
                                                                     end
                                                                 end
                                                             end
                                                         end
                                                     end
+                                                    if weapon.Type == "GL" then
+                                                        local Weapon_RocketLauncherShellInfoUserData_RE4 = Weapon_ShellGenerator_UserData_RE4:get_field("_RocketLauncherShellInfoUserData")
+
+                                                        if Weapon_RocketLauncherShellInfoUserData_RE4 then
+                                                            local Weapon_LifeInfo_RE4 = Weapon_RocketLauncherShellInfoUserData_RE4:get_field("_LifeInfo")
+                                                            local Weapon_MoveInfo_RE4 = Weapon_RocketLauncherShellInfoUserData_RE4:get_field("_MoveInfo")
+                                                            local Weapon_AttackInfo_RE4 = Weapon_RocketLauncherShellInfoUserData_RE4:get_field("_AttackInfo")
+
+                                                            if subParamName_2nd == "LifeInfo" then
+                                                                for subParamName_3rd, subParamValue_3rd in pairs(subParamValue_2nd) do
+                                                                    Weapon_LifeInfo_RE4[subParamName_3rd] = subParamValue_3rd
+                                                                end 
+                                                            end
+                                                            if subParamName_2nd == "MoveInfo" then
+                                                                for subParamName_3rd, subParamValue_3rd in pairs(subParamValue_2nd) do
+                                                                    Weapon_MoveInfo_RE4[subParamName_3rd] = subParamValue_3rd
+                                                                end 
+                                                            end
+                                                            if subParamName_2nd == "AttackInfo" then
+                                                                for subParamName_3rd, subParamValue_3rd in pairs(subParamValue_2nd) do
+                                                                    local Weapon_AttackInfo_DamageRate_RE4 = Weapon_AttackInfo_RE4:get_field("_DamageRate")
+                                                                    local Weapon_AttackInfo_WinceRate_RE4 = Weapon_AttackInfo_RE4:get_field("_WinceRate")
+                                                                    local Weapon_AttackInfo_BreakRate_RE4 = Weapon_AttackInfo_RE4:get_field("_BreakRate")
+                                                                    local Weapon_AttackInfo_StoppingRate_RE4 = Weapon_AttackInfo_RE4:get_field("_StoppingRate")
+                                                                    
+                                                                    if subParamName_3rd == "_ColliderRadius" then
+                                                                        Weapon_AttackInfo_RE4[subParamName_3rd] = subParamValue_3rd
+                                                                    end
+
+                                                                    if subParamName_3rd == "DamageRate" then
+                                                                        for subParamName_4th, subParamValue_4th in pairs(subParamValue_3rd) do
+                                                                            Weapon_AttackInfo_DamageRate_RE4[subParamName_4th] = subParamValue_4th
+                                                                        end
+                                                                    end
+                                                                    if subParamName_3rd == "WinceRate" then
+                                                                        for subParamName_4th, subParamValue_4th in pairs(subParamValue_3rd) do
+                                                                            Weapon_AttackInfo_WinceRate_RE4[subParamName_4th] = subParamValue_4th
+                                                                        end
+                                                                    end
+                                                                    if subParamName_3rd == "BreakRate" then
+                                                                        for subParamName_4th, subParamValue_4th in pairs(subParamValue_3rd) do
+                                                                            Weapon_AttackInfo_BreakRate_RE4[subParamName_4th] = subParamValue_4th
+                                                                        end
+                                                                    end
+                                                                    if subParamName_3rd == "StoppingRate" then
+                                                                        for subParamName_4th, subParamValue_4th in pairs(subParamValue_3rd) do
+                                                                            Weapon_AttackInfo_StoppingRate_RE4[subParamName_4th] = subParamValue_4th
+                                                                        end
+                                                                    end
+                                                                end
+                                                            end
+                                                        end
+                                                    end
+                                                    -- if weapon.Type == "XBOW" then
+                                                    --     local Weapon_ShellGenerator_ArrowUserData_RE4 = Weapon_ShellGenerator_RE4:get_field("_ArrowBombShellGeneratorUserData")
+
+                                                    --     if Weapon_ShellGenerator_ArrowUserData_RE4 then
+                                                    --         if subParamName_2nd == "Arrow" then
+                                                    --             Weapon_ShellGenerator_ArrowUserData_RE4[subParamName_2nd] = subParamValue_2nd
+                                                    --         end
+                                                    --     end
+                                                    -- end
                                                 end
-                                                -- if weapon.Type == "XBOW" then
-                                                --     local Weapon_ShellGenerator_ArrowUserData_RE4 = Weapon_ShellGenerator_RE4:get_field("_ArrowBombShellGeneratorUserData")
-
-                                                --     if Weapon_ShellGenerator_ArrowUserData_RE4 then
-                                                --         if subParamName_2nd == "Arrow" then
-                                                --             Weapon_ShellGenerator_ArrowUserData_RE4[subParamName_2nd] = subParamValue_2nd
-                                                --         end
-                                                --     end
-                                                -- end
                                             end
                                         end
-                                    end
-                                    if subParamName == "WeaponStructureParam" then
-                                        for subParamName_2nd, subParamValue_2nd in pairs(subParamValue) do                         
-                                            local Weapon_WeaponStructureParam_RE4 = Weapon_Stats_RE4:get_field("WeaponStructureParam")
-                                            Weapon_WeaponStructureParam_RE4[subParamName_2nd] = subParamValue_2nd
-                                        end
-                                    end
-                                    if subParamName == "ThinkPlayerParam" then
-                                        for subParamName_2nd, subParamValue_2nd in pairs(subParamValue) do
-                                            local Weapon_ThinkPlayerParam_RE4 = Weapon_Stats_RE4:get_field("<ThinkPlayerParam>k__BackingField")
-                                            Weapon_ThinkPlayerParam_RE4[subParamName_2nd] = subParamValue_2nd
-                                        end
-                                    end
-                                    if subParamName == "ReticleFitParam" then
-                                        for subParamName_2nd, subParamValue_2nd in pairs(subParamValue) do
-                                            local Weapon_ReticleFitParam_RE4 = Weapon_Stats_RE4:get_field("<ReticleFitParam>k__BackingField")
-
-                                            if subParamName_2nd ~= "PointRange" then
-                                                Weapon_ReticleFitParam_RE4[subParamName_2nd] = subParamValue_2nd
+                                        if subParamName == "WeaponStructureParam" then
+                                            for subParamName_2nd, subParamValue_2nd in pairs(subParamValue) do                         
+                                                local Weapon_WeaponStructureParam_RE4 = Weapon_Stats_RE4:get_field("WeaponStructureParam")
+                                                Weapon_WeaponStructureParam_RE4[subParamName_2nd] = subParamValue_2nd
                                             end
-                                            if subParamName_2nd == "PointRange" then
-                                                for subParamName_3rd, subParamValue_3rd in pairs(subParamValue_2nd) do
-                                                    local Weapon_ReticleFitParamRange_RE4 = Weapon_ReticleFitParam_RE4:get_field("_PointRange")
+                                        end
+                                        if subParamName == "ThinkPlayerParam" then
+                                            for subParamName_2nd, subParamValue_2nd in pairs(subParamValue) do
+                                                local Weapon_ThinkPlayerParam_RE4 = Weapon_Stats_RE4:get_field("<ThinkPlayerParam>k__BackingField")
+                                                Weapon_ThinkPlayerParam_RE4[subParamName_2nd] = subParamValue_2nd
+                                            end
+                                        end
+                                        if subParamName == "ReticleFitParam" then
+                                            for subParamName_2nd, subParamValue_2nd in pairs(subParamValue) do
+                                                local Weapon_ReticleFitParam_RE4 = Weapon_Stats_RE4:get_field("<ReticleFitParam>k__BackingField")
 
-                                                    Weapon_ReticleFitParamRange_RE4[subParamName_3rd] = subParamValue_3rd
-                                                    func.write_valuetype(Weapon_ReticleFitParam_RE4, 0x10, Weapon_ReticleFitParamRange_RE4)
+                                                if subParamName_2nd ~= "PointRange" then
+                                                    Weapon_ReticleFitParam_RE4[subParamName_2nd] = subParamValue_2nd
+                                                end
+                                                if subParamName_2nd == "PointRange" then
+                                                    for subParamName_3rd, subParamValue_3rd in pairs(subParamValue_2nd) do
+                                                        local Weapon_ReticleFitParamRange_RE4 = Weapon_ReticleFitParam_RE4:get_field("_PointRange")
+
+                                                        Weapon_ReticleFitParamRange_RE4[subParamName_3rd] = subParamValue_3rd
+                                                        func.write_valuetype(Weapon_ReticleFitParam_RE4, 0x10, Weapon_ReticleFitParamRange_RE4)
+                                                    end
+                                                end
+                                            end
+                                        end
+                                    elseif weapon.Type == "KNF" then
+                                        if subParamName == "MeleeParam" then
+                                            for subParamName_2nd, subParamValue_2nd in pairs(subParamValue) do
+                                                local Weapon_MeleeParam_RE4 = Weapon_Stats_RE4:get_field("_MeleeParam")
+
+                                                if Weapon_MeleeParam_RE4 then
+                                                    local Weapon_MeleeAttackInfo_RE4 = Weapon_MeleeParam_RE4._AttackTypeInfoTable
+
+                                                    for i, attackTypes in pairs(Weapon_MeleeAttackInfo_RE4) do
+                                                        for subParamName_3rd, subParamValue_3rd in pairs(subParamValue_2nd) do
+                                                            if i == 0 and subParamName_3rd == "Combat" then
+                                                                for subParamName_4th, subParamValue_4th in pairs(subParamValue_3rd) do
+                                                                    Weapon_MeleeAttackInfo_RE4[i][subParamName_4th] = subParamValue_4th
+                                                                end                                                                
+                                                            end
+                                                            if i == 1 and subParamName_3rd == "CombatCombo" then
+                                                                for subParamName_4th, subParamValue_4th in pairs(subParamValue_3rd) do
+                                                                    Weapon_MeleeAttackInfo_RE4[i][subParamName_4th] = subParamValue_4th
+                                                                end                                                                
+                                                            end
+                                                        end
+                                                    end
+                                                end
+                                            end
+                                        end
+                                        if subParamName == "ThinkPlayerParam" then
+                                            for subParamName_2nd, subParamValue_2nd in pairs(subParamValue) do
+                                                local Weapon_ThinkPlayerParam_RE4 = Weapon_Stats_RE4:get_field("<ThinkPlayerParam>k__BackingField")
+                                                Weapon_ThinkPlayerParam_RE4[subParamName_2nd] = subParamValue_2nd
+                                            end
+                                        end
+                                        if subParamName == "ReticleFitParam" then
+                                            for subParamName_2nd, subParamValue_2nd in pairs(subParamValue) do
+                                                local Weapon_ReticleFitParam_RE4 = Weapon_Stats_RE4:get_field("<ReticleFitParam>k__BackingField")
+
+                                                if subParamName_2nd ~= "PointRange" then
+                                                    Weapon_ReticleFitParam_RE4[subParamName_2nd] = subParamValue_2nd
+                                                end
+                                                if subParamName_2nd == "PointRange" then
+                                                    for subParamName_3rd, subParamValue_3rd in pairs(subParamValue_2nd) do
+                                                        local Weapon_ReticleFitParamRange_RE4 = Weapon_ReticleFitParam_RE4:get_field("_PointRange")
+
+                                                        Weapon_ReticleFitParamRange_RE4[subParamName_3rd] = subParamValue_3rd
+                                                        func.write_valuetype(Weapon_ReticleFitParam_RE4, 0x10, Weapon_ReticleFitParamRange_RE4)
+                                                    end
                                                 end
                                             end
                                         end
@@ -3047,7 +3144,7 @@ local function get_WeaponData_RE4(weaponData)
             end
         end
         weapon.isUpdated = false
-
+        
         if weapon.isCatalogUpdated then
             if AWF_tool_settings.isDebug then
                 log.info("[AWF] [ " .. weapon.ID .. " Catalog data updated.]")
@@ -3082,6 +3179,10 @@ local function get_WeaponData_RE4(weaponData)
                                                 for subParamName_2nd, subParamValue_2nd in pairs(subParamValue) do
                                                     local Weapon_WeaponCatalog_ReticleFitParamTable_RE4 = Weapon_WeaponCatalog_DataTable_RE4[i]:get_field("_ReticleFitParamTable")
                                                     Weapon_WeaponCatalog_ReticleFitParamTable_RE4[subParamName_2nd] = subParamValue_2nd
+
+                                                    if AWF_tool_settings.isHideReticle then
+                                                        Weapon_WeaponCatalog_ReticleFitParamTable_RE4[subParamName_2nd] = 100000
+                                                    end
                                                 end
                                             end                                            
                                             if subParamName == "CameraRecoilParam" then
@@ -3283,7 +3384,7 @@ local function get_WeaponData_RE4(weaponData)
                                                 local Weapon_WeaponCustomCatalog_UserData_Commons_RE4 = Weapon_WeaponCustomCatalog_UserData_WeaponsCustom_RE4:get_field("_Commons")
                                                 Weapon_WeaponCustomCatalog_UserData_Commons_RE4 = Weapon_WeaponCustomCatalog_UserData_Commons_RE4 and Weapon_WeaponCustomCatalog_UserData_Commons_RE4:get_elements() or {}
                                                 
-                                                local IndividualsMap = {"_CustomReloadSpeed", "_CustomRapid"}
+                                                local IndividualsMap = {"_CustomReloadSpeed", "_CustomRapid", "_CustomStrength"}
                                                 local Weapon_WeaponCustomCatalog_UserData_Individuals_RE4 = Weapon_WeaponCustomCatalog_UserData_WeaponsCustom_RE4:get_field("_Individuals")
                                                 Weapon_WeaponCustomCatalog_UserData_Individuals_RE4 = Weapon_WeaponCustomCatalog_UserData_Individuals_RE4 and Weapon_WeaponCustomCatalog_UserData_Individuals_RE4:get_elements() or {}
 
@@ -3316,18 +3417,28 @@ local function get_WeaponData_RE4(weaponData)
                                                                                     if subParamName_3rd == "_Info" then
                                                                                         if subParamName_2nd == subParamMap[1] then
                                                                                             if tonumber(v) == 1 then
-                                                                                                if weapon.Type ~= "SG" then
-                                                                                                    stage[subParamName_3rd] = tostring(string.format("%.2f", AWF_settings.RE4.Weapon_Params[weapon.ID].CustomCatalog.Level_1.LVL1_DMG._BaseValue * AWF_settings.RE4.Weapon_Params[weapon.ID].BaseStats.ShellGenerator.AttackInfo.DamageRate._BaseValue))
-                                                                                                    weaponParams[paramName][subParamName]["LVL" .. v .."_DMG"]._Info = stage[subParamName_3rd]
-                                                                                                end
-                                                                                                if weapon.Type == "SG" then
-                                                                                                    stage[subParamName_3rd] = tostring(string.format("%.2f", AWF_settings.RE4.Weapon_Params[weapon.ID].CustomCatalog.Level_1.LVL1_DMG._BaseValue * AWF_settings.RE4.Weapon_Params[weapon.ID].BaseStats.ShellGenerator.Around.AttackInfo.DamageRate._BaseValue))
+                                                                                                if weapon.Type ~= "KNF" then
+                                                                                                    if weapon.Type ~= "SG" then
+                                                                                                        stage[subParamName_3rd] = tostring(string.format("%.2f", AWF_settings.RE4.Weapon_Params[weapon.ID].CustomCatalog.Level_1.LVL1_DMG._BaseValue * AWF_settings.RE4.Weapon_Params[weapon.ID].BaseStats.ShellGenerator.AttackInfo.DamageRate._BaseValue))
+                                                                                                        weaponParams[paramName][subParamName]["LVL" .. v .."_DMG"]._Info = stage[subParamName_3rd]
+                                                                                                    end
+                                                                                                    if weapon.Type == "SG" then
+                                                                                                        stage[subParamName_3rd] = tostring(string.format("%.2f", AWF_settings.RE4.Weapon_Params[weapon.ID].CustomCatalog.Level_1.LVL1_DMG._BaseValue * AWF_settings.RE4.Weapon_Params[weapon.ID].BaseStats.ShellGenerator.Around.AttackInfo.DamageRate._BaseValue))
+                                                                                                        weaponParams[paramName][subParamName]["LVL" .. v .."_DMG"]._Info = stage[subParamName_3rd]
+                                                                                                    end
+                                                                                                elseif weapon.Type == "KNF" then
+                                                                                                    stage[subParamName_3rd] = tostring(string.format("%.2f", AWF_settings.RE4.Weapon_Params[weapon.ID].CustomCatalog.Level_1.LVL1_DMG._Info))
                                                                                                     weaponParams[paramName][subParamName]["LVL" .. v .."_DMG"]._Info = stage[subParamName_3rd]
                                                                                                 end
                                                                                             end
                                                                                             if tonumber(v) > 1 then
-                                                                                                stage[subParamName_3rd] = tostring(string.format("%.2f", (AWF_settings.RE4.Weapon_Params[weapon.ID].CustomCatalog.Level_1.LVL1_DMG._Info * weaponParams[paramName][subParamName]["LVL" .. v .."_DMG"]._BaseValue)))
-                                                                                                weaponParams[paramName][subParamName]["LVL" .. v .."_DMG"]._Info = stage[subParamName_3rd]
+                                                                                                if weapon.Type ~= "KNF" then
+                                                                                                    stage[subParamName_3rd] = tostring(string.format("%.2f", (AWF_settings.RE4.Weapon_Params[weapon.ID].CustomCatalog.Level_1.LVL1_DMG._Info * weaponParams[paramName][subParamName]["LVL" .. v .."_DMG"]._BaseValue)))
+                                                                                                    weaponParams[paramName][subParamName]["LVL" .. v .."_DMG"]._Info = stage[subParamName_3rd]
+                                                                                                elseif weapon.Type == "KNF" then
+                                                                                                    stage[subParamName_3rd] = tostring(string.format("%.2f", (weaponParams[paramName][subParamName]["LVL" .. v .."_DMG"]._BaseValue / 2)))
+                                                                                                    weaponParams[paramName][subParamName]["LVL" .. v .."_DMG"]._Info = stage[subParamName_3rd]
+                                                                                                end
                                                                                             end
                                                                                         end
                                                                                         if subParamName_2nd == subParamMap[2] then
@@ -3348,14 +3459,14 @@ local function get_WeaponData_RE4(weaponData)
                                                         local Weapon_WeaponCustomCatalog_UserData_Individuals_Field_RE4 = Weapon_WeaponCustomCatalog_UserData_Individuals_RE4[h]:get_field(field)
 
                                                         if Weapon_WeaponCustomCatalog_UserData_Individuals_Field_RE4 then
-                                                            local customStagesField = field == "_CustomReloadSpeed" and "_ReloadSpeedCustomStages" or "_RapidCustomStages"
+                                                            local customStagesField = field == ("_CustomReloadSpeed" and "_ReloadSpeedCustomStages" or "_RapidCustomStages") or ("_CustomStrength" and "_StrengthCustomStages")
                                                             local Weapon_WeaponCustomCatalog_UserData_Individuals_Field_CustomStages_RE4 = Weapon_WeaponCustomCatalog_UserData_Individuals_Field_RE4:get_field(customStagesField)
                                                             Weapon_WeaponCustomCatalog_UserData_Individuals_Field_CustomStages_RE4 = Weapon_WeaponCustomCatalog_UserData_Individuals_Field_CustomStages_RE4 and Weapon_WeaponCustomCatalog_UserData_Individuals_Field_CustomStages_RE4:get_elements() or {}
 
                                                             for k, stage in ipairs(Weapon_WeaponCustomCatalog_UserData_Individuals_Field_CustomStages_RE4) do
                                                                 if subParamName:match("^Level_([1-9]%d*)$") then
                                                                     local v = subParamName:match("%d+$")
-                                                                    local subParamMap = {[1] = "LVL" .. v .."_RS", [2] = "LVL" .. v .."_ROF"}
+                                                                    local subParamMap = {[1] = "LVL" .. v .."_RS", [2] = "LVL" .. v .."_ROF", [3] = "LVL" .. v .. "_DUR"}
                                                                     local subParamName_2nd = subParamMap[h]
                                                                     
                                                                     if subParamName_2nd and tonumber(v) == k then
@@ -3366,6 +3477,10 @@ local function get_WeaponData_RE4(weaponData)
                                                                                         stage[subParamName_3rd] = subParamValue_3rd
                                                                                     end
                                                                                     if subParamName_3rd == "_Info" then 
+                                                                                        if subParamName_2nd == subParamMap[3] then
+                                                                                            stage[subParamName_3rd] = tostring(string.format("%.2f", (weaponParams[paramName][subParamName]["LVL" .. v .."_DUR"]._BaseValue / 1000)))
+                                                                                            weaponParams[paramName][subParamName]["LVL" .. v .."_DUR"]._Info = stage[subParamName_3rd]
+                                                                                        end
                                                                                         if subParamName_2nd == subParamMap[2] then
                                                                                             stage[subParamName_3rd] = subParamValue_3rd
                                                                                         end
@@ -3443,28 +3558,35 @@ local function get_WeaponData_RE4(weaponData)
                                                         
                                                             if Weapon_WeaponCustomCatalog_UserData_CommonsCustomAttackUp_RE4 then
                                                                 local rateTypes = {
-                                                                    ["_DamageRates"] = "_DMG",
-                                                                    ["_WinceRates"] = "_WIN",
-                                                                    ["_BreakRates"] = "_BRK",
-                                                                    ["_StoppingRates"] = "_STP"
+                                                                    ["_DamageRates"] = {suffix = "_DMG", multiplier = "DamageRate"},
+                                                                    ["_WinceRates"] = {suffix = "_WIN", multiplier = "WinceRate"},
+                                                                    ["_BreakRates"] = {suffix = "_BRK", multiplier = "BreakRate"},
+                                                                    ["_StoppingRates"] = {suffix = "_STP", multiplier = "StoppingRate"}
                                                                 }
-                                                        
-                                                                for rateType, subParamSuffix in pairs(rateTypes) do
+                                                            
+                                                                for rateType, rateInfo in pairs(rateTypes) do
                                                                     local ratesTable = Weapon_WeaponCustomCatalog_UserData_CommonsCustomAttackUp_RE4:get_field(rateType)
                                                                     ratesTable = ratesTable and ratesTable:get_elements() or {}
-                                                        
+                                                            
                                                                     for k in pairs(ratesTable) do
                                                                         if subParamName:match("^Level_([1-9]%d*)$") then
                                                                             local v = subParamName:match("%d+$")
-                                                                            local subParamName_2nd = "LVL" .. v .. subParamSuffix
-                                                        
+                                                                            local subParamName_2nd = "LVL" .. v .. rateInfo.suffix
+                                                            
                                                                             if tonumber(v) == k then
-                                                                                --log.info(subParamName_2nd .. "--" .. v .. "==" .. k)
                                                                                 for subParam, subParamValue_2nd in pairs(subParamValue) do
                                                                                     if subParam == subParamName_2nd then
                                                                                         for subParamName_3rd, subParamValue_3rd in pairs(subParamValue_2nd) do
                                                                                             if subParamName_3rd == "_BaseValue" then
-                                                                                                ratesTable[k][subParamName_3rd] = subParamValue_3rd
+                                                                                                if weapon.Type ~= "KNF" then
+                                                                                                    if weapon.Type ~= "SG" then
+                                                                                                        ratesTable[k][subParamName_3rd] = subParamValue_3rd * AWF_settings.RE4.Weapon_Params[weapon.ID].BaseStats.ShellGenerator.AttackInfo[rateInfo.multiplier]._BaseValue
+                                                                                                    elseif weapon.Type == "SG" then
+                                                                                                        ratesTable[k][subParamName_3rd] = subParamValue_3rd * AWF_settings.RE4.Weapon_Params[weapon.ID].BaseStats.ShellGenerator.Around.AttackInfo[rateInfo.multiplier]._BaseValue
+                                                                                                    end
+                                                                                                elseif weapon.Type == "KNF" then
+                                                                                                    ratesTable[k][subParamName_3rd] = subParamValue_3rd
+                                                                                                end
                                                                                             end
                                                                                         end
                                                                                     end
@@ -3515,6 +3637,39 @@ local function get_WeaponData_RE4(weaponData)
                                                 for j in pairs(Weapon_WeaponCustomCatalog_UserData_IndividualCustom_RE4) do
                                                     local Weapon_WeaponCustomCatalog_UserData_IndividualCustom_Category_RE4 = Weapon_WeaponCustomCatalog_UserData_IndividualCustom_RE4[j]:get_field("_IndividualCustomCategory")
                                                     
+                                                    if Weapon_WeaponCustomCatalog_UserData_IndividualCustom_Category_RE4 == 6 then
+                                                        local Weapon_WeaponCustomCatalog_UserData_IndividualCustom_Strength_RE4 = Weapon_WeaponCustomCatalog_UserData_IndividualCustom_RE4[j]:get_field("_Strength")
+
+                                                        if Weapon_WeaponCustomCatalog_UserData_IndividualCustom_Strength_RE4 then
+                                                            local rateTypes = {
+                                                                ["_DurabilityMaxes"] = "_DUR",
+                                                            }
+
+                                                            for rateType, subParamSuffix in pairs(rateTypes) do
+                                                                local ratesTable = Weapon_WeaponCustomCatalog_UserData_IndividualCustom_Strength_RE4:get_field(rateType)
+                                                    
+                                                                for k in pairs(ratesTable) do
+                                                                    if subParamName:match("^Level_([1-9]%d*)$") then
+                                                                        local v = subParamName:match("%d+$")
+                                                                        local subParamName_2nd = "LVL" .. v .. subParamSuffix
+                                                    
+                                                                        if tonumber(v-1) == k then
+                                                                            for subParam, subParamValue_2nd in pairs(subParamValue) do
+                                                                                if subParam == subParamName_2nd then
+                                                                                    for subParamName_3rd, subParamValue_3rd in pairs(subParamValue_2nd) do
+                                                                                        if subParamName_3rd == "_BaseValue" then
+                                                                                            ratesTable[k] = subParamValue_3rd
+                                                                                        end
+                                                                                    end
+                                                                                end
+                                                                            end
+                                                                        end
+                                                                    end
+                                                                end
+                                                            end
+                                                        end
+                                                    end
+
                                                     if Weapon_WeaponCustomCatalog_UserData_IndividualCustom_Category_RE4 == 7 then
                                                         local Weapon_WeaponCustomCatalog_UserData_IndividualCustom_ReloadSpeed_RE4 = Weapon_WeaponCustomCatalog_UserData_IndividualCustom_RE4[j]:get_field("_ReloadSpeed")
                                                         
@@ -3522,6 +3677,7 @@ local function get_WeaponData_RE4(weaponData)
                                                             local rateTypes = {
                                                                 ["_ReloadSpeedRates"] = "_RS",
                                                                 ["_ReloadNums"] = "_RN",
+
                                                             }
 
                                                             for rateType, subParamSuffix in pairs(rateTypes) do
@@ -3707,6 +3863,40 @@ local function get_WeaponData_RE4(weaponData)
                                                             end
                                                         end
                                                     end
+                                                    if Weapon_WeaponCustomCatalog_UserData_LimitBreakCustom_Category_RE4 == 8 then
+                                                        local Weapon_WeaponCustomCatalog_UserData_LimitBreakCustom_Speed_RE4 = Weapon_WeaponCustomCatalog_UserData_LimitBreakCustom_RE4[j]:get_field("_LimitBreakCombatSpeed")
+
+                                                        if Weapon_WeaponCustomCatalog_UserData_LimitBreakCustom_Speed_RE4 then
+                                                            if subParamName:match("Level_EX") then
+                                                                for subParamName_2nd, subParamValue_2nd in pairs(subParamValue) do
+                                                                    if subParamName_2nd == "EXSPD" then
+                                                                        for subParamName_3rd, subParamValue_3rd in pairs(subParamValue_2nd) do
+                                                                            if subParamName_3rd == "_CombatSpeed" then
+                                                                                Weapon_WeaponCustomCatalog_UserData_LimitBreakCustom_Speed_RE4[subParamName_3rd] = subParamValue_3rd
+                                                                            end
+                                                                        end
+                                                                    end
+                                                                end
+                                                            end
+                                                        end
+                                                    end
+                                                    if Weapon_WeaponCustomCatalog_UserData_LimitBreakCustom_Category_RE4 == 7 then
+                                                        local Weapon_WeaponCustomCatalog_UserData_LimitBreakCustom_UNBRK_RE4 = Weapon_WeaponCustomCatalog_UserData_LimitBreakCustom_RE4[j]:get_field("_LimitBreakUnbreakable")
+
+                                                        if Weapon_WeaponCustomCatalog_UserData_LimitBreakCustom_UNBRK_RE4 then
+                                                            if subParamName:match("Level_EX") then
+                                                                for subParamName_2nd, subParamValue_2nd in pairs(subParamValue) do
+                                                                    if subParamName_2nd == "EXUNBRK" then
+                                                                        for subParamName_3rd, subParamValue_3rd in pairs(subParamValue_2nd) do
+                                                                            if subParamName_3rd == "_IsUnbreakable" then
+                                                                                Weapon_WeaponCustomCatalog_UserData_LimitBreakCustom_UNBRK_RE4[subParamName_3rd] = subParamValue_3rd
+                                                                            end
+                                                                        end
+                                                                    end
+                                                                end
+                                                            end
+                                                        end
+                                                    end
                                                     if Weapon_WeaponCustomCatalog_UserData_LimitBreakCustom_Category_RE4 == 10 then
                                                         local Weapon_WeaponCustomCatalog_UserData_LimitBreakCustom_Blast_RE4 = Weapon_WeaponCustomCatalog_UserData_LimitBreakCustom_RE4[j]:get_field("_LimitBreakBlastRange_1011")
 
@@ -3727,171 +3917,172 @@ local function get_WeaponData_RE4(weaponData)
                                                 end
 
                                                 for j in pairs(Weapon_WeaponCustomCatalog_UserData_AttachmentCustom_RE4) do
-                                                    local Weapon_WeaponCustomCatalog_UserData_AttachmentParams_Category_RE4 = Weapon_WeaponCustomCatalog_UserData_AttachmentCustom_RE4[j]:get_field("_AttachmentParams")
+                                                    if weapon.isUseCustomPart then
+                                                        local Weapon_WeaponCustomCatalog_UserData_AttachmentParams_Category_RE4 = Weapon_WeaponCustomCatalog_UserData_AttachmentCustom_RE4[j]:get_field("_AttachmentParams")
 
-                                                    for k in pairs(Weapon_WeaponCustomCatalog_UserData_AttachmentParams_Category_RE4) do
-                                                        local Weapon_WeaponCustomCatalog_UserData_AttachmentCustom_Category_RE4 = Weapon_WeaponCustomCatalog_UserData_AttachmentParams_Category_RE4[k]:get_field("_AttachmentParamName")
-                                                        
-                                                        if Weapon_WeaponCustomCatalog_UserData_AttachmentCustom_Category_RE4 == 101 then
-                                                            Weapon_WeaponCustomCatalog_UserData_AttachmentParams_Category_RE4[k]._RandomRadius_Fit = AWF_settings.RE4.Weapon_Params[weapon.ID].CustomCatalog.CustomParts._RandomRadius_Fit
-                                                        end
-
-                                                        if Weapon_WeaponCustomCatalog_UserData_AttachmentCustom_Category_RE4 == 103 then
-                                                            local Weapon_WeaponCustomCatalog_UserData_ReticleFit_Category_RE4 = Weapon_WeaponCustomCatalog_UserData_AttachmentParams_Category_RE4[k]:get_field("_ReticleFitParam")
-
-                                                            if Weapon_WeaponCustomCatalog_UserData_ReticleFit_Category_RE4 then
-                                                                if subParamName:match("CustomParts") then
-                                                                    for subParamName_2nd, subParamValue_2nd in pairs(subParamValue) do
-                                                                        if subParamName_2nd == "ReticleFitParam" then
-                                                                            for subParamName_3rd, subParamValue_3rd in pairs(subParamValue_2nd) do
-                                                                                if subParamName_3rd ~= "PointRange" then
-                                                                                    Weapon_WeaponCustomCatalog_UserData_ReticleFit_Category_RE4[subParamName_3rd] = subParamValue_3rd
-                                                                                end
-                                                                                if subParamName_3rd == "PointRange" then
-                                                                                    for subParamName_4th, subParamValue_4th in pairs(subParamValue_3rd) do
-                                                                                        local Weapon_WeaponCustomCatalog_UserData_ReticleFit_PointRange_RE4 = Weapon_WeaponCustomCatalog_UserData_ReticleFit_Category_RE4:get_field("_PointRange")
-
-                                                                                        Weapon_WeaponCustomCatalog_UserData_ReticleFit_PointRange_RE4[subParamName_4th] = subParamValue_4th
-                                                                                        func.write_valuetype(Weapon_WeaponCustomCatalog_UserData_ReticleFit_Category_RE4, 0x10, Weapon_WeaponCustomCatalog_UserData_ReticleFit_PointRange_RE4)
-                                                                                    end
-                                                                                end
-                                                                            end
-                                                                        end
-                                                                    end
-                                                                end
-                                                            end
-                                                        end
-
-                                                        if Weapon_WeaponCustomCatalog_UserData_AttachmentCustom_Category_RE4 == 104 then
-                                                            local Weapon_WeaponCustomCatalog_UserData_CameraRecoil_Category_RE4 = Weapon_WeaponCustomCatalog_UserData_AttachmentParams_Category_RE4[k]:get_field("_CameraRecoilParam")
-
-                                                            if Weapon_WeaponCustomCatalog_UserData_CameraRecoil_Category_RE4 then
-                                                                if subParamName:match("CustomParts") then
-                                                                    for subParamName_2nd, subParamValue_2nd in pairs(subParamValue) do
-                                                                        if subParamName_2nd == "CameraRecoilParam" then
-                                                                            for subParamName_3rd, subParamValue_3rd in pairs(subParamValue_2nd) do
-                                                                                if not subParamName_3rd:match("Deg$") then
-                                                                                    Weapon_WeaponCustomCatalog_UserData_CameraRecoil_Category_RE4[subParamName_3rd] = subParamValue_3rd
-                                                                                end
-                                                                                if subParamName_3rd == "YawRangeDeg" then
-                                                                                    for subParamName_4th, subParamValue_4th in pairs(subParamValue_3rd) do
-                                                                                        local Weapon_WeaponCatalog_CameraRecoilParam_Yaw_RE4 = Weapon_WeaponCustomCatalog_UserData_CameraRecoil_Category_RE4:get_field("_YawRangeDeg")
-                                                                                        Weapon_WeaponCatalog_CameraRecoilParam_Yaw_RE4[subParamName_4th] = subParamValue_4th
-                                                                                        func.write_valuetype(Weapon_WeaponCustomCatalog_UserData_CameraRecoil_Category_RE4, 0x18, Weapon_WeaponCatalog_CameraRecoilParam_Yaw_RE4)
-                                                                                    end
-                                                                                end
-                                                                                if subParamName_3rd == "PitchRangeDeg" then
-                                                                                    for subParamName_4th, subParamValue_4th in pairs(subParamValue_3rd) do
-                                                                                        local Weapon_WeaponCatalog_CameraRecoilParam_Pitch_RE4 = Weapon_WeaponCustomCatalog_UserData_CameraRecoil_Category_RE4:get_field("_PitchRangeDeg")
-                                                                                        Weapon_WeaponCatalog_CameraRecoilParam_Pitch_RE4[subParamName_4th] = subParamValue_4th
-                                                                                        func.write_valuetype(Weapon_WeaponCustomCatalog_UserData_CameraRecoil_Category_RE4, 0x20, Weapon_WeaponCatalog_CameraRecoilParam_Pitch_RE4)
-                                                                                    end
-                                                                                end
-                                                                            end
-                                                                        end
-                                                                    end
-                                                                end
-                                                            end
-                                                        end
-
-                                                        if Weapon_WeaponCustomCatalog_UserData_AttachmentCustom_Category_RE4 == 105 then
-                                                            local Weapon_WeaponCustomCatalog_UserData_CameraShakeParam_Category_RE4 = Weapon_WeaponCustomCatalog_UserData_AttachmentParams_Category_RE4[k]:get_field("_CameraShakeParam")
-
-                                                            if Weapon_WeaponCustomCatalog_UserData_CameraShakeParam_Category_RE4 then
-                                                                if subParamName:match("CustomParts") then
-                                                                    for subParamName_2nd, subParamValue_2nd in pairs(subParamValue) do
-                                                                        if subParamName_2nd == "CameraShakeParam" then
-                                                                            for subParamName_3rd, subParamValue_3rd in pairs(subParamValue_2nd) do
-                                                                                if subParamName_3rd == "_Type" then
-                                                                                    Weapon_WeaponCustomCatalog_UserData_CameraShakeParam_Category_RE4[subParamName_3rd] = subParamValue_3rd
-                                                                                end
-                                                                                if subParamName_3rd == "Life" then
-                                                                                    for subParamName_4th, subParamValue_4th in pairs(subParamValue_3rd) do
-                                                                                        local Weapon_WeaponCatalog_CameraShakeParam_Life_RE4 = Weapon_WeaponCustomCatalog_UserData_CameraShakeParam_Category_RE4:get_field("_Life")
-                                                                                        Weapon_WeaponCatalog_CameraShakeParam_Life_RE4[subParamName_4th] = subParamValue_4th
-                                                                                    end
-                                                                                end
-                                                                                if subParamName_3rd == "Move" then
-                                                                                    for subParamName_4th, subParamValue_4th in pairs(subParamValue_3rd) do
-                                                                                        local Weapon_WeaponCatalog_CameraShakeParam_Move_RE4 = Weapon_WeaponCustomCatalog_UserData_CameraShakeParam_Category_RE4:get_field("_Move")
-
-                                                                                        if subParamName_4th == "Period" then
-                                                                                            for subParamName_5th, subParamValue_5th in pairs(subParamValue_4th) do
-                                                                                                local Weapon_WeaponCatalog_CameraShakeParam_Move_Period_RE4 = Weapon_WeaponCatalog_CameraShakeParam_Move_RE4:get_field("_Period")
-                                                                                                Weapon_WeaponCatalog_CameraShakeParam_Move_Period_RE4[subParamName_5th] = subParamValue_5th
-                                                                                                func.write_valuetype(Weapon_WeaponCatalog_CameraShakeParam_Move_RE4, 0x10, Weapon_WeaponCatalog_CameraShakeParam_Move_Period_RE4)
-                                                                                            end
-                                                                                        end
-                                                                                        if subParamName_4th == "TranslationXRange" then
-                                                                                            for subParamName_5th, subParamValue_5th in pairs(subParamValue_4th) do
-                                                                                                local Weapon_WeaponCatalog_CameraShakeParam_Move_TransX_RE4 = Weapon_WeaponCatalog_CameraShakeParam_Move_RE4:get_field("_TranslationXRange")
-                                                                                                Weapon_WeaponCatalog_CameraShakeParam_Move_TransX_RE4[subParamName_5th] = subParamValue_5th
-                                                                                                func.write_valuetype(Weapon_WeaponCatalog_CameraShakeParam_Move_RE4, 0x18, Weapon_WeaponCatalog_CameraShakeParam_Move_TransX_RE4)
-                                                                                            end
-                                                                                        end
-                                                                                        if subParamName_4th == "TranslationYRange" then
-                                                                                            for subParamName_5th, subParamValue_5th in pairs(subParamValue_4th) do
-                                                                                                local Weapon_WeaponCatalog_CameraShakeParam_Move_TransY_RE4 = Weapon_WeaponCatalog_CameraShakeParam_Move_RE4:get_field("_TranslationYRange")
-                                                                                                Weapon_WeaponCatalog_CameraShakeParam_Move_TransY_RE4[subParamName_5th] = subParamValue_5th
-                                                                                                func.write_valuetype(Weapon_WeaponCatalog_CameraShakeParam_Move_RE4, 0x20, Weapon_WeaponCatalog_CameraShakeParam_Move_TransY_RE4)
-                                                                                            end
-                                                                                        end
-                                                                                        if subParamName_4th == "TranslationZRange" then
-                                                                                            for subParamName_5th, subParamValue_5th in pairs(subParamValue_4th) do
-                                                                                                local Weapon_WeaponCatalog_CameraShakeParam_Move_TransZ_RE4 = Weapon_WeaponCatalog_CameraShakeParam_Move_RE4:get_field("_TranslationZRange")
-                                                                                                Weapon_WeaponCatalog_CameraShakeParam_Move_TransZ_RE4[subParamName_5th] = subParamValue_5th
-                                                                                                func.write_valuetype(Weapon_WeaponCatalog_CameraShakeParam_Move_RE4, 0x28, Weapon_WeaponCatalog_CameraShakeParam_Move_TransZ_RE4)
-                                                                                            end
-                                                                                        end
-                                                                                        if subParamName_4th == "RotationXRange" then
-                                                                                            for subParamName_5th, subParamValue_5th in pairs(subParamValue_4th) do
-                                                                                                local Weapon_WeaponCatalog_CameraShakeParam_Move_RotX_RE4 = Weapon_WeaponCatalog_CameraShakeParam_Move_RE4:get_field("_RotationXRange")
-                                                                                                Weapon_WeaponCatalog_CameraShakeParam_Move_RotX_RE4[subParamName_5th] = subParamValue_5th
-                                                                                                func.write_valuetype(Weapon_WeaponCatalog_CameraShakeParam_Move_RE4, 0x30, Weapon_WeaponCatalog_CameraShakeParam_Move_RotX_RE4)
-                                                                                            end
-                                                                                        end
-                                                                                        if subParamName_4th == "RotationYRange" then
-                                                                                            for subParamName_5th, subParamValue_5th in pairs(subParamValue_4th) do
-                                                                                                local Weapon_WeaponCatalog_CameraShakeParam_Move_RotY_RE4 = Weapon_WeaponCatalog_CameraShakeParam_Move_RE4:get_field("_RotationYRange")
-                                                                                                Weapon_WeaponCatalog_CameraShakeParam_Move_RotY_RE4[subParamName_5th] = subParamValue_5th
-                                                                                                func.write_valuetype(Weapon_WeaponCatalog_CameraShakeParam_Move_RE4, 0x38, Weapon_WeaponCatalog_CameraShakeParam_Move_RotY_RE4)
-                                                                                            end
-                                                                                        end
-                                                                                        if subParamName_4th == "RotationZRange" then
-                                                                                            for subParamName_5th, subParamValue_5th in pairs(subParamValue_4th) do
-                                                                                                local Weapon_WeaponCatalog_CameraShakeParam_Move_RotZ_RE4 = Weapon_WeaponCatalog_CameraShakeParam_Move_RE4:get_field("_RotationZRange")
-                                                                                                Weapon_WeaponCatalog_CameraShakeParam_Move_RotZ_RE4[subParamName_5th] = subParamValue_5th
-                                                                                                func.write_valuetype(Weapon_WeaponCatalog_CameraShakeParam_Move_RE4, 0x40, Weapon_WeaponCatalog_CameraShakeParam_Move_RotZ_RE4)
-                                                                                            end
-                                                                                        end
-                                                                                    end
-                                                                                end
-                                                                            end
-                                                                        end
-                                                                    end
-                                                                end
-                                                            end
-                                                        end
-
-                                                        if Weapon_WeaponCustomCatalog_UserData_AttachmentCustom_Category_RE4 == 106 then
-                                                            local Weapon_WeaponCustomCatalog_UserData_Handshake_Category_RE4 = Weapon_WeaponCustomCatalog_UserData_AttachmentParams_Category_RE4[k]:get_field("_WeaponHandShakeParam")
+                                                        for k in pairs(Weapon_WeaponCustomCatalog_UserData_AttachmentParams_Category_RE4) do
+                                                            local Weapon_WeaponCustomCatalog_UserData_AttachmentCustom_Category_RE4 = Weapon_WeaponCustomCatalog_UserData_AttachmentParams_Category_RE4[k]:get_field("_AttachmentParamName")
                                                             
-                                                            if Weapon_WeaponCustomCatalog_UserData_Handshake_Category_RE4 then
-                                                                if subParamName:match("CustomParts") then
-                                                                    for subParamName_2nd, subParamValue_2nd in pairs(subParamValue) do
-                                                                        if subParamName_2nd == "HandShakeParam" then
-                                                                            for subParamName_3rd, subParamValue_3rd in pairs(subParamValue_2nd) do
-                                                                                Weapon_WeaponCustomCatalog_UserData_Handshake_Category_RE4[subParamName_3rd] = subParamValue_3rd
+                                                            if Weapon_WeaponCustomCatalog_UserData_AttachmentCustom_Category_RE4 == 101 then
+                                                                Weapon_WeaponCustomCatalog_UserData_AttachmentParams_Category_RE4[k]._RandomRadius_Fit = AWF_settings.RE4.Weapon_Params[weapon.ID].CustomCatalog.CustomParts._RandomRadius_Fit
+                                                            end
+
+                                                            if Weapon_WeaponCustomCatalog_UserData_AttachmentCustom_Category_RE4 == 103 then
+                                                                local Weapon_WeaponCustomCatalog_UserData_ReticleFit_Category_RE4 = Weapon_WeaponCustomCatalog_UserData_AttachmentParams_Category_RE4[k]:get_field("_ReticleFitParam")
+
+                                                                if Weapon_WeaponCustomCatalog_UserData_ReticleFit_Category_RE4 then
+                                                                    if subParamName:match("CustomParts") then
+                                                                        for subParamName_2nd, subParamValue_2nd in pairs(subParamValue) do
+                                                                            if subParamName_2nd == "ReticleFitParam" then
+                                                                                for subParamName_3rd, subParamValue_3rd in pairs(subParamValue_2nd) do
+                                                                                    if subParamName_3rd ~= "PointRange" then
+                                                                                        Weapon_WeaponCustomCatalog_UserData_ReticleFit_Category_RE4[subParamName_3rd] = subParamValue_3rd
+                                                                                    end
+                                                                                    if subParamName_3rd == "PointRange" then
+                                                                                        for subParamName_4th, subParamValue_4th in pairs(subParamValue_3rd) do
+                                                                                            local Weapon_WeaponCustomCatalog_UserData_ReticleFit_PointRange_RE4 = Weapon_WeaponCustomCatalog_UserData_ReticleFit_Category_RE4:get_field("_PointRange")
+
+                                                                                            Weapon_WeaponCustomCatalog_UserData_ReticleFit_PointRange_RE4[subParamName_4th] = subParamValue_4th
+                                                                                            func.write_valuetype(Weapon_WeaponCustomCatalog_UserData_ReticleFit_Category_RE4, 0x10, Weapon_WeaponCustomCatalog_UserData_ReticleFit_PointRange_RE4)
+                                                                                        end
+                                                                                    end
+                                                                                end
                                                                             end
                                                                         end
                                                                     end
                                                                 end
                                                             end
-                                                        end
 
-                                                        if Weapon_WeaponCustomCatalog_UserData_AttachmentCustom_Category_RE4 == 501 and not weapon.ID == "wp4401" then
-                                                            log.info("DEBUG ".. weapon.ID)
-                                                            Weapon_WeaponCustomCatalog_UserData_AttachmentParams_Category_RE4[k]._ReticleGuiType = AWF_settings.RE4.Weapon_Params[weapon.ID].CustomCatalog.CustomParts._ReticleGuiType
+                                                            if Weapon_WeaponCustomCatalog_UserData_AttachmentCustom_Category_RE4 == 104 then
+                                                                local Weapon_WeaponCustomCatalog_UserData_CameraRecoil_Category_RE4 = Weapon_WeaponCustomCatalog_UserData_AttachmentParams_Category_RE4[k]:get_field("_CameraRecoilParam")
+
+                                                                if Weapon_WeaponCustomCatalog_UserData_CameraRecoil_Category_RE4 then
+                                                                    if subParamName:match("CustomParts") then
+                                                                        for subParamName_2nd, subParamValue_2nd in pairs(subParamValue) do
+                                                                            if subParamName_2nd == "CameraRecoilParam" then
+                                                                                for subParamName_3rd, subParamValue_3rd in pairs(subParamValue_2nd) do
+                                                                                    if not subParamName_3rd:match("Deg$") then
+                                                                                        Weapon_WeaponCustomCatalog_UserData_CameraRecoil_Category_RE4[subParamName_3rd] = subParamValue_3rd
+                                                                                    end
+                                                                                    if subParamName_3rd == "YawRangeDeg" then
+                                                                                        for subParamName_4th, subParamValue_4th in pairs(subParamValue_3rd) do
+                                                                                            local Weapon_WeaponCatalog_CameraRecoilParam_Yaw_RE4 = Weapon_WeaponCustomCatalog_UserData_CameraRecoil_Category_RE4:get_field("_YawRangeDeg")
+                                                                                            Weapon_WeaponCatalog_CameraRecoilParam_Yaw_RE4[subParamName_4th] = subParamValue_4th
+                                                                                            func.write_valuetype(Weapon_WeaponCustomCatalog_UserData_CameraRecoil_Category_RE4, 0x18, Weapon_WeaponCatalog_CameraRecoilParam_Yaw_RE4)
+                                                                                        end
+                                                                                    end
+                                                                                    if subParamName_3rd == "PitchRangeDeg" then
+                                                                                        for subParamName_4th, subParamValue_4th in pairs(subParamValue_3rd) do
+                                                                                            local Weapon_WeaponCatalog_CameraRecoilParam_Pitch_RE4 = Weapon_WeaponCustomCatalog_UserData_CameraRecoil_Category_RE4:get_field("_PitchRangeDeg")
+                                                                                            Weapon_WeaponCatalog_CameraRecoilParam_Pitch_RE4[subParamName_4th] = subParamValue_4th
+                                                                                            func.write_valuetype(Weapon_WeaponCustomCatalog_UserData_CameraRecoil_Category_RE4, 0x20, Weapon_WeaponCatalog_CameraRecoilParam_Pitch_RE4)
+                                                                                        end
+                                                                                    end
+                                                                                end
+                                                                            end
+                                                                        end
+                                                                    end
+                                                                end
+                                                            end
+
+                                                            if Weapon_WeaponCustomCatalog_UserData_AttachmentCustom_Category_RE4 == 105 then
+                                                                local Weapon_WeaponCustomCatalog_UserData_CameraShakeParam_Category_RE4 = Weapon_WeaponCustomCatalog_UserData_AttachmentParams_Category_RE4[k]:get_field("_CameraShakeParam")
+
+                                                                if Weapon_WeaponCustomCatalog_UserData_CameraShakeParam_Category_RE4 then
+                                                                    if subParamName:match("CustomParts") then
+                                                                        for subParamName_2nd, subParamValue_2nd in pairs(subParamValue) do
+                                                                            if subParamName_2nd == "CameraShakeParam" then
+                                                                                for subParamName_3rd, subParamValue_3rd in pairs(subParamValue_2nd) do
+                                                                                    if subParamName_3rd == "_Type" then
+                                                                                        Weapon_WeaponCustomCatalog_UserData_CameraShakeParam_Category_RE4[subParamName_3rd] = subParamValue_3rd
+                                                                                    end
+                                                                                    if subParamName_3rd == "Life" then
+                                                                                        for subParamName_4th, subParamValue_4th in pairs(subParamValue_3rd) do
+                                                                                            local Weapon_WeaponCatalog_CameraShakeParam_Life_RE4 = Weapon_WeaponCustomCatalog_UserData_CameraShakeParam_Category_RE4:get_field("_Life")
+                                                                                            Weapon_WeaponCatalog_CameraShakeParam_Life_RE4[subParamName_4th] = subParamValue_4th
+                                                                                        end
+                                                                                    end
+                                                                                    if subParamName_3rd == "Move" then
+                                                                                        for subParamName_4th, subParamValue_4th in pairs(subParamValue_3rd) do
+                                                                                            local Weapon_WeaponCatalog_CameraShakeParam_Move_RE4 = Weapon_WeaponCustomCatalog_UserData_CameraShakeParam_Category_RE4:get_field("_Move")
+
+                                                                                            if subParamName_4th == "Period" then
+                                                                                                for subParamName_5th, subParamValue_5th in pairs(subParamValue_4th) do
+                                                                                                    local Weapon_WeaponCatalog_CameraShakeParam_Move_Period_RE4 = Weapon_WeaponCatalog_CameraShakeParam_Move_RE4:get_field("_Period")
+                                                                                                    Weapon_WeaponCatalog_CameraShakeParam_Move_Period_RE4[subParamName_5th] = subParamValue_5th
+                                                                                                    func.write_valuetype(Weapon_WeaponCatalog_CameraShakeParam_Move_RE4, 0x10, Weapon_WeaponCatalog_CameraShakeParam_Move_Period_RE4)
+                                                                                                end
+                                                                                            end
+                                                                                            if subParamName_4th == "TranslationXRange" then
+                                                                                                for subParamName_5th, subParamValue_5th in pairs(subParamValue_4th) do
+                                                                                                    local Weapon_WeaponCatalog_CameraShakeParam_Move_TransX_RE4 = Weapon_WeaponCatalog_CameraShakeParam_Move_RE4:get_field("_TranslationXRange")
+                                                                                                    Weapon_WeaponCatalog_CameraShakeParam_Move_TransX_RE4[subParamName_5th] = subParamValue_5th
+                                                                                                    func.write_valuetype(Weapon_WeaponCatalog_CameraShakeParam_Move_RE4, 0x18, Weapon_WeaponCatalog_CameraShakeParam_Move_TransX_RE4)
+                                                                                                end
+                                                                                            end
+                                                                                            if subParamName_4th == "TranslationYRange" then
+                                                                                                for subParamName_5th, subParamValue_5th in pairs(subParamValue_4th) do
+                                                                                                    local Weapon_WeaponCatalog_CameraShakeParam_Move_TransY_RE4 = Weapon_WeaponCatalog_CameraShakeParam_Move_RE4:get_field("_TranslationYRange")
+                                                                                                    Weapon_WeaponCatalog_CameraShakeParam_Move_TransY_RE4[subParamName_5th] = subParamValue_5th
+                                                                                                    func.write_valuetype(Weapon_WeaponCatalog_CameraShakeParam_Move_RE4, 0x20, Weapon_WeaponCatalog_CameraShakeParam_Move_TransY_RE4)
+                                                                                                end
+                                                                                            end
+                                                                                            if subParamName_4th == "TranslationZRange" then
+                                                                                                for subParamName_5th, subParamValue_5th in pairs(subParamValue_4th) do
+                                                                                                    local Weapon_WeaponCatalog_CameraShakeParam_Move_TransZ_RE4 = Weapon_WeaponCatalog_CameraShakeParam_Move_RE4:get_field("_TranslationZRange")
+                                                                                                    Weapon_WeaponCatalog_CameraShakeParam_Move_TransZ_RE4[subParamName_5th] = subParamValue_5th
+                                                                                                    func.write_valuetype(Weapon_WeaponCatalog_CameraShakeParam_Move_RE4, 0x28, Weapon_WeaponCatalog_CameraShakeParam_Move_TransZ_RE4)
+                                                                                                end
+                                                                                            end
+                                                                                            if subParamName_4th == "RotationXRange" then
+                                                                                                for subParamName_5th, subParamValue_5th in pairs(subParamValue_4th) do
+                                                                                                    local Weapon_WeaponCatalog_CameraShakeParam_Move_RotX_RE4 = Weapon_WeaponCatalog_CameraShakeParam_Move_RE4:get_field("_RotationXRange")
+                                                                                                    Weapon_WeaponCatalog_CameraShakeParam_Move_RotX_RE4[subParamName_5th] = subParamValue_5th
+                                                                                                    func.write_valuetype(Weapon_WeaponCatalog_CameraShakeParam_Move_RE4, 0x30, Weapon_WeaponCatalog_CameraShakeParam_Move_RotX_RE4)
+                                                                                                end
+                                                                                            end
+                                                                                            if subParamName_4th == "RotationYRange" then
+                                                                                                for subParamName_5th, subParamValue_5th in pairs(subParamValue_4th) do
+                                                                                                    local Weapon_WeaponCatalog_CameraShakeParam_Move_RotY_RE4 = Weapon_WeaponCatalog_CameraShakeParam_Move_RE4:get_field("_RotationYRange")
+                                                                                                    Weapon_WeaponCatalog_CameraShakeParam_Move_RotY_RE4[subParamName_5th] = subParamValue_5th
+                                                                                                    func.write_valuetype(Weapon_WeaponCatalog_CameraShakeParam_Move_RE4, 0x38, Weapon_WeaponCatalog_CameraShakeParam_Move_RotY_RE4)
+                                                                                                end
+                                                                                            end
+                                                                                            if subParamName_4th == "RotationZRange" then
+                                                                                                for subParamName_5th, subParamValue_5th in pairs(subParamValue_4th) do
+                                                                                                    local Weapon_WeaponCatalog_CameraShakeParam_Move_RotZ_RE4 = Weapon_WeaponCatalog_CameraShakeParam_Move_RE4:get_field("_RotationZRange")
+                                                                                                    Weapon_WeaponCatalog_CameraShakeParam_Move_RotZ_RE4[subParamName_5th] = subParamValue_5th
+                                                                                                    func.write_valuetype(Weapon_WeaponCatalog_CameraShakeParam_Move_RE4, 0x40, Weapon_WeaponCatalog_CameraShakeParam_Move_RotZ_RE4)
+                                                                                                end
+                                                                                            end
+                                                                                        end
+                                                                                    end
+                                                                                end
+                                                                            end
+                                                                        end
+                                                                    end
+                                                                end
+                                                            end
+
+                                                            if Weapon_WeaponCustomCatalog_UserData_AttachmentCustom_Category_RE4 == 106 then
+                                                                local Weapon_WeaponCustomCatalog_UserData_Handshake_Category_RE4 = Weapon_WeaponCustomCatalog_UserData_AttachmentParams_Category_RE4[k]:get_field("_WeaponHandShakeParam")
+                                                                
+                                                                if Weapon_WeaponCustomCatalog_UserData_Handshake_Category_RE4 then
+                                                                    if subParamName:match("CustomParts") then
+                                                                        for subParamName_2nd, subParamValue_2nd in pairs(subParamValue) do
+                                                                            if subParamName_2nd == "HandShakeParam" then
+                                                                                for subParamName_3rd, subParamValue_3rd in pairs(subParamValue_2nd) do
+                                                                                    Weapon_WeaponCustomCatalog_UserData_Handshake_Category_RE4[subParamName_3rd] = subParamValue_3rd
+                                                                                end
+                                                                            end
+                                                                        end
+                                                                    end
+                                                                end
+                                                            end
+
+                                                            if Weapon_WeaponCustomCatalog_UserData_AttachmentCustom_Category_RE4 == 501 and not weapon.ID == "wp4401" then
+                                                                Weapon_WeaponCustomCatalog_UserData_AttachmentParams_Category_RE4[k]._ReticleGuiType = AWF_settings.RE4.Weapon_Params[weapon.ID].CustomCatalog.CustomParts._ReticleGuiType
+                                                            end
                                                         end
                                                     end
                                                 end
@@ -4183,9 +4374,11 @@ local function draw_AWF_RE4Editor_GUI(weaponOrder)
 
                     imgui.spacing()
 
-                    changed, AWF_settings.RE4.Weapon_Params[weapon.ID].UnlimitedCapacity = imgui.checkbox("Unlimited Capacity", AWF_settings.RE4.Weapon_Params[weapon.ID].UnlimitedCapacity); wc = wc or changed
-                    func.tooltip("If enabled, the weapon does not need to be reloaded.")
-                    
+                    if weapon.Type ~= "KNF" then
+                        changed, AWF_settings.RE4.Weapon_Params[weapon.ID].UnlimitedCapacity = imgui.checkbox("Unlimited Capacity", AWF_settings.RE4.Weapon_Params[weapon.ID].UnlimitedCapacity); wc = wc or changed
+                        func.tooltip("If enabled, the weapon does not need to be reloaded.")
+                    end
+
                     -- if AWF_tool_settings.isDebug then
                     --     ui.button_n_colored_txt("DAMAGE LVL:", AWF_settings.RE4.Weapon_Params[weapon.ID].LevelTracker.CurrentLevel.DMG, 0xFF00FF00); wc = wc or changed
                     --     if AWF_settings.RE4.Weapon_Params[weapon.ID].LevelTracker.CurrentLevel.DMG == 1 then
@@ -4371,6 +4564,28 @@ local function draw_AWF_RE4Editor_GUI(weaponOrder)
                                 func.tooltip("TBD")
                             end
 
+                            if AWF_settings.RE4.Weapon_Params[weapon.ID].BaseStats.MeleeParam then
+                                imgui.text_colored(ui.draw_line("=", 95) .. "|  Melee Params " , func.convert_rgba_to_AGBR(textColor))
+
+                                if imgui.button("Reset Melee Parameters") then
+                                    wc = true
+                                    AWF_settings.RE4.Weapon_Params[weapon.ID].BaseStats.MeleeParam = hk.recurse_def_settings({}, AWFWeapons.RE4.Weapon_Params[weapon.ID].BaseStats.MeleeParam)
+                                    AWF_settings.RE4.Weapon_Params[weapon.ID].BaseStats.ThinkPlayerParam = hk.recurse_def_settings({}, AWFWeapons.RE4.Weapon_Params[weapon.ID].BaseStats.ThinkPlayerParam)
+                                end
+
+                                changed, AWF_settings.RE4.Weapon_Params[weapon.ID].BaseStats.MeleeParam.AttackInfo.Combat._ReducePoint = imgui.drag_int("Combat: Reduce Point", AWF_settings.RE4.Weapon_Params[weapon.ID].BaseStats.MeleeParam.AttackInfo.Combat._ReducePoint,  1, 0, 1000); wc = wc or changed
+                                func.tooltip("TBD")
+                                changed, AWF_settings.RE4.Weapon_Params[weapon.ID].BaseStats.MeleeParam.AttackInfo.Combat._CriticalRate = imgui.drag_int("Combat: Critical Rate", AWF_settings.RE4.Weapon_Params[weapon.ID].BaseStats.MeleeParam.AttackInfo.Combat._CriticalRate,  1, 0, 1000); wc = wc or changed
+                                func.tooltip("TBD")
+                                hanged, AWF_settings.RE4.Weapon_Params[weapon.ID].BaseStats.MeleeParam.AttackInfo.CombatCombo._ReducePoint = imgui.drag_int("Combat Combo: Reduce Point", AWF_settings.RE4.Weapon_Params[weapon.ID].BaseStats.MeleeParam.AttackInfo.CombatCombo._ReducePoint,  1, 0, 1000); wc = wc or changed
+                                func.tooltip("TBD")
+                                changed, AWF_settings.RE4.Weapon_Params[weapon.ID].BaseStats.MeleeParam.AttackInfo.CombatCombo._CriticalRate = imgui.drag_int("Combat Combo: Critical Rate", AWF_settings.RE4.Weapon_Params[weapon.ID].BaseStats.MeleeParam.AttackInfo.CombatCombo._CriticalRate,  1, 0, 1000); wc = wc or changed
+                                func.tooltip("TBD")
+
+                                changed, AWF_settings.RE4.Weapon_Params[weapon.ID].BaseStats.ThinkPlayerParam.RangeDistance = imgui.drag_float("Think Range Distance", AWF_settings.RE4.Weapon_Params[weapon.ID].BaseStats.ThinkPlayerParam.RangeDistance,  1.0, 0.0, 1000.0); wc = wc or changed
+                                func.tooltip("TBD")
+                            end
+
                             imgui.spacing()
                             if AWF_settings.RE4.Weapon_Params[weapon.ID].Inventory then
                                 imgui.text_colored(ui.draw_line("=", 95) .. "| Inventory" , func.convert_rgba_to_AGBR(textColor))
@@ -4395,8 +4610,6 @@ local function draw_AWF_RE4Editor_GUI(weaponOrder)
                                 func.tooltip("TBD")
                                 changed, AWF_settings.RE4.Weapon_Params[weapon.ID].Inventory.Define._SliderDurabilityMaxValue = imgui.drag_int("Slider Durability Max", AWF_settings.RE4.Weapon_Params[weapon.ID].Inventory.Define._SliderDurabilityMaxValue, 10, 0, 10000); wc = wc or changed
                                 func.tooltip("TBD")
-                                -- changed, AWF_settings.RE4.Weapon_Params[weapon.ID].Inventory.Define.DefaultDurabilityMax = imgui.drag_int("Default Durability Max 2", AWF_settings.RE4.Weapon_Params[weapon.ID].Inventory.Define.DefaultDurabilityMax, 10, 0, 10000); wc = wc or changed
-                                -- func.tooltip("TBD")
                             end
 
                             imgui.spacing()
@@ -4433,9 +4646,15 @@ local function draw_AWF_RE4Editor_GUI(weaponOrder)
                                 if imgui.button("Reset ReticleFitParam Parameters") then
                                     wc = true
                                     AWF_settings.RE4.Weapon_Params[weapon.ID].BaseStats.ReticleFitParam = hk.recurse_def_settings({}, AWFWeapons.RE4.Weapon_Params[weapon.ID].BaseStats.ReticleFitParam)
+                                    AWF_settings.RE4.Weapon_Params[weapon.ID].Catalog.ReticleFitParamTable = hk.recurse_def_settings({},AWFWeapons.RE4.Weapon_Params[weapon.ID].Catalog.ReticleFitParamTable)
                                 end
                                 if AWF_settings.RE4.Weapon_Params[weapon.ID].Catalog.ReticleFitParamTable._ReticleShape then 
                                     changed, AWF_settings.RE4.Weapon_Params[weapon.ID].Catalog.ReticleFitParamTable._ReticleShape = imgui.combo("Reticle Type", AWF_settings.RE4.Weapon_Params[weapon.ID].Catalog.ReticleFitParamTable._ReticleShape, RE4_Cache.reticleTypes); wc = wc or changed
+                                    -- if AWF_tool_settings.isHideReticle then
+                                    --     AWF_settings.RE4.Weapon_Params[weapon.ID].Catalog.ReticleFitParamTable._ReticleShape = 100000
+                                    -- elseif not AWF_tool_settings.isHideReticle then
+                                    --     AWF_settings.RE4.Weapon_Params[weapon.ID].Catalog.ReticleFitParamTable = hk.recurse_def_settings({},AWFWeapons.RE4.Weapon_Params[weapon.ID].Catalog.ReticleFitParamTable)
+                                    -- end
                                 end
         
                                 changed, AWF_settings.RE4.Weapon_Params[weapon.ID].BaseStats.ReticleFitParam._HoldAddPoint = imgui.drag_float("Hold Add Point", AWF_settings.RE4.Weapon_Params[weapon.ID].BaseStats.ReticleFitParam._HoldAddPoint,  1.0, 0.0, 10000.0); wc = wc or changed
@@ -4482,6 +4701,15 @@ local function draw_AWF_RE4Editor_GUI(weaponOrder)
                                 func.tooltip("TBD")
                             end
                             
+                            if AWF_settings.RE4.Weapon_Params[weapon.ID].Catalog.KnifeCombatSpeedParam and weapon.Type == "KNF" then
+                                if imgui.button("Reset KnifeCombatSpeedParam Parameters") then
+                                    wc = true
+                                    AWF_settings.RE4.Weapon_Params[weapon.ID].Catalog.KnifeCombatSpeedParam = hk.recurse_def_settings({}, AWFWeapons.RE4.Weapon_Params[weapon.ID].Catalog.KnifeCombatSpeedParam)
+                                end
+
+                                changed, AWF_settings.RE4.Weapon_Params[weapon.ID].Catalog.KnifeCombatSpeedParam._KnifeCombatSpeed = imgui.drag_float("KnifeCombatSpeed", AWF_settings.RE4.Weapon_Params[weapon.ID].Catalog.KnifeCombatSpeedParam._KnifeCombatSpeed,  0.01, 0.0, 10.0); wc = wc or changed    
+                            end
+                        
                             -- if AWF_tool_settings.isDebug then
                             --     imgui.spacing()
 
@@ -4562,15 +4790,7 @@ local function draw_AWF_RE4Editor_GUI(weaponOrder)
 
                             --     imgui.spacing()
 
-                            --     if AWF_settings.RE4.Weapon_Params[weapon.ID].Catalog.KnifeCombatSpeedParam then
-                            --         if imgui.button("Reset KnifeCombatSpeedParam Parameters") then
-                            --             wc = true
-                            --             AWF_settings.RE4.Weapon_Params[weapon.ID].Catalog.KnifeCombatSpeedParam = hk.recurse_def_settings({}, AWFWeapons.RE4.Weapon_Params[weapon.ID].Catalog.KnifeCombatSpeedParam)
-                            --         end
-
-                            --         changed, AWF_settings.RE4.Weapon_Params[weapon.ID].Catalog.KnifeCombatSpeedParam._KnifeCombatSpeed = imgui.drag_float("KnifeCombatSpeed", AWF_settings.RE4.Weapon_Params[weapon.ID].Catalog.KnifeCombatSpeedParam._KnifeCombatSpeed,  0.1, 0.0, 100.0); wc = wc or changed    
-                            --     end
-                            -- end
+                            
                             imgui.spacing()
                             imgui.text_colored(ui.draw_line("=", 95) .. "|" , func.convert_rgba_to_AGBR(textColor))
                         end
@@ -4610,17 +4830,17 @@ local function draw_AWF_RE4Editor_GUI(weaponOrder)
 
                                     if tonumber(j) == 1 then 
                                         if AWF_settings.RE4.Weapon_Params[weapon.ID].CustomCatalog[i]["LVL" .. j .."_DMG"] then
-                                            imgui.drag_float("LVL-" .. j .. " Power", AWF_settings.RE4.Weapon_Params[weapon.ID].CustomCatalog[i]["LVL" .. j .."_DMG"]._BaseValue)
-                                            imgui.input_text("LVL-" .. j .. " Power Info", AWF_settings.RE4.Weapon_Params[weapon.ID].CustomCatalog[i]["LVL" .. j .."_DMG"]._Info)
+                                            imgui.drag_float("LVL-" .. j .. " Power", AWF_settings.RE4.Weapon_Params[weapon.ID].CustomCatalog[i]["LVL" .. j .."_DMG"]._BaseValue); wc = wc or changed
+                                            imgui.input_text("LVL-" .. j .. " Power Info", AWF_settings.RE4.Weapon_Params[weapon.ID].CustomCatalog[i]["LVL" .. j .."_DMG"]._Info); wc = wc or changed
                                         end
                                         if AWF_settings.RE4.Weapon_Params[weapon.ID].CustomCatalog[i]["LVL" .. j .."_WIN"] then
-                                        imgui.drag_float("LVL-" .. j .. " Wince", AWF_settings.RE4.Weapon_Params[weapon.ID].CustomCatalog[i]["LVL" .. j .."_WIN"]._BaseValue)
+                                        imgui.drag_float("LVL-" .. j .. " Wince", AWF_settings.RE4.Weapon_Params[weapon.ID].CustomCatalog[i]["LVL" .. j .."_WIN"]._BaseValue); wc = wc or changed
                                         end
                                         if AWF_settings.RE4.Weapon_Params[weapon.ID].CustomCatalog[i]["LVL" .. j .."_BRK"] then
-                                            imgui.drag_float("LVL-" .. j .. " Break", AWF_settings.RE4.Weapon_Params[weapon.ID].CustomCatalog[i]["LVL" .. j .."_BRK"]._BaseValue)
+                                            imgui.drag_float("LVL-" .. j .. " Break", AWF_settings.RE4.Weapon_Params[weapon.ID].CustomCatalog[i]["LVL" .. j .."_BRK"]._BaseValue); wc = wc or changed
                                         end
                                         if AWF_settings.RE4.Weapon_Params[weapon.ID].CustomCatalog[i]["LVL" .. j .."_STP"] then
-                                            imgui.drag_float("LVL-" .. j .. " Stopping Power", AWF_settings.RE4.Weapon_Params[weapon.ID].CustomCatalog[i]["LVL" .. j .."_STP"]._BaseValue)
+                                            imgui.drag_float("LVL-" .. j .. " Stopping Power", AWF_settings.RE4.Weapon_Params[weapon.ID].CustomCatalog[i]["LVL" .. j .."_STP"]._BaseValue); wc = wc or changed
                                         end
                                     end
 
@@ -4689,7 +4909,14 @@ local function draw_AWF_RE4Editor_GUI(weaponOrder)
                                         changed, AWF_settings.RE4.Weapon_Params[weapon.ID].CustomCatalog[i]["LVL" .. j .."_PMP"]._BaseValue = imgui.drag_float("LVL-" .. j .. " Pump Action Speed", AWF_settings.RE4.Weapon_Params[weapon.ID].CustomCatalog[i]["LVL" .. j .."_PMP"]._BaseValue, 0.01, -1.0, 10000.0); wc = wc or changed
                                         AWF_settings.RE4.Weapon_Params[weapon.ID].BaseStats.WeaponStructureParam._PumpActionRapidSpeed = AWF_settings.RE4.Weapon_Params[weapon.ID].CustomCatalog.Level_1.LVL1_PMP._BaseValue
                                     end
+                                    if AWF_settings.RE4.Weapon_Params[weapon.ID].CustomCatalog[i]["LVL" .. j .."_DUR"] then
+                                        changed, AWF_settings.RE4.Weapon_Params[weapon.ID].CustomCatalog[i]["LVL" .. j .."_DUR"]._BaseValue = imgui.drag_int("LVL-" .. j .. " Durability", AWF_settings.RE4.Weapon_Params[weapon.ID].CustomCatalog[i]["LVL" .. j .."_DUR"]._BaseValue, 10, 0, 10000); wc = wc or changed
+                                        AWF_settings.RE4.Weapon_Params[weapon.ID].Inventory.Define._DefaultDurabilityMax =  AWF_settings.RE4.Weapon_Params[weapon.ID].CustomCatalog.Level_1.LVL1_DUR._BaseValue
 
+                                        changed, AWF_settings.RE4.Weapon_Params[weapon.ID].CustomCatalog[i]["LVL" .. j .."_DUR"]._Cost = imgui.drag_int("LVL-" .. j .. " Durability Cost", AWF_settings.RE4.Weapon_Params[weapon.ID].CustomCatalog[i]["LVL" .. j .."_DUR"]._Cost, 100, 0, 1000000); wc = wc or changed
+                                        changed, AWF_settings.RE4.Weapon_Params[weapon.ID].CustomCatalog[i]["LVL" .. j .."_DUR"]._Info = imgui.input_text("LVL-" .. j .. " Durability Info", AWF_settings.RE4.Weapon_Params[weapon.ID].CustomCatalog[i]["LVL" .. j .."_DUR"]._Info); wc = wc or changed
+                                    
+                                    end
                                     imgui.spacing()
                                 end
                             end
@@ -4872,7 +5099,7 @@ local function draw_AWF_RE4Preset_GUI(weaponOrder)
             lastGame = weapon.Game
         end
 
-        if weapon then
+        if weapon and AWF_tool_settings.RE4[weapon.ID] then
             changed, AWF_settings.RE4.Weapon_Params[weapon.ID].current_param_indx = imgui.combo(weapon.Name, AWF_settings.RE4.Weapon_Params[weapon.ID].current_param_indx or 1, AWF_settings.RE4.Weapon_Params[weapon.ID].Weapon_Presets); wc = wc or changed
             if changed then
                 local selected_profile = AWF_settings.RE4.Weapon_Params[weapon.ID].Weapon_Presets[AWF_settings.RE4.Weapon_Params[weapon.ID].current_param_indx]
@@ -4913,14 +5140,13 @@ local function draw_AWF_RE4_GUI()
         if imgui.button("Reset to Defaults") then
             wc = true
             changed = true
-            AWF_settings.RE4.Weapons = hk.recurse_def_settings({}, AWFWeapons.RE4.Weapons)
-            AWF_settings.RE4.Weapon_Params = hk.recurse_def_settings({}, AWFWeapons.RE4.Weapon_Params)
-            AWF_settings.RE4.Weapon_Order = hk.recurse_def_settings({}, AWFWeapons.RE4.Weapon_Order)
+            AWF_settings.RE4 = hk.recurse_def_settings({}, AWFWeapons.RE4)
             for _, weapon in pairs(AWF_settings.RE4.Weapons) do
                 weapon.isUpdated = true
                 weapon.isCatalogUpdated = true
                 weapon.isCustomCatalogUpdated = true
                 weapon.isInventoryUpdated = true
+                get_WeaponData_RE4(AWF_settings.RE4.Weapons)
             end
             cache_AWF_json_files_RE4(AWF_settings.RE4.Weapons)
         end
@@ -4949,29 +5175,33 @@ local function draw_AWF_RE4_GUI()
             imgui.spacing()
             imgui.indent(5)
 
-            imgui.button("Notes:")
-            imgui.same_line()
-            imgui.button("(1)")
-            func.tooltip("The Level 1 Power/Wince/Break/Stopping Power values are hardcoded and therefore cannot be changed, however you can change their multipliers under the weapon's Base Stat tab.")
-            imgui.same_line()
-            imgui.button("(2)")
-            func.tooltip("INFO = The value displayed in the Inventory/Shop.\nCOST = The price of the upgrade.")
-            imgui.same_line()
-            imgui.button("(3)")
-            func.tooltip("Rate of Fire is somewhat limited by the animations.")
-            imgui.same_line()
-            imgui.button("(4)")
-            func.tooltip("Power Info Calculation Formula: (Level 1 Power * Damage Multiplier) * Level n Power = Level n Info")
-            imgui.same_line()
-            imgui.button("(5)")
-            func.tooltip("Rate of Fire Info Calculation Formula: Level 1 Rate of Fire / Level n Rate of Fire = Level n Rate of Fire Info.")
-            
-            imgui.spacing()
-
             changed, AWF_tool_settings.isDebug = imgui.checkbox("Debug Mode", AWF_tool_settings.isDebug); wc = wc or changed
             func.tooltip("Enable/Disable debug mode. When enabled, AWF will log significantly more information in the 're2_framework_log.txt' file, located in the game's root folder.\nLeave this on if you don't know what you are doing.")
             changed, AWF_tool_settings.isInheritPresetName = imgui.checkbox("Inherit Preset Name", AWF_tool_settings.isInheritPresetName); wc = wc or changed
             func.tooltip("If enabled the '[Enter Preset Name Here]' text in the Weapon Stat Editor will be replaced by the name of the last loaded preset.")
+            changed, AWF_tool_settings.isHideReticle = imgui.checkbox("Hide Weapon Reticles", AWF_tool_settings.isHideReticle); wc = wc or changed
+            if AWF_tool_settings.isHideReticle and wc or changed then
+                for _, weapon in pairs(AWF_settings.RE4.Weapons) do
+                    weapon.isCatalogUpdated = true
+                end
+                get_WeaponData_RE4(AWF_settings.RE4.Weapons)
+            elseif not AWF_tool_settings.isHideReticle and wc or changed then
+                for _, weapon in pairs(AWF_settings.RE4.Weapons) do
+                    weapon.isCatalogUpdated = true
+                end
+                get_WeaponData_RE4(AWF_settings.RE4.Weapons)
+            end
+
+
+            if imgui.tree_node("Display Settings") then
+                for _, weaponName in pairs(AWF_settings.RE4.Weapon_Order) do
+                    local weapon = AWF_settings.RE4.Weapons[weaponName]
+                    changed, AWF_tool_settings.RE4[weapon.ID] = imgui.checkbox("Show " .. weapon.Name , AWF_tool_settings.RE4[weapon.ID]); wc = wc or changed
+                    func.tooltip("Show/Hide the " .. weapon.Name .. " in the Preset Manager.")
+                end
+
+                imgui.tree_pop()
+            end
 
             if imgui.tree_node("Credits") then
                 imgui.text(modCredits .. " ")
