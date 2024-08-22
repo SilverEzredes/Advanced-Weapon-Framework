@@ -2,8 +2,8 @@
 local modName = "Advanced Weapon Framework - Gunsmith"
 
 local modAuthor = "SilverEzredes"
-local modUpdated = "08/21/2024"
-local modVersion = "v3.2.5"
+local modUpdated = "08/22/2024"
+local modVersion = "v3.2.51"
 local modCredits = "praydog; alphaZomega"
 
 --/////////////////////////////////////--
@@ -31,7 +31,7 @@ local AWFGS_default_settings = {
     isDebug = true,
     showMeshName = true,
     showMaterialCount = true,
-    showPresetPath = true,
+    showPresetPath = false,
     showMeshPath = true,
     showMDFPath = true,
 }
@@ -48,7 +48,7 @@ AWFWeapons.RE3_Gunsmith = require("AWFCore/AWFGS/RE3R_MaterialData")
 AWFWeapons.RE4_Gunsmith = require("AWFCore/AWFGS/RE4R_MaterialData")
 AWFWeapons.RE7_Gunsmith = require("AWFCore/AWFGS/RE7_MaterialData")
 AWFWeapons.RE8_Gunsmith = require("AWFCore/AWFGS/RE8_MaterialData")
-local AWFGS_RE4Comp = require("AWFCore/AWFGS/Compendium/RE4R_MaterialCompendium")
+AWFGS_RE4Comp = require("AWFCore/AWFGS/Compendium/RE4R_MaterialCompendium")
 
 local AWFGS_settings = hk.merge_tables({}, AWFGS_default_settings) and hk.recurse_def_settings(json.load_file("AWF/AWF_Gunsmith/AWFGS_ToolSettings.json") or {}, AWFGS_default_settings)
 local AWF_settings = hk.merge_tables({}, AWFWeapons) and hk.recurse_def_settings(json.load_file("AWF/AWF_Gunsmith/AWF_Gunsmith_Settings.json") or {}, AWFWeapons)

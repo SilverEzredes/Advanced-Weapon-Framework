@@ -6714,7 +6714,7 @@ local RE4R_WeaponData = {
                 CustomParts = {},
             },
             Inventory = {
-               _CurrentAmmo = 112808000,
+               _CurrentAmmo = 112480000,
                 Define = {
                     _AmmoMax = 1,
                     _AmmoCost = 1,

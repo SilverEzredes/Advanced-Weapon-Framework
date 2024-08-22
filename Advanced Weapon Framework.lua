@@ -2,8 +2,8 @@
 local modName = "Advanced Weapon Framework"
 
 local modAuthor = "SilverEzredes"
-local modUpdated = "08/21/2024"
-local modVersion = "v3.2.5"
+local modUpdated = "08/22/2024"
+local modVersion = "v3.2.6"
 local modCredits = "praydog; alphaZomega; MrBoobieBuyer; Lotiuss"
 
 --/////////////////////////////////////--
@@ -183,10 +183,9 @@ local function check_if_playerIsInScene()
     end
 end
 
-
+-- This is the master function for RE4R, updates *all* AWF data on loading screens.
 local function check_for_loading_screen_RE4()
     check_if_playerIsInScene()
-    -- This is the master function for RE4R, updates *all* AWF data on loading screens.
     tick_interval = 1.0 / 1.0
     local loading_screen_GameObject_RE4 = func.get_GameObject(scene, AWF_Cache.LoadingGUI_RE4)
 
@@ -216,7 +215,6 @@ local function check_for_loading_screen_RE4()
                     for key, value in pairs(temp_params) do
                         AWF.AWF_settings.RE4.Weapon_Params[weapon.ID][key] = value
                     end
-                    AWF.cache_AWF_json_files_RE4(AWF.AWF_settings.RE4.Weapons)
                 elseif selected_preset == nil or {} then
                     AWF.AWF_settings.RE4.Weapon_Params[weapon.ID].current_param_indx = 1
                 end
@@ -226,8 +224,10 @@ local function check_for_loading_screen_RE4()
                 end
             end
             log.info("[AWF] [--------------------- Loading... All AWF Data Updated!]")
+            log.info("[AWF] [--------------------- Version: " .. modVersion .. " Updated: " .. modUpdated .. "]")
             last_time = os.clock()
         elseif not loading_screen_RE4 and NowLoading and isPlayerInScene then
+            AWF.cache_AWF_json_files_RE4(AWF.AWF_settings.RE4.Weapons)
             for _, weapon in pairs(AWF.AWF_settings.RE4.Weapons) do
                 weapon.isUpdated = false
                 weapon.isCatalogUpdated = false

@@ -2,8 +2,8 @@
 local modName = "Advanced Weapon Framework Core"
 
 local modAuthor = "SilverEzredes"
-local modUpdated = "08/21/2024"
-local modVersion = "v3.2.5"
+local modUpdated = "08/22/2024"
+local modVersion = "v3.2.73"
 local modCredits = "praydog; alphaZomega; MrBoobieBuyer; Lotiuss"
 
 --/////////////////////////////////////--
@@ -2633,6 +2633,7 @@ end
 --////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 --MARK: RE4R
 local cached_weapon_GameObjects_RE4 = {}
+local cached_jsonPaths_RE4 = {}
 local RE4_Cache = {
     weaponCatalog = "WeaponCatalog",
     weaponCatalog_AO = "WeaponCatalog_AO",
@@ -2663,6 +2664,7 @@ local RE4_Cache = {
     },
     ammoTypes = {
         [-1] = "Invalid",
+        [112480000] = "Blast Arrows",
         [112800000] = "Handgun Ammo",
         [112801600] = "Magnum Ammo",
         [112803200] = "Shotgun Ammo",
@@ -2715,8 +2717,7 @@ local function dump_Default_WeaponParam_json_RE4(weaponData)
         end
     end
 end
-
---Gets the weapon data for the weapons found in the AWF_settings table
+--Sets the weapon data for the weapons found in the AWF_settings table, or uses the values from a custom preset
 local function get_WeaponData_RE4(weaponData)
     for _, weapon in pairs(weaponData) do
         if weapon.isUpdated then
@@ -3454,12 +3455,20 @@ local function get_WeaponData_RE4(weaponData)
                                                         end
                                                     end
                                                 end
-                                                for h, field in ipairs(IndividualsMap) do
+                                                
+                                                for h, field in ipairs(IndividualsMap) do                                                    
                                                     if Weapon_WeaponCustomCatalog_UserData_Individuals_RE4[h] then
                                                         local Weapon_WeaponCustomCatalog_UserData_Individuals_Field_RE4 = Weapon_WeaponCustomCatalog_UserData_Individuals_RE4[h]:get_field(field)
 
                                                         if Weapon_WeaponCustomCatalog_UserData_Individuals_Field_RE4 then
-                                                            local customStagesField = field == ("_CustomReloadSpeed" and "_ReloadSpeedCustomStages" or "_RapidCustomStages") or ("_CustomStrength" and "_StrengthCustomStages")
+                                                            local customStagesField
+                                                            if field == "_CustomReloadSpeed" then
+                                                                customStagesField = "_ReloadSpeedCustomStages"
+                                                            elseif field == "_CustomRapid" then
+                                                                customStagesField = "_RapidCustomStages"
+                                                            elseif field == "_CustomStrength" then
+                                                                customStagesField = "_StrengthCustomStages"
+                                                            end
                                                             local Weapon_WeaponCustomCatalog_UserData_Individuals_Field_CustomStages_RE4 = Weapon_WeaponCustomCatalog_UserData_Individuals_Field_RE4:get_field(customStagesField)
                                                             Weapon_WeaponCustomCatalog_UserData_Individuals_Field_CustomStages_RE4 = Weapon_WeaponCustomCatalog_UserData_Individuals_Field_CustomStages_RE4 and Weapon_WeaponCustomCatalog_UserData_Individuals_Field_CustomStages_RE4:get_elements() or {}
 
@@ -3476,22 +3485,16 @@ local function get_WeaponData_RE4(weaponData)
                                                                                     if subParamName_3rd == "_Cost" then
                                                                                         stage[subParamName_3rd] = subParamValue_3rd
                                                                                     end
-                                                                                    if subParamName_3rd == "_Info" then 
-                                                                                        if subParamName_2nd == subParamMap[3] then
-                                                                                            stage[subParamName_3rd] = tostring(string.format("%.2f", (weaponParams[paramName][subParamName]["LVL" .. v .."_DUR"]._BaseValue / 1000)))
-                                                                                            weaponParams[paramName][subParamName]["LVL" .. v .."_DUR"]._Info = stage[subParamName_3rd]
+                                                                                    if subParamName_3rd == "_Info" then                                                                     
+                                                                                        if subParamName_2nd == subParamMap[1] then
+                                                                                            stage[subParamName_3rd] = subParamValue_3rd
                                                                                         end
                                                                                         if subParamName_2nd == subParamMap[2] then
                                                                                             stage[subParamName_3rd] = subParamValue_3rd
                                                                                         end
-                                                                                        if subParamName_2nd == subParamMap[1] then
-                                                                                            stage[subParamName_3rd] = subParamValue_3rd
-                                                                                            -- if weapon.ID == "wp4200" then
-                                                                                            --     stage[subParamName_3rd] = tostring(string.format("%.2f", weaponParams[paramName][subParamName]["LVL" .. v .."_RS"]._BaseValue / AWF_settings.RE4.Weapon_Params[weapon.ID].BaseStats.WeaponStructureParam._ReloadSpeedRate))
-                                                                                            --     weaponParams[paramName][subParamName]["LVL" .. v .."_RS"]._Info = stage[subParamName_3rd]
-                                                                                            -- elseif weapon.ID == "wp4200" then
-                                                                                            --     stage[subParamName_3rd] = subParamValue_3rd
-                                                                                            --end
+                                                                                        if subParamName_2nd == subParamMap[3] then
+                                                                                            stage[subParamName_3rd] = tostring(string.format("%.2f", (weaponParams[paramName][subParamName]["LVL" .. v .."_DUR"]._BaseValue / 1000)))
+                                                                                            weaponParams[paramName][subParamName]["LVL" .. v .."_DUR"]._Info = stage[subParamName_3rd]
                                                                                         end
                                                                                     end
                                                                                 end
@@ -3880,7 +3883,7 @@ local function get_WeaponData_RE4(weaponData)
                                                             end
                                                         end
                                                     end
-                                                    if Weapon_WeaponCustomCatalog_UserData_LimitBreakCustom_Category_RE4 == 7 then
+                                                    if Weapon_WeaponCustomCatalog_UserData_LimitBreakCustom_Category_RE4 == 9 then
                                                         local Weapon_WeaponCustomCatalog_UserData_LimitBreakCustom_UNBRK_RE4 = Weapon_WeaponCustomCatalog_UserData_LimitBreakCustom_RE4[j]:get_field("_LimitBreakUnbreakable")
 
                                                         if Weapon_WeaponCustomCatalog_UserData_LimitBreakCustom_UNBRK_RE4 then
@@ -4082,6 +4085,10 @@ local function get_WeaponData_RE4(weaponData)
 
                                                             if Weapon_WeaponCustomCatalog_UserData_AttachmentCustom_Category_RE4 == 501 and not weapon.ID == "wp4401" then
                                                                 Weapon_WeaponCustomCatalog_UserData_AttachmentParams_Category_RE4[k]._ReticleGuiType = AWF_settings.RE4.Weapon_Params[weapon.ID].CustomCatalog.CustomParts._ReticleGuiType
+
+                                                                if AWF_tool_settings.isHideReticle then
+                                                                    Weapon_WeaponCustomCatalog_UserData_AttachmentParams_Category_RE4[k]._ReticleGuiType = 100000
+                                                                end
                                                             end
                                                         end
                                                     end
@@ -4119,6 +4126,11 @@ local function get_WeaponData_RE4(weaponData)
 
                             if Weapon_PlayerInventoryObserver_CSInventory_RE4 then
                                 local Weapon_PlayerInventoryObserver_InventoryItems_RE4 = Weapon_PlayerInventoryObserver_CSInventory_RE4:get_field("_InventoryItems")
+                                -- local Weapon_PlayerInventoryObserver_TacticalAmmo_RE4 =  Weapon_PlayerInventoryObserver_CSInventory_RE4._ReloadInfos
+                                
+                                -- for i in pairs(Weapon_PlayerInventoryObserver_TacticalAmmo_RE4) do
+                                --     Weapon_PlayerInventoryObserver_TacticalAmmo_RE4[i]:set_field("<HasTacticalAmmo>k__BackingField", false) 
+                                -- end
 
                                 if Weapon_PlayerInventoryObserver_InventoryItems_RE4 then
                                     local Weapon_PlayerInventoryObserver_InventoryItems_Items_RE4 = Weapon_PlayerInventoryObserver_InventoryItems_RE4:get_field("_items")
@@ -4175,7 +4187,21 @@ local function get_WeaponData_RE4(weaponData)
     end
 end
 
---Caches the .json files --TODO this is slow af
+--Clears the cached path for a weapon if a new preset is saved
+local function clear_AWF_json_cache_RE4(weaponData)
+    for _, weapon in pairs(weaponData) do
+        if weapon.isUpdated then
+            local cacheKey = "AWF\\AWF_Weapons\\" .. weapon.Name
+            cached_jsonPaths_RE4[cacheKey] = nil
+
+            if AWF_tool_settings.isDebug then
+                log.info("[AWF] [Preset path cache cleared for " .. weapon.Name .. " | " .. weapon.ID .. " ]")
+            end
+        end
+    end
+end
+
+--Caches the .json files
 local function cache_AWF_json_files_RE4(weaponData)
     for _, weapon in pairs(weaponData) do
         local weaponParams = AWF_settings.RE4.Weapon_Params[weapon.ID]
@@ -4184,7 +4210,12 @@ local function cache_AWF_json_files_RE4(weaponData)
             local json_names = weaponParams.Weapon_Presets or {}
             local cacheKey = "AWF\\AWF_Weapons\\" .. weapon.Name
 
-            local json_filepaths = fs.glob([[AWF\\AWF_Weapons\\]] .. weapon.Name .. [[\\.*.json]])
+            if not cached_jsonPaths_RE4[cacheKey] then
+                local path = [[AWF\\AWF_Weapons\\]] .. weapon.Name .. [[\\.*.json]]
+                cached_jsonPaths_RE4[cacheKey] =  fs.glob(path)
+            end
+
+            local json_filepaths = cached_jsonPaths_RE4[cacheKey]
             
             if json_filepaths then
                 local defaultName = weapon.Name .. " Default"
@@ -4359,7 +4390,7 @@ local function draw_AWF_RE4Editor_GUI(weaponOrder)
                         end
                         cache_AWF_json_files_RE4(AWF_settings.RE4.Weapons)
                     end
-
+                    
                     imgui.push_id(_)
                     changed, presetName = imgui.input_text("", presetName); wc = wc or changed
                     imgui.pop_id()
@@ -4367,7 +4398,9 @@ local function draw_AWF_RE4Editor_GUI(weaponOrder)
                     imgui.same_line()
                     if imgui.button("Save Preset") then
                         json.dump_file("AWF/AWF_Weapons/".. weapon.Name .. "/" .. presetName .. ".json", AWF_settings.RE4.Weapon_Params[weapon.ID])
-                        log.info("[AWF] [Custom " .. weapon.Name ..  " Params Saved]")
+                        log.info("[AWF] [Custom " .. weapon.Name ..  " params saved with the preset name " .. presetName .. " ]")
+                        weapon.isUpdated = true
+                        clear_AWF_json_cache_RE4(AWF_settings.RE4.Weapons)
                         cache_AWF_json_files_RE4(AWF_settings.RE4.Weapons)
                     end
                     func.tooltip("Save the current parameters of the " .. weapon.Name .. " to '[PresetName].json' found in [RESIDENT EVIL 4  BIOHAZARD RE4/reframework/data/AWF/AWF_Weapons/".. weapon.Name .. "]")
@@ -4988,6 +5021,15 @@ local function draw_AWF_RE4Editor_GUI(weaponOrder)
                                     changed, AWF_settings.RE4.Weapon_Params[weapon.ID].CustomCatalog.Level_EX.EXEXP._BlastRangeScale = imgui.drag_float("Blast Range Scale", AWF_settings.RE4.Weapon_Params[weapon.ID].CustomCatalog.Level_EX.EXEXP._BlastRangeScale, 0.01, 0.0, 100.0); wc = wc or changed
                                     func.tooltip("Blast Range Scale multiplier. Higher is better.")
                                     changed, AWF_settings.RE4.Weapon_Params[weapon.ID].CustomCatalog.Level_EX.EXEXP._Cost = imgui.drag_int("EX Upgrade Cost", AWF_settings.RE4.Weapon_Params[weapon.ID].CustomCatalog.Level_EX.EXEXP._Cost, 100, 0, 1000000); wc = wc or changed
+                                end
+                                if AWF_settings.RE4.Weapon_Params[weapon.ID].CustomCatalog.Level_EX.EXSPD then
+                                    changed, AWF_settings.RE4.Weapon_Params[weapon.ID].CustomCatalog.Level_EX.EXSPD._CombatSpeed = imgui.drag_float("Combat Speed Scale", AWF_settings.RE4.Weapon_Params[weapon.ID].CustomCatalog.Level_EX.EXSPD._CombatSpeed, 0.01, 0.0, 100.0); wc = wc or changed
+                                    func.tooltip("Combat Speed Scale multiplier. Higher is better.")
+                                    changed, AWF_settings.RE4.Weapon_Params[weapon.ID].CustomCatalog.Level_EX.EXSPD._Cost = imgui.drag_int("EX Upgrade Cost", AWF_settings.RE4.Weapon_Params[weapon.ID].CustomCatalog.Level_EX.EXSPD._Cost, 100, 0, 1000000); wc = wc or changed
+                                end
+                                if AWF_settings.RE4.Weapon_Params[weapon.ID].CustomCatalog.Level_EX.EXUNBRK then
+                                    changed, AWF_settings.RE4.Weapon_Params[weapon.ID].CustomCatalog.Level_EX.EXUNBRK._IsUnbreakable = imgui.checkbox("Unbreakable", AWF_settings.RE4.Weapon_Params[weapon.ID].CustomCatalog.Level_EX.EXUNBRK._IsUnbreakable); wc = wc or changed
+                                    changed, AWF_settings.RE4.Weapon_Params[weapon.ID].CustomCatalog.Level_EX.EXUNBRK._Cost = imgui.drag_int("EX Upgrade Cost", AWF_settings.RE4.Weapon_Params[weapon.ID].CustomCatalog.Level_EX.EXUNBRK._Cost, 100, 0, 1000000); wc = wc or changed
                                 end
                             end
                         end
