@@ -12,10 +12,6 @@ This is a repository of all Advanced Weapon Framework lua scripts, for use with 
 - [REFramework](https://github.com/praydog/REFramework-nightly/releases)
 - [Fluffy Mod Manager](https://www.fluffyquack.com/)
 
-### Installation:
-- All scripts require REFramework's dinput8.dll to be in your game directory.
-- Scripts can be installed each as a package by Fluffy Mod Manager.
-
 ## Links
 Resident Evil 2 Remake:
 - [Script Core](https://www.nexusmods.com/residentevil22019/mods/1421)
