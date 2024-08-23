@@ -1,15 +1,18 @@
 --'Hotkeys' REFramework lua script
 --By alphaZomega
---v1.2.0 August 14, 2023
 --Manage custom hotkeys across scripts
+--v1.3.3 August 5, 2024
 
-local kb
-local mouse
-local pad
+--Removed yellow asterisk for key conflicts
+--Added 'check_kb_key', 'check_mouse_button' and 'check_pad_button' functions for testing if an input is down by name directly
+--Added 'check_doubletap' and 'check_hold' hotkey checkers, for seeing if an action is being double-tapped or held down
 
-local kb_state = { down = {}, released = {},}
-local gp_state = { down = {}, released = {},}
-local mb_state = { down = {}, released = {},}
+local kb, mouse, pad
+local m_up, m_down, m_trig
+local gp_up, gp_down, gp_trig 
+local kb_state = {down = {}, released = {}, triggered={}}
+local gp_state = {down = {}, released = {}, triggered={}}
+local mb_state = {down = {}, released = {}, triggered={}}
 local modifiers = {}
 local temp_data = {}
 
@@ -54,10 +57,15 @@ local backup_hotkeys = {}
 local hotkeys_down = {}
 local hotkeys_up = {}
 local hotkeys_trig = {}
+local hold_dn_times = {}
+local hold_times = {}
+local dt_rel_times = {}
+local dt_times = {}
 
 local keys = generate_statics("via.hid.KeyboardKey")
 local buttons = generate_statics("via.hid.GamePadButton")
 local mbuttons = generate_statics("via.hid.MouseButton")
+
 keys.DefinedEnter = nil
 keys.Shift = nil
 keys.LAlt, keys.RAlt, keys.Alt = keys.LMenu, keys.RMenu, keys.Menu
@@ -162,7 +170,12 @@ end
 local function reset_from_defaults_tbl(default_hotkey_table)
 	for key, value in pairs(default_hotkey_table) do
 		hotkeys[key] = value
-		hotkeys[key.."_$"], hotkeys[key.."_$_$"], hk_data.modifier_actions[key.."_$"], hk_data.modifier_actions[key.."_$_$"] = nil
+		if not default_hotkey_table[key.."_$_$"] then
+			hk_data.modifier_actions[key.."_$"], hk_data.modifier_actions[key.."_$_$"] = nil
+		end
+		if not default_hotkey_table[key.."_$"] then
+			hotkeys[key.."_$"], hotkeys[key.."_$_$"] = nil
+		end
 	end
 	json.dump_file("Hotkeys_data.json", hk_data)
 	setup_active_keys_tbl()
@@ -178,17 +191,38 @@ local function setup_hotkeys(hotkey_table, default_hotkey_table)
 	if not default_hotkey_table then
 	     	default_hotkey_table = {}
 		for key, value in pairs(hotkey_table) do
-			default_hotkey_table[key] = value
+			default_hotkey_table[key] = value or nil
 		end
 	end
 	default_hotkeys = merge_tables(default_hotkeys, default_hotkey_table)
 	for key, value in pairs(default_hotkey_table) do 
 		if hotkey_table[key] == nil then 
-			hotkey_table[key] = value 
+			hotkey_table[key] = value or nil
 		end 
 	end
 	hotkeys = merge_tables(hotkeys, hotkey_table)
 	setup_active_keys_tbl()
+end
+
+local function check_kb_key(key_str, check_down, check_triggered)
+	local key = keys[key_str]
+	if not key or not kb then return end
+	local method_name = check_down==true and "isDown" or (check_down or check_triggered) and "isTrigger" or "isRelease"
+	return kb:call(method_name, key)
+end
+
+local function check_pad_button(button_str, check_down, check_triggered)
+	local button = buttons[button_str]
+	if not button or not pad then return end
+	local gp_button = check_down==true and gp_down or (check_down or check_triggered) and gp_trig or gp_up
+	return (gp_button | button) == gp_button
+end
+
+local function check_mouse_button(button_str, check_down, check_triggered)
+	local button = mbuttons[button_str]
+	if not button or not mouse then return end
+	local m_button = check_down==true and m_down or (check_down or check_triggered) and m_trig or m_up
+	return (m_button | button) == m_button
 end
 
 --Checks if an action's binding is down
@@ -238,6 +272,34 @@ local function check_hotkey(action_name, check_down, check_triggered)
 	return hotkeys_up[action_name]
 end
 
+--Checks if an action's binding has been pressed twice in the past 0.25 seconds
+local function check_doubletap(action_name, check_released)
+	if check_hotkey(action_name, nil, not check_released) then
+		local times = check_released and dt_rel_times or dt_times
+		local start = times[action_name]
+		if start and os.clock() - start < 0.25 then
+			return true
+		end
+		times[action_name] = os.clock()
+	end
+end
+
+--Checks if an action's binding has been held down for 'time_limit' seconds
+--'check_down' specifies if the function should keep returning true while the button continues to be held
+local function check_hold(action_name, check_down, time_limit)
+	local times = check_down and hold_dn_times or hold_times
+	if check_hotkey(action_name, true) then
+		local start = times[action_name]
+		times[action_name] = start or os.clock()
+		if start and start ~= 0 and os.clock() - start >= (time_limit or 0.5) then
+			if not check_down then  times[action_name] = 0  end
+			return true
+		end
+	else
+		times[action_name] = nil
+	end
+end
+
 --Displays an imgui button that you can click then and press a button to assign a button to an action
 local function hotkey_setter(action_name, hold_action_name, fake_name, title_tooltip)
 	
@@ -267,8 +329,7 @@ local function hotkey_setter(action_name, hold_action_name, fake_name, title_too
 					end
 				end
 			end
-			m_up = mouse and mouse:call("get_ButtonUp")
-			if m_up and m_up ~= 0 then
+			if mouse and m_up and m_up ~= 0 then
 				for button_name, id in pairs(mbuttons) do 
 					if (m_up | id) == m_up then 
 						hotkeys[action_name] = button_name
@@ -341,15 +402,15 @@ local function hotkey_setter(action_name, hold_action_name, fake_name, title_too
 				hotkeys[action_name] = default_hotkeys[action_name]
 				key_updated = true
 			end
-			if not is_mod_2 and not had_hold and hotkeys[action_name] ~= "[Not Bound]" and imgui.menu_item((hotkeys[action_name.."_$"] and "Disable " or "Enable ") .. "Modifier") then
-				hotkeys[action_name.."_$"] = not hotkeys[action_name.."_$"] and (pad and pad:get_Connecting() and ((is_mod_1 and "LB (L1)") or "LT (L2)")) or ((is_mod_1 and "LShift") or "LAlt") or nil
+			if not is_mod_2 and hotkeys[action_name] ~= "[Not Bound]" and imgui.menu_item((hotkeys[action_name.."_$"] and "Disable " or "Enable ") .. "Modifier") then
+				hotkeys[action_name.."_$"] = not hotkeys[action_name.."_$"] and ((pad and pad:get_Connecting() and ((is_mod_1 and "LB (L1)") or "LT (L2)")) or ((is_mod_1 and "LShift") or "LAlt")) or nil
 				hotkeys[action_name.."_$_$"], hk_data.modifier_actions[action_name.."_$_$"] = nil
 				hk_data.modifier_actions[action_name.."_$"] = hotkeys[action_name.."_$"]
 				json.dump_file("Hotkeys_data.json", hk_data)
 			end
 			imgui.end_popup() 
 		end
-		if not is_mod_1 and not hotkeys[action_name.."_$"] and hotkeys[action_name] ~= "[Not Bound]" then
+		--[[if not is_mod_1 and not hotkeys[action_name.."_$"] and hotkeys[action_name] ~= "[Not Bound]" then
 			local names = "\n"
 			for act_name, key_name in pairs(hotkeys) do 
 				if act_name ~= action_name and key_name == hotkeys[action_name] and key_name ~= "[Press Input]" and (not hold_action_name or modifiers[act_name] == hold_action_name) then
@@ -364,7 +425,7 @@ local function hotkey_setter(action_name, hold_action_name, fake_name, title_too
 					--break
 				end
 			end
-		end
+		end]]
 	imgui.pop_id()
 	if is_down then imgui.end_rect(1); imgui.end_rect(2) end
 	
@@ -378,7 +439,7 @@ local kb_typedef = sdk.find_type_definition("via.hid.Keyboard")
 local gp_typedef = sdk.find_type_definition("via.hid.GamePad")
 local mb_typedef = sdk.find_type_definition("via.hid.Mouse")
 
-re.on_pre_application_entry("UpdateHID", function()
+re.on_application_entry("UpdateHID", function()
 	
 	hk.kb = sdk.call_native_func(kb_singleton, kb_typedef, "get_Device")
 	hk.pad = sdk.call_native_func(gp_singleton, gp_typedef, "getMergedDevice", 0)
@@ -395,7 +456,7 @@ re.on_pre_application_entry("UpdateHID", function()
 	end
 	
 	if mouse then 
-		local m_up, m_down, m_trig = mouse:call("get_ButtonUp"), mouse:call("get_Button"), mouse:call("get_ButtonDown")
+		m_up, m_down, m_trig = mouse:call("get_ButtonUp"), mouse:call("get_Button"), mouse:call("get_ButtonDown")
 		for button, state in pairs(mb_state.released) do 
 			mb_state.released[button]	= ((m_up | button) == m_up) 
 			mb_state.down[button] 		= ((m_down | button) == m_down) 
@@ -404,17 +465,17 @@ re.on_pre_application_entry("UpdateHID", function()
 	end
 	
 	if pad then 
-		local up, down, trig = pad:call("get_ButtonUp"), pad:call("get_Button"), pad:call("get_ButtonDown")
+		gp_up, gp_down, gp_trig = pad:call("get_ButtonUp"), pad:call("get_Button"), pad:call("get_ButtonDown")
 		for button, state in pairs(gp_state.released) do 
-			gp_state.released[button] 	= ((up | button) == up) 
-			gp_state.down[button] 		= ((down | button) == down) 
-			gp_state.triggered[button]  = ((trig | button) == trig) 
+			gp_state.released[button] 	= ((gp_up | button) == gp_up) 
+			gp_state.down[button] 		= ((gp_down | button) == gp_down) 
+			gp_state.triggered[button]  = ((gp_trig | button) == gp_trig) 
 		end
 	end
 end)
 
 -- Script functionality:
-hk = {
+hk = hk or {
 	kb = kb, 											-- Keyboard device Managed Object, updated every frame
 	mouse = mouse, 										-- Mouse device Managed Object, updated every frame
 	pad = pad, 											-- Gamepad device Managed Object, updated every frame
@@ -441,10 +502,18 @@ hk = {
 	get_button_string = get_button_string, 				-- Fn takes and action name and returns the full button combination required to trigger an action, including modifiers if they exist
 
 	hotkey_setter = hotkey_setter, 						-- Fn takes an action name and displays an imgui button that you can click then and press an input to assign that input to that action name. Returns true if updated
-	check_hotkey = check_hotkey, 						-- Fn checks if an input for a given action name is just released, and also if its modifiers are down (if they exist). Send "true" as 2nd argument to check if input is down
-	chk_up = chk_up, 									-- Fn checks if an input for an action name is released
-	chk_down = chk_down, 								-- Fn checks if an input for an action name is down
-	chk_trig = chk_trig, 								-- Fn checks if an input for an action name is just pressed
+	
+	check_hotkey = check_hotkey, 						-- Fn checks if an input (by action name) is just released, and also if its modifiers are down (if they exist). Send "true" as 2nd argument to check if input is down, "1" or use argument#3 to check if just-triggered
+	check_doubletap = check_doubletap,					-- Fn uses 'check_hotkey' to check if an input (by action name) has been pressed twice in the past 0.25 seconds
+	check_hold = check_hold,							-- Fn uses 'check_hotkey' to check if an input (by action name) has been held for as long as its argument#2
+	
+	chk_up = chk_up, 									-- Fn checks if an input (by action name) is released
+	chk_down = chk_down, 								-- Fn checks if an input (by action name) is down
+	chk_trig = chk_trig, 								-- Fn checks if an input (by action name) is just pressed
+	
+	check_kb_key = check_kb_key,						-- Fn checks if a keyboard input is released, down or triggered (by key name)
+	check_mouse_button = check_mouse_button,			-- Fn checks if a mouse input is released, down or triggered (by mbutton name)
+	check_pad_button = check_pad_button,				-- Fn checks if a gamepad input is released, down or triggered (by button name)
 }
 
 return hk
