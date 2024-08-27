@@ -2,8 +2,8 @@
 local modName = "Advanced Weapon Framework"
 
 local modAuthor = "SilverEzredes"
-local modUpdated = "08/22/2024"
-local modVersion = "v3.2.6"
+local modUpdated = "08/27/2024"
+local modVersion = "v3.3.00"
 local modCredits = "praydog; alphaZomega; MrBoobieBuyer; Lotiuss"
 
 --/////////////////////////////////////--
@@ -260,6 +260,9 @@ local function check_for_inventory_RE4()
                 weapon.isUpdated = true
                 weapon.isInventoryUpdated = true
                 AWF.get_WeaponData_RE4(AWF.AWF_settings.RE4.Weapons)
+            end
+            if AWFGS then
+                AWFGS_inventoryUpdater_RE4 = true
             end
         elseif not inventory and AWF_Inventory_Found then
             for _, weapon in pairs(AWF.AWF_settings.RE4.Weapons) do

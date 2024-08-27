@@ -2,8 +2,8 @@
 local modName = "Advanced Weapon Framework - Gunsmith"
 
 local modAuthor = "SilverEzredes"
-local modUpdated = "08/22/2024"
-local modVersion = "v3.2.51"
+local modUpdated = "08/27/2024"
+local modVersion = "v3.3.00"
 local modCredits = "praydog; alphaZomega"
 
 --/////////////////////////////////////--
@@ -34,6 +34,7 @@ local AWFGS_default_settings = {
     showPresetPath = false,
     showMeshPath = true,
     showMDFPath = true,
+    showConsole = true,
 }
 
 local AWFWeapons = {
@@ -57,6 +58,10 @@ local AWF_settings = hk.merge_tables({}, AWFWeapons) and hk.recurse_def_settings
 --MARK: RE4R
 local playerContext = nil
 local isPlayerInScene = false
+local consoleLoadPass_RE4 = ""
+local consoleLoadFail_RE4 = ""
+AWFGS_inventoryUpdater_RE4 = false
+
 local function get_playerContext()
     local character_manager
     character_manager = sdk.get_managed_singleton(sdk.game_namespace("CharacterManager"))
@@ -115,6 +120,34 @@ local function get_MaterialParams_RE4(weaponData, WPM_table)
                         WPM_table[weapon.ID].MDFPath = formattedMDFPath
                         if AWFGS_settings.isDebug then
                             log.info("[AWG-GS] [" .. formattedMDFPath .. "]")
+                        end
+                    end
+
+                    for MatName, _ in pairs(WPM_table[weapon.ID].Materials) do
+                        local found = false
+                        for i = 0, MatCount - 1 do
+                            if MatName == render_mesh:call("getMaterialName", i) then
+                                found = true
+                                break
+                            end
+                        end
+                        if not found then
+                            WPM_table[weapon.ID].Materials[MatName] = nil
+                        end
+                    end
+    
+                    local newPartNames = {}
+                    for i = 0, MatCount - 1 do
+                        local MatName = render_mesh:call("getMaterialName", i)
+                        if MatName then
+                            table.insert(newPartNames, MatName)
+                        end
+                    end
+    
+                    for PartIndex, PartName in ipairs(WPM_table[weapon.ID].Parts) do
+                        if not func.table_contains(newPartNames, PartName) then
+                            table.remove(WPM_table[weapon.ID].Parts, PartIndex)
+                            table.remove(WPM_table[weapon.ID].Enabled, PartIndex)
                         end
                     end
 
@@ -253,7 +286,7 @@ local function cache_AWFGS_json_files_RE4(weaponData)
             local json_filepaths = fs.glob([[AWF\\AWF_Gunsmith\\]] .. weapon.Name .. [[\\.*.json]])
             
             if json_filepaths then
-                local defaultName = weapon.Name .. " Current Preset"
+                local defaultName = weapon.Name .. " Default"
                 local defaultNameInserted = false
 
                 for i, filepath in ipairs(json_filepaths) do
@@ -422,6 +455,7 @@ local function get_MasterMaterialData_RE4(weaponData)
     check_if_playerIsInScene()
 
     if isPlayerInScene then
+        --Initial loading screen check
         if NowLoading and not isDefaultsDumped then
             get_MaterialParams_RE4(AWF.AWF_settings.RE4.Weapons, AWF_settings.RE4_Gunsmith)
             dump_DefaultMaterialParam_json_RE4(AWF.AWF_settings.RE4.Weapons)
@@ -436,12 +470,49 @@ local function get_MasterMaterialData_RE4(weaponData)
                     wc = true
                     local json_filepath = [[AWF\\AWF_Gunsmith\\]] .. weapon.Name .. [[\\]] .. selected_preset .. [[.json]]
                     local temp_parts = json.load_file(json_filepath)
-            
-                    temp_parts.Presets = nil
-                    temp_parts.current_preset_indx = nil
 
-                    for key, value in pairs(temp_parts) do
-                        AWF_settings.RE4_Gunsmith[weapon.ID][key] = value
+                    if temp_parts.Parts ~= nil then
+                        if AWFGS_settings.isDebug then
+                            log.info("[AWF-GS] [Auto Preset Loader: " .. weapon.Name .. " --- " .. #temp_parts.Parts .. " ]")
+
+                            for _, part in ipairs(temp_parts.Parts) do
+                                log.info("[AWF-GS] [Preset Part Name: " .. part .. " ]")
+                            end
+                            for _, part in ipairs(AWF_settings.RE4_Gunsmith[weapon.ID].Parts) do
+                                log.info("[AWF-GS] Original Part Name: " .. part .. " ]")
+                            end
+                        end
+                        
+                        local partsMatch = #temp_parts.Parts == #AWF_settings.RE4_Gunsmith[weapon.ID].Parts
+
+                        if partsMatch then
+                            for _, part in ipairs(temp_parts.Parts) do
+                                local found = false
+                                for _, ogPart in ipairs(AWF_settings.RE4_Gunsmith[weapon.ID].Parts) do
+                                    if part == ogPart then
+                                        found = true
+                                        break
+                                    end
+                                end
+                
+                                if not found then
+                                    partsMatch = false
+                                    break
+                                end
+                            end
+                        end
+                
+                        if partsMatch then
+                            temp_parts.Presets = nil
+                            temp_parts.current_preset_indx = nil
+
+                            for key, value in pairs(temp_parts) do
+                                AWF_settings.RE4_Gunsmith[weapon.ID][key] = value
+                            end
+                        else
+                            log.info("[AWF-GS] [Parts do not match, skipping the update.]")
+                            AWF_settings.RE4_Gunsmith[weapon.ID].current_preset_indx = 1
+                        end
                     end
                 elseif selected_preset == nil or {} then
                     AWF_settings.RE4_Gunsmith[weapon.ID].current_preset_indx = 1
@@ -452,6 +523,7 @@ local function get_MasterMaterialData_RE4(weaponData)
             log.info("[AWF-GS] [Master Data defaults dumped.]")
             isDefaultsDumped = true
         end
+        --Subsequent loading screen checks
         if NowLoading and isDefaultsDumped then
             get_MaterialParams_RE4(AWF.AWF_settings.RE4.Weapons, AWF_settings.RE4_Gunsmith)
             cache_AWFGS_json_files_RE4(AWF.AWF_settings.RE4.Weapons)
@@ -465,11 +537,48 @@ local function get_MasterMaterialData_RE4(weaponData)
                     local json_filepath = [[AWF\\AWF_Gunsmith\\]] .. weapon.Name .. [[\\]] .. selected_preset .. [[.json]]
                     local temp_parts = json.load_file(json_filepath)
             
-                    temp_parts.Presets = nil
-                    temp_parts.current_preset_indx = nil
+                    if temp_parts.Parts ~= nil then
+                        if AWFGS_settings.isDebug then
+                            log.info("[AWF-GS] [Auto Preset Loader: " .. weapon.Name .. " --- " .. #temp_parts.Parts .. " ]")
 
-                    for key, value in pairs(temp_parts) do
-                        AWF_settings.RE4_Gunsmith[weapon.ID][key] = value
+                            for _, part in ipairs(temp_parts.Parts) do
+                                log.info("[AWF-GS] [Preset Part Name: " .. part .. " ]")
+                            end
+                            for _, part in ipairs(AWF_settings.RE4_Gunsmith[weapon.ID].Parts) do
+                                log.info("[AWF-GS] Original Part Name: " .. part .. " ]")
+                            end
+                        end
+                        
+                        local partsMatch = #temp_parts.Parts == #AWF_settings.RE4_Gunsmith[weapon.ID].Parts
+
+                        if partsMatch then
+                            for _, part in ipairs(temp_parts.Parts) do
+                                local found = false
+                                for _, ogPart in ipairs(AWF_settings.RE4_Gunsmith[weapon.ID].Parts) do
+                                    if part == ogPart then
+                                        found = true
+                                        break
+                                    end
+                                end
+                
+                                if not found then
+                                    partsMatch = false
+                                    break
+                                end
+                            end
+                        end
+                
+                        if partsMatch then
+                            temp_parts.Presets = nil
+                            temp_parts.current_preset_indx = nil
+
+                            for key, value in pairs(temp_parts) do
+                                AWF_settings.RE4_Gunsmith[weapon.ID][key] = value
+                            end
+                        else
+                            log.info("[AWF-GS] [Parts do not match, skipping the update.]")
+                            AWF_settings.RE4_Gunsmith[weapon.ID].current_preset_indx = 1
+                        end
                     end
                 elseif selected_preset == nil or {} then
                     AWF_settings.RE4_Gunsmith[weapon.ID].current_preset_indx = 1
@@ -477,8 +586,17 @@ local function get_MasterMaterialData_RE4(weaponData)
                 update_MaterialParams_RE4(AWF.AWF_settings.RE4.Weapons, AWF_settings.RE4_Gunsmith)
             end
         end
+        --Update data on opening the inventory
+        if AWF_Inventory_Found and AWFGS_inventoryUpdater_RE4 then
+            get_MaterialParams_RE4(AWF.AWF_settings.RE4.Weapons, AWF_settings.RE4_Gunsmith)
+            dump_CurrentMaterialParam_json_RE4(AWF.AWF_settings.RE4.Weapons)
+            AWFGS_MaterialParamDefaultsHolder = func.deepcopy(AWF_settings)
+            update_MaterialParams_RE4(AWF.AWF_settings.RE4.Weapons, AWF_settings.RE4_Gunsmith)
+            AWFGS_inventoryUpdater_RE4 = false
+        end
     end
 end
+
 local function draw_AWFGSEditor_GUI_RE4(weaponOrder)
     if imgui.begin_window("Advanced Weapon Framework: Gunsmith Editor") then
         imgui.begin_rect()
@@ -555,11 +673,49 @@ local function draw_AWFGSEditor_GUI_RE4(weaponOrder)
                         local json_filepath = [[AWF\\AWF_Gunsmith\\]] .. weapon.Name .. [[\\]] .. selected_preset .. [[.json]]
                         local temp_parts = json.load_file(json_filepath)
                         
-                        temp_parts.Presets = nil
-                        temp_parts.current_preset_indx = nil
-
-                        for key, value in pairs(temp_parts) do
-                            AWF_settings.RE4_Gunsmith[weapon.ID][key] = value
+                        if temp_parts.Parts ~= nil then
+                            if AWFGS_settings.isDebug then
+                                log.info("[AWF-GS] [Preset Loader: " .. weapon.Name .. " --- " .. #temp_parts.Parts .. " ]")
+        
+                                for _, part in ipairs(temp_parts.Parts) do
+                                    log.info("[AWF-GS] [Preset Part Name: " .. part .. " ]")
+                                end
+                                for _, part in ipairs(AWF_settings.RE4_Gunsmith[weapon.ID].Parts) do
+                                    log.info("[AWF-GS] Original Part Name: " .. part .. " ]")
+                                end
+                            end
+                            
+                            local partsMatch = #temp_parts.Parts == #AWF_settings.RE4_Gunsmith[weapon.ID].Parts
+        
+                            if partsMatch then
+                                for _, part in ipairs(temp_parts.Parts) do
+                                    local found = false
+                                    for _, ogPart in ipairs(AWF_settings.RE4_Gunsmith[weapon.ID].Parts) do
+                                        if part == ogPart then
+                                            found = true
+                                            break
+                                        end
+                                    end
+                    
+                                    if not found then
+                                        partsMatch = false
+                                        break
+                                    end
+                                end
+                            end
+                    
+                            if partsMatch then
+                                temp_parts.Presets = nil
+                                temp_parts.current_preset_indx = nil
+        
+                                for key, value in pairs(temp_parts) do
+                                    AWF_settings.RE4_Gunsmith[weapon.ID][key] = value
+                                end
+                            else
+                                log.info("[AWF-GS] [Parts do not match, skipping the update.]")
+                                AWF_settings.RE4_Gunsmith[weapon.ID].current_preset_indx = 1
+                                consoleLoadFail_RE4 = "[ERORR]\nCouldn't load the data from " .. selected_preset .. " for " .. weapon.Name .. ".\nThe material count of the preset doesn't match the material count of the " .. weapon.Name
+                            end
                         end
                         update_MaterialParams_RE4(AWF.AWF_settings.RE4.Weapons, AWF_settings.RE4_Gunsmith)
                     end
@@ -669,6 +825,9 @@ local function draw_AWFGSEditor_GUI_RE4(weaponOrder)
                                             if imgui.button("[ " .. tostring(paramName) .. " ]") then
                                                 paramValue[1] = AWFGS_MaterialParamDefaultsHolder.RE4_Gunsmith[weapon.ID].Materials[matName][paramName][1] or nil
                                                 wc = true
+                                            end
+                                            if AWFGS_RE4Comp[paramName] then
+                                                func.tooltip(AWFGS_RE4Comp[paramName])
                                             end
                                             if imgui.begin_popup_context_item() then
                                                 if imgui.menu_item("Reset") then
@@ -780,6 +939,23 @@ local function draw_AWFGSPreset_GUI_RE4(weaponOrder)
         SW = "Separate Ways"
     }
     
+    if AWFGS_settings.showConsole then
+        imgui.begin_rect()
+        imgui.text("[AWF-GS Console] " .. ui.draw_line("-", 40))
+        if imgui.button("Clear Log") then
+            consoleLoadFail_RE4 = ""
+        end
+        imgui.indent(5)
+        imgui.spacing()
+
+        imgui.text_colored(consoleLoadFail_RE4, func.convert_rgba_to_AGBR(255, 0, 0, 255))
+
+        imgui.spacing()
+        imgui.indent(-5)
+        imgui.text(ui.draw_line("-", 66))
+        imgui.end_rect(1)
+    end
+
     for _, weaponName in ipairs(weaponOrder) do
         local weapon = AWF.AWF_settings.RE4.Weapons[weaponName]
         local textColor = {255,255,255,255}
@@ -802,15 +978,54 @@ local function draw_AWFGSPreset_GUI_RE4(weaponOrder)
                 local json_filepath = [[AWF\\AWF_Gunsmith\\]] .. weapon.Name .. [[\\]] .. selected_preset .. [[.json]]
                 local temp_parts = json.load_file(json_filepath)
                 
-                temp_parts.Presets = nil
-                temp_parts.current_preset_indx = nil
+                if temp_parts.Parts ~= nil then
+                    if AWFGS_settings.isDebug then
+                        log.info("[AWF-GS] [Preset Loader: " .. weapon.Name .. " --- " .. #temp_parts.Parts .. " ]")
 
-                for key, value in pairs(temp_parts) do
-                    AWF_settings.RE4_Gunsmith[weapon.ID][key] = value
+                        for _, part in ipairs(temp_parts.Parts) do
+                            log.info("[AWF-GS] [Preset Part Name: " .. part .. " ]")
+                        end
+                        for _, part in ipairs(AWF_settings.RE4_Gunsmith[weapon.ID].Parts) do
+                            log.info("[AWF-GS] Original Part Name: " .. part .. " ]")
+                        end
+                    end
+                    
+                    local partsMatch = #temp_parts.Parts == #AWF_settings.RE4_Gunsmith[weapon.ID].Parts
+
+                    if partsMatch then
+                        for _, part in ipairs(temp_parts.Parts) do
+                            local found = false
+                            for _, ogPart in ipairs(AWF_settings.RE4_Gunsmith[weapon.ID].Parts) do
+                                if part == ogPart then
+                                    found = true
+                                    break
+                                end
+                            end
+            
+                            if not found then
+                                partsMatch = false
+                                break
+                            end
+                        end
+                    end
+            
+                    if partsMatch then
+                        temp_parts.Presets = nil
+                        temp_parts.current_preset_indx = nil
+
+                        for key, value in pairs(temp_parts) do
+                            AWF_settings.RE4_Gunsmith[weapon.ID][key] = value
+                        end
+                    else
+                        log.info("[AWF-GS] [ERORR] [Parts do not match, skipping the update.]")
+                        AWF_settings.RE4_Gunsmith[weapon.ID].current_preset_indx = 1
+                        consoleLoadFail_RE4 = "[ERORR]\nCouldn't load the data from " .. selected_preset .. " for " .. weapon.Name .. ".\nThe material count of the preset doesn't match the material count of the " .. weapon.Name
+                    end
                 end
                 AWF_settings.RE4_Gunsmith[weapon.ID].isUpdated = true
                 update_MaterialParams_RE4(AWF.AWF_settings.RE4.Weapons, AWF_settings.RE4_Gunsmith)
             end
+            imgui.spacing()
         end
     end
     imgui.text_colored(ui.draw_line("=", 60), 0xFFFFFFFF)
@@ -859,6 +1074,7 @@ local function draw_AWFGS_GUI_RE4()
                 changed, AWFGS_settings.showPresetPath = imgui.checkbox("Show Preset Path", AWFGS_settings.showPresetPath); wc = wc or changed
                 changed, AWFGS_settings.showMeshPath = imgui.checkbox("Show Mesh Path", AWFGS_settings.showMeshPath); wc = wc or changed
                 changed, AWFGS_settings.showMDFPath = imgui.checkbox("Show MDF Path", AWFGS_settings.showMDFPath); wc = wc or changed
+                changed, AWFGS_settings.showConsole = imgui.checkbox("Show Console", AWFGS_settings.showConsole); wc = wc or changed
 
                 if imgui.tree_node("Credits") then
                     imgui.text(modCredits .. " ")
@@ -880,7 +1096,7 @@ local function draw_AWFGS_GUI_RE4()
                 update_MaterialParams_RE4(AWF.AWF_settings.RE4.Weapons, AWF_settings.RE4_Gunsmith)
                 
             end
-            ui.button_n_colored_txt("Current Version:", modVersion .. " | " .. modUpdated, func.convert_rgba_to_AGBR(255, 155, 0, 255))
+            ui.button_n_colored_txt("Current Version:", modVersion .. " | " .. modUpdated, func.convert_rgba_to_AGBR(0, 255, 0, 255))
             imgui.same_line()
             imgui.text("| by " .. modAuthor .. " ")
             

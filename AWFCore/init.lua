@@ -2,8 +2,8 @@
 local modName = "Advanced Weapon Framework Core"
 
 local modAuthor = "SilverEzredes"
-local modUpdated = "08/22/2024"
-local modVersion = "v3.2.73"
+local modUpdated = "08/27/2024"
+local modVersion = "v3.3.00"
 local modCredits = "praydog; alphaZomega; MrBoobieBuyer; Lotiuss"
 
 --/////////////////////////////////////--
@@ -23,6 +23,7 @@ local AWF_default_settings = {
     isInheritPresetName = false,
     isHideReticle = false,
     RE4 = {
+        isUnbreakable = false,
         wp4000 = true,
         wp4001 = true,
         wp4002 = true,
@@ -2643,6 +2644,7 @@ local RE4_Cache = {
     weaponCustomCatalogRegister = sdk.typeof("chainsaw.WeaponCustomCatalogRegister"),
     playerInventory = "PlayerInventoryObserver",
     playerInventoryObserver = sdk.typeof("chainsaw.PlayerInventoryObserver"),
+    playerEquipment = "chainsaw.PlayerEquipment",
     reticleTypes = {
         [0] = "Handgun (Type-0)",
         [4] = "Handgun (Type-4)",
@@ -2705,6 +2707,16 @@ local RE4_Cache = {
         [1] = "Full Auto"
     },
 }
+local playerContext = nil
+local playerHead = nil
+local isPlayerInScene = false
+
+local function get_playerContext()
+    local character_manager
+    character_manager = sdk.get_managed_singleton(sdk.game_namespace("CharacterManager"))
+    playerContext = character_manager and character_manager:call("getPlayerContextRef")
+    return playerContext
+end
 
 --Dumps the default weapon data from the AWFWeapons table to [WeaponName]-Default.json
 local function dump_Default_WeaponParam_json_RE4(weaponData)
@@ -2717,8 +2729,10 @@ local function dump_Default_WeaponParam_json_RE4(weaponData)
         end
     end
 end
---Sets the weapon data for the weapons found in the AWF_settings table, or uses the values from a custom preset
+--Sets the weapon data for the weapons found in the AWF Master table, or uses the values from a custom preset
 local function get_WeaponData_RE4(weaponData)
+    get_playerContext()
+
     for _, weapon in pairs(weaponData) do
         if weapon.isUpdated then
             local Weapon_GameObject_RE4 = scene:call("findGameObject(System.String)", weapon.ID)
@@ -4110,63 +4124,58 @@ local function get_WeaponData_RE4(weaponData)
                 log.info("[AWF] [ " .. weapon.ID .. " Inventory data updated.]")
             end
             
-            local Weapon_PlayerInventoryObserver_RE4 = scene:call("findGameObject(System.String)", RE4_Cache.playerInventory)
+            if playerContext ~= nil then
+                isPlayerInScene = true
+                playerHead = playerContext and playerContext:get_HeadGameObject()
+        
+                if playerHead then
+                    local playerEquipmentComp = func.get_GameObjectComponent(playerHead, RE4_Cache.playerEquipment)
+        
+                    if playerEquipmentComp then
+                        local Weapon_PlayerInventoryObserver_CSInventory_RE4 = playerEquipmentComp:get_InventoryController():get__CsInventory()
 
-            if Weapon_PlayerInventoryObserver_RE4 then
-                local Weapon_PlayerInventoryObserver_Component_RE4 = Weapon_PlayerInventoryObserver_RE4:call("getComponent(System.Type)", RE4_Cache.playerInventoryObserver)
+                        if Weapon_PlayerInventoryObserver_CSInventory_RE4 then
+                            local Weapon_PlayerInventoryObserver_InventoryItems_RE4 = Weapon_PlayerInventoryObserver_CSInventory_RE4:get_field("_InventoryItems")
+                            -- local Weapon_PlayerInventoryObserver_TacticalAmmo_RE4 =  Weapon_PlayerInventoryObserver_CSInventory_RE4._ReloadInfos
+                            
+                            -- for i in pairs(Weapon_PlayerInventoryObserver_TacticalAmmo_RE4) do
+                            --     Weapon_PlayerInventoryObserver_TacticalAmmo_RE4[i]:set_field("<HasTacticalAmmo>k__BackingField", false) 
+                            -- end
 
-                if Weapon_PlayerInventoryObserver_Component_RE4 then
-                    local Weapon_PlayerInventoryObserver_Observer_RE4 = Weapon_PlayerInventoryObserver_Component_RE4:get_field("_Observer")
-
-                    if Weapon_PlayerInventoryObserver_Observer_RE4 then
-                        local Weapon_PlayerInventoryObserver_InventoryController_RE4 = Weapon_PlayerInventoryObserver_Observer_RE4:get_field("_InventoryController")
-
-                        if Weapon_PlayerInventoryObserver_InventoryController_RE4 then
-                            local Weapon_PlayerInventoryObserver_CSInventory_RE4 = Weapon_PlayerInventoryObserver_InventoryController_RE4:get_field("<_CsInventory>k__BackingField")
-
-                            if Weapon_PlayerInventoryObserver_CSInventory_RE4 then
-                                local Weapon_PlayerInventoryObserver_InventoryItems_RE4 = Weapon_PlayerInventoryObserver_CSInventory_RE4:get_field("_InventoryItems")
-                                -- local Weapon_PlayerInventoryObserver_TacticalAmmo_RE4 =  Weapon_PlayerInventoryObserver_CSInventory_RE4._ReloadInfos
+                            if Weapon_PlayerInventoryObserver_InventoryItems_RE4 then
+                                local Weapon_PlayerInventoryObserver_InventoryItems_Items_RE4 = Weapon_PlayerInventoryObserver_InventoryItems_RE4:get_field("_items")
                                 
-                                -- for i in pairs(Weapon_PlayerInventoryObserver_TacticalAmmo_RE4) do
-                                --     Weapon_PlayerInventoryObserver_TacticalAmmo_RE4[i]:set_field("<HasTacticalAmmo>k__BackingField", false) 
-                                -- end
-
-                                if Weapon_PlayerInventoryObserver_InventoryItems_RE4 then
-                                    local Weapon_PlayerInventoryObserver_InventoryItems_Items_RE4 = Weapon_PlayerInventoryObserver_InventoryItems_RE4:get_field("_items")
+                                for i = 0, #Weapon_PlayerInventoryObserver_InventoryItems_Items_RE4 do
+                                    local ItemID = Weapon_PlayerInventoryObserver_InventoryItems_Items_RE4[i]
                                     
-                                    for i = 0, #Weapon_PlayerInventoryObserver_InventoryItems_Items_RE4 do
-                                        local ItemID = Weapon_PlayerInventoryObserver_InventoryItems_Items_RE4[i]
+                                    if ItemID then
+                                        local WeaponID = ItemID:call("get_WeaponId")
                                         
-                                        if ItemID then
-                                            local WeaponID = ItemID:call("get_WeaponId")
-                                            
-                                            if WeaponID == weapon.Enum then
-                                                local Weapon_InventoryItem_RE4 = ItemID:get_field("<Item>k__BackingField")
+                                        if WeaponID == weapon.Enum then
+                                            local Weapon_InventoryItem_RE4 = ItemID:get_field("<Item>k__BackingField")
 
-                                                if Weapon_InventoryItem_RE4 then
-                                                    local weaponParams = AWF_settings.RE4.Weapon_Params[weapon.ID]
-                                                    local Weapon_InventoryItem_Define_RE4 = Weapon_InventoryItem_RE4:get_field("<_DefaultWeaponDefine>k__BackingField")
-                                                    
-                                                    Weapon_InventoryItem_RE4._CurrentAmmo = AWF_settings.RE4.Weapon_Params[weapon.ID].Inventory._CurrentAmmo
-                                                    
-                                                    for paramName, paramValue in pairs(weaponParams) do
-                                                        if paramName == "Inventory" then
-                                                            for subParamName, subParamValue in pairs(paramValue) do
-                                                                if subParamName == "Define" then
-                                                                    if Weapon_InventoryItem_Define_RE4 then
-                                                                        for subParamName_2nd, subParamValue_2nd in pairs(subParamValue) do
-                                                                            if subParamName_2nd ~= "_AmmoCost" then
+                                            if Weapon_InventoryItem_RE4 then
+                                                local weaponParams = AWF_settings.RE4.Weapon_Params[weapon.ID]
+                                                local Weapon_InventoryItem_Define_RE4 = Weapon_InventoryItem_RE4:get_field("<_DefaultWeaponDefine>k__BackingField")
+                                                
+                                                Weapon_InventoryItem_RE4._CurrentAmmo = AWF_settings.RE4.Weapon_Params[weapon.ID].Inventory._CurrentAmmo
+                                                
+                                                for paramName, paramValue in pairs(weaponParams) do
+                                                    if paramName == "Inventory" then
+                                                        for subParamName, subParamValue in pairs(paramValue) do
+                                                            if subParamName == "Define" then
+                                                                if Weapon_InventoryItem_Define_RE4 then
+                                                                    for subParamName_2nd, subParamValue_2nd in pairs(subParamValue) do
+                                                                        if subParamName_2nd ~= "_AmmoCost" then
+                                                                            Weapon_InventoryItem_Define_RE4[subParamName_2nd] = subParamValue_2nd
+                                                                        end
+                                                                        if subParamName_2nd == "_AmmoCost" then
+                                                                            if weaponParams.UnlimitedCapacity then
+                                                                                Weapon_InventoryItem_Define_RE4._AmmoCost = 0
+                                                                            elseif not weaponParams.UnlimitedCapacity then
                                                                                 Weapon_InventoryItem_Define_RE4[subParamName_2nd] = subParamValue_2nd
                                                                             end
-                                                                            if subParamName_2nd == "_AmmoCost" then
-                                                                                if weaponParams.UnlimitedCapacity then
-                                                                                    Weapon_InventoryItem_Define_RE4._AmmoCost = 0
-                                                                                elseif not weaponParams.UnlimitedCapacity then
-                                                                                    Weapon_InventoryItem_Define_RE4[subParamName_2nd] = subParamValue_2nd
-                                                                                end
-                                                                            end                                                                         
-                                                                        end
+                                                                        end                                                                         
                                                                     end
                                                                 end
                                                             end
@@ -4186,6 +4195,16 @@ local function get_WeaponData_RE4(weaponData)
         weapon.isInventoryUpdated = false
     end
 end
+
+sdk.hook(sdk.find_type_definition("chainsaw.Item"):get_method("reduceDurability(System.Int32)"),
+function(args)
+    if AWF_tool_settings.RE4.isUnbreakable then
+        return sdk.PreHookResult.SKIP_ORIGINAL
+    end
+end,
+function(retval)
+    return retval
+end)
 
 --Clears the cached path for a weapon if a new preset is saved
 local function clear_AWF_json_cache_RE4(weaponData)
@@ -4320,11 +4339,11 @@ local function draw_AWF_RE4Editor_GUI(weaponOrder)
         for _, weaponName in ipairs(weaponOrder) do
             local weapon = AWF_settings.RE4.Weapons[weaponName]
             if weapon then
-                local game = weapon.Game
-                if not weaponsByGame[game] then
-                    weaponsByGame[game] = {}
+                local gameMode = weapon.Game
+                if not weaponsByGame[gameMode] then
+                    weaponsByGame[gameMode] = {}
                 end
-                table.insert(weaponsByGame[game], weapon)
+                table.insert(weaponsByGame[gameMode], weapon)
             end
         end
             
@@ -5233,7 +5252,7 @@ local function draw_AWF_RE4_GUI()
                 end
                 get_WeaponData_RE4(AWF_settings.RE4.Weapons)
             end
-
+            changed, AWF_tool_settings.RE4.isUnbreakable = imgui.checkbox("Unbreakable Knives", AWF_tool_settings.RE4.isUnbreakable); wc = wc or changed
 
             if imgui.tree_node("Display Settings") then
                 for _, weaponName in pairs(AWF_settings.RE4.Weapon_Order) do
