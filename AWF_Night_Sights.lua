@@ -2,14 +2,15 @@
 local modName =  "Advanced Weapon Framework - Night Sights"
 
 local modAuthor = "SilverEzredes"
-local modUpdated = "08/21/2024"
-local modVersion = "v3.2.5"
+local modUpdated = "09/03/2024"
+local modVersion = "v3.3.30"
 local modCredits = "praydog; alphaZomega"
 
 --/////////////////////////////////////--
 local AWF = require("AWFCore")
 local hk = require("Hotkeys/Hotkeys")
 local func = require("_SharedCore/Functions")
+local ui = require("_SharedCore/Imgui")
 
 local show_AWFNS_editor = false
 local scene = func.get_CurrentScene()
@@ -497,7 +498,8 @@ local function draw_AWFNS_RE4Editor_GUI(weaponOrder)
             
         local gameModeLabels = {
             Main = "Main Game",
-            SW = "Separate Ways"
+            SW = "Separate Ways",
+            Mercs = "Mercenaries"
         }
 
         for _, weaponName in ipairs(weaponOrder) do
@@ -510,6 +512,8 @@ local function draw_AWFNS_RE4Editor_GUI(weaponOrder)
                     textColor = {255, 187, 0, 255}
                 elseif weapon.Game == "SW" then
                     textColor = {245, 56, 81, 255}
+                elseif weapon.Game == "Mercs" then
+                    textColor = {0, 255, 219, 255}
                 end
 
                 if weapon.Game ~= lastGame then

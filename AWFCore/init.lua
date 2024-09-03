@@ -2,8 +2,8 @@
 local modName = "Advanced Weapon Framework Core"
 
 local modAuthor = "SilverEzredes"
-local modUpdated = "08/27/2024"
-local modVersion = "v3.3.00"
+local modUpdated = "09/03/2024"
+local modVersion = "v3.3.31"
 local modCredits = "praydog; alphaZomega; MrBoobieBuyer; Lotiuss"
 
 --/////////////////////////////////////--
@@ -25,43 +25,64 @@ local AWF_default_settings = {
     RE4 = {
         isUnbreakable = false,
         wp4000 = true,
+        wp4000_MC = true,
         wp4001 = true,
         wp4002 = true,
+        wp4002_MC = true,
         wp4003 = true,
         wp4004 = true,
         wp4100 = true,
+        wp4100_MC = true,
         wp4101 = true,
+        wp4101_MC = true,
         wp4102 = true,
         wp4200 = true,
+        wp4200_MC = true,
         wp4201 = true,
+        wp4201_MC = true,
         wp4202 = true,
+        wp4202_MC = true,
         wp4400 = true,
+        wp4400_MC = true,
         wp4401 = true,
+        wp4401_MC = true,
         wp4402 = true,
         wp4500 = true,
+        wp4500_MC = true,
         wp4501 = true,
+        wp4501_MC = true,
         wp4502 = true,
         wp4600 = true,
         wp4900 = true,
         wp4902 = true,
         wp5000 = true,
+        wp5000_MC = true,
         wp5001 = true,
+        wp5001_MC = true,
         wp5006 = true,
         wp6000 = true,
         wp6001 = true,
         wp6100 = true,
+        wp6100_MC = true,
         wp6101 = true,
         wp6102 = true,
+        wp6102_MC = true,
         wp6103 = true,
+        wp6103_MC = true,
         wp6104 = true,
+        wp6104_MC = true,
         wp6105 = true,
+        wp6105_MC = true,
         wp6106 = true,
         wp6107 = true,
+        wp6107_MC = true,
         wp6108 = true,
         wp6111 = true,
         wp6112_AO = true,
         wp6113_AO = true,
         wp6114 = true,
+        wp6300_MC = true,
+        wp6304 = true,
     }
 }
 
@@ -2638,9 +2659,12 @@ local cached_jsonPaths_RE4 = {}
 local RE4_Cache = {
     weaponCatalog = "WeaponCatalog",
     weaponCatalog_AO = "WeaponCatalog_AO",
+    weaponCatalog_MC = "WeaponCatalog_MC",
+    weaponCatalog_MC2 = "WeaponCatalog_MC_2nd",
     weaponCatalogRegister = sdk.typeof("chainsaw.WeaponCatalogRegister"),
     weaponCustomCatalog = "WeaponCustomCatalog",
     weaponCustomCatalog_AO = "WeaponCustomCatalog_AO",
+    weaponCustomCatalog_MC = "WeaponCustomCatalog_MC",
     weaponCustomCatalogRegister = sdk.typeof("chainsaw.WeaponCustomCatalogRegister"),
     playerInventory = "PlayerInventoryObserver",
     playerInventoryObserver = sdk.typeof("chainsaw.PlayerInventoryObserver"),
@@ -2653,6 +2677,7 @@ local RE4_Cache = {
         [104] = "Shotgun (Type-104)",
         [105] = "Shotgun (Type-105)",
         [106] = "Handgun (Type-106)",
+        [201] = "Submachine Gun (Type-201)",
         [202] = "Submachine Gun (Type-202)",
         [203] = "Submachine Gun (Type-203)",
         [400] = "Submachine Gun (Type-400)",
@@ -2666,6 +2691,7 @@ local RE4_Cache = {
     },
     ammoTypes = {
         [-1] = "Invalid",
+        [112320000] = "Explosive Arrows",
         [112480000] = "Blast Arrows",
         [112800000] = "Handgun Ammo",
         [112801600] = "Magnum Ammo",
@@ -2732,6 +2758,7 @@ end
 --Sets the weapon data for the weapons found in the AWF Master table, or uses the values from a custom preset
 local function get_WeaponData_RE4(weaponData)
     get_playerContext()
+    local currentGameMode = nil
 
     for _, weapon in pairs(weaponData) do
         if weapon.isUpdated then
@@ -3146,7 +3173,7 @@ local function get_WeaponData_RE4(weaponData)
                                         local Weapon_CustomLevel_Common_items_RE4 = Weapon_CustomLevel_Common_RE4:get_field("_items")
 
                                         for i in pairs(Weapon_CustomLevel_Common_items_RE4) do   
-                                            if i == 0 and weapon.Type ~= "GL" then
+                                            if i == 0 and weapon.Type ~= "GL" and weapon.ID ~= "wp6304" then
                                                 weaponParams[paramName].CurrentLevel.DMG = Weapon_CustomLevel_Common_items_RE4[0]:get_field("_DamageRateLevel") + 1
                                             end
                                         end
@@ -3161,14 +3188,21 @@ local function get_WeaponData_RE4(weaponData)
         weapon.isUpdated = false
         
         if weapon.isCatalogUpdated then
-            if AWF_tool_settings.isDebug then
-                log.info("[AWF] [ " .. weapon.ID .. " Catalog data updated.]")
-            end
-
-            local  Weapon_WeaponCatalog_RE4 = scene:call("findGameObject(System.String)", RE4_Cache.weaponCatalog)
+            currentGameMode = "Main"
+            local Weapon_WeaponCatalog_RE4 = scene:call("findGameObject(System.String)", RE4_Cache.weaponCatalog)
 
             if not Weapon_WeaponCatalog_RE4 then
                 Weapon_WeaponCatalog_RE4 = scene:call("findGameObject(System.String)", RE4_Cache.weaponCatalog_AO)
+                currentGameMode = "SW"
+            end
+
+            if not Weapon_WeaponCatalog_RE4 then
+                if weapon.ID == "wp6300_MC" then
+                    Weapon_WeaponCatalog_RE4 = scene:call("findGameObject(System.String)", RE4_Cache.weaponCatalog_MC2)
+                else
+                    Weapon_WeaponCatalog_RE4 = scene:call("findGameObject(System.String)", RE4_Cache.weaponCatalog_MC)
+                end
+                currentGameMode = "Mercs"
             end
 
             if Weapon_WeaponCatalog_RE4 then
@@ -3184,7 +3218,10 @@ local function get_WeaponData_RE4(weaponData)
                         for i in pairs(Weapon_WeaponCatalog_DataTable_RE4) do
                             local Weapon_WeaponCatalog_DataTable_Data_RE4 = Weapon_WeaponCatalog_DataTable_RE4[i]:get_field("_WeaponID")
 
-                            if Weapon_WeaponCatalog_DataTable_Data_RE4 == weapon.Enum then
+                            if Weapon_WeaponCatalog_DataTable_Data_RE4 == weapon.Enum and currentGameMode == weapon.Game then
+                                if AWF_tool_settings.isDebug then
+                                    log.info("[AWF] [ " .. weapon.ID .. " Catalog data updated.]")
+                                end
                                 local weaponParams = AWF_settings.RE4.Weapon_Params[weapon.ID]
                                 
                                 for paramName, paramValue in pairs(weaponParams) do
@@ -3363,14 +3400,17 @@ local function get_WeaponData_RE4(weaponData)
         weapon.isCatalogUpdated = false
 
         if weapon.isCustomCatalogUpdated then
-            if AWF_tool_settings.isDebug then
-                log.info("[AWF] [ " .. weapon.ID .. " Custom Catalog data updated.]")
-            end
-            
+            currentGameMode = "Main"
             local Weapon_WeaponCustomCatalog_RE4 = scene:call("findGameObject(System.String)", RE4_Cache.weaponCustomCatalog)
 
             if not Weapon_WeaponCustomCatalog_RE4 then
                 Weapon_WeaponCustomCatalog_RE4 = scene:call("findGameObject(System.String)", RE4_Cache.weaponCustomCatalog_AO)
+                currentGameMode = "SW"
+            end
+
+            if not Weapon_WeaponCustomCatalog_RE4 then
+                Weapon_WeaponCustomCatalog_RE4 = scene:call("findGameObject(System.String)", RE4_Cache.weaponCustomCatalog_MC)
+                currentGameMode = "Mercs"
             end
 
             if Weapon_WeaponCustomCatalog_RE4 then
@@ -3390,7 +3430,10 @@ local function get_WeaponData_RE4(weaponData)
                                 for i in pairs(Weapon_WeaponCustomCatalog_UserData_WeaponStages_RE4) do
                                     local Weapon_WeaponCustomCatalog_UserData_Weapons_RE4 = Weapon_WeaponCustomCatalog_UserData_WeaponStages_RE4[i]:get_field("_WeaponID")
 
-                                    if Weapon_WeaponCustomCatalog_UserData_Weapons_RE4 == weapon.Enum then
+                                    if Weapon_WeaponCustomCatalog_UserData_Weapons_RE4 == weapon.Enum and currentGameMode == weapon.Game then
+                                        if AWF_tool_settings.isDebug then
+                                            log.info("[AWF] [ " .. weapon.ID .. " Custom Catalog data updated.]")
+                                        end
                                         local Weapon_WeaponCustomCatalog_UserData_WeaponsCustom_RE4 = Weapon_WeaponCustomCatalog_UserData_WeaponStages_RE4[i]:get_field("_WeaponCustom")
 
                                         if Weapon_WeaponCustomCatalog_UserData_WeaponsCustom_RE4 then
@@ -4120,14 +4163,10 @@ local function get_WeaponData_RE4(weaponData)
         weapon.isCustomCatalogUpdated = false
 
         if weapon.isInventoryUpdated then
-            if AWF_tool_settings.isDebug then
-                log.info("[AWF] [ " .. weapon.ID .. " Inventory data updated.]")
-            end
-            
             if playerContext ~= nil then
-                isPlayerInScene = true
                 playerHead = playerContext and playerContext:get_HeadGameObject()
-        
+                isPlayerInScene = true
+
                 if playerHead then
                     local playerEquipmentComp = func.get_GameObjectComponent(playerHead, RE4_Cache.playerEquipment)
         
@@ -4136,11 +4175,6 @@ local function get_WeaponData_RE4(weaponData)
 
                         if Weapon_PlayerInventoryObserver_CSInventory_RE4 then
                             local Weapon_PlayerInventoryObserver_InventoryItems_RE4 = Weapon_PlayerInventoryObserver_CSInventory_RE4:get_field("_InventoryItems")
-                            -- local Weapon_PlayerInventoryObserver_TacticalAmmo_RE4 =  Weapon_PlayerInventoryObserver_CSInventory_RE4._ReloadInfos
-                            
-                            -- for i in pairs(Weapon_PlayerInventoryObserver_TacticalAmmo_RE4) do
-                            --     Weapon_PlayerInventoryObserver_TacticalAmmo_RE4[i]:set_field("<HasTacticalAmmo>k__BackingField", false) 
-                            -- end
 
                             if Weapon_PlayerInventoryObserver_InventoryItems_RE4 then
                                 local Weapon_PlayerInventoryObserver_InventoryItems_Items_RE4 = Weapon_PlayerInventoryObserver_InventoryItems_RE4:get_field("_items")
@@ -4151,7 +4185,10 @@ local function get_WeaponData_RE4(weaponData)
                                     if ItemID then
                                         local WeaponID = ItemID:call("get_WeaponId")
                                         
-                                        if WeaponID == weapon.Enum then
+                                        if WeaponID == weapon.Enum and currentGameMode == weapon.Game then
+                                            if AWF_tool_settings.isDebug then
+                                                log.info("[AWF] [ " .. weapon.ID .. " Inventory data updated.]")
+                                            end
                                             local Weapon_InventoryItem_RE4 = ItemID:get_field("<Item>k__BackingField")
 
                                             if Weapon_InventoryItem_RE4 then
@@ -4349,7 +4386,8 @@ local function draw_AWF_RE4Editor_GUI(weaponOrder)
             
         local gameModeLabels = {
             Main = "Main Game",
-            SW = "Separate Ways"
+            SW = "Separate Ways",
+            Mercs = "Mercenaries"
         }
         
         for _, weaponName in ipairs(weaponOrder) do
@@ -4362,6 +4400,8 @@ local function draw_AWF_RE4Editor_GUI(weaponOrder)
                     textColor = {255, 187, 0, 255}
                 elseif weapon.Game == "SW" then
                     textColor = {245, 56, 81, 255}
+                elseif weapon.Game == "Mercs" then
+                    textColor = {0, 255, 219, 255}
                 end
 
                 if weapon.Game ~= lastGame then
@@ -5142,7 +5182,8 @@ local function draw_AWF_RE4Preset_GUI(weaponOrder)
         
     local gameModeLabels = {
         Main = "Main Game",
-        SW = "Separate Ways"
+        SW = "Separate Ways",
+        Mercs = "Mercenaries"
     }
     
     for _, weaponName in ipairs(weaponOrder) do
@@ -5153,6 +5194,8 @@ local function draw_AWF_RE4Preset_GUI(weaponOrder)
             textColor = {255, 187, 0, 255}
         elseif weapon.Game == "SW" then
             textColor = {245, 56, 81, 255}
+        elseif weapon.Game == "Mercs" then
+            textColor = {0, 255, 219, 255}
         end
     
         if weapon.Game ~= lastGame then
@@ -5255,12 +5298,49 @@ local function draw_AWF_RE4_GUI()
             changed, AWF_tool_settings.RE4.isUnbreakable = imgui.checkbox("Unbreakable Knives", AWF_tool_settings.RE4.isUnbreakable); wc = wc or changed
 
             if imgui.tree_node("Display Settings") then
-                for _, weaponName in pairs(AWF_settings.RE4.Weapon_Order) do
+                local weaponsByGame = {}
+                local lastGame = nil
+                for _, weaponName in ipairs(AWF_settings.RE4.Weapon_Order) do
                     local weapon = AWF_settings.RE4.Weapons[weaponName]
-                    changed, AWF_tool_settings.RE4[weapon.ID] = imgui.checkbox("Show " .. weapon.Name , AWF_tool_settings.RE4[weapon.ID]); wc = wc or changed
-                    func.tooltip("Show/Hide the " .. weapon.Name .. " in the Preset Manager.")
+                    if weapon then
+                        local game = weapon.Game
+                        if not weaponsByGame[game] then
+                            weaponsByGame[game] = {}
+                        end
+                        table.insert(weaponsByGame[game], weapon)
+                    end
                 end
-
+                    
+                local gameModeLabels = {
+                    Main = "Main Game",
+                    SW = "Separate Ways",
+                    Mercs = "Mercenaries"
+                }
+                
+                for gameMode, label in pairs(gameModeLabels) do
+                    if weaponsByGame[gameMode] then
+                        if imgui.tree_node(label) then
+                            for _, weapon in ipairs(weaponsByGame[gameMode]) do
+                                local textColor = {255,255,255,255}
+            
+                                if weapon.Game == "Main" then
+                                    textColor = {255, 187, 0, 255}
+                                elseif weapon.Game == "SW" then
+                                    textColor = {245, 56, 81, 255}
+                                elseif weapon.Game == "Mercs" then
+                                    textColor = {0, 255, 219, 255}
+                                end
+                                
+                                local changed
+                                changed, AWF_tool_settings.RE4[weapon.ID] = imgui.checkbox("", AWF_tool_settings.RE4[weapon.ID]); wc = wc or changed
+                                imgui.same_line()
+                                imgui.text_colored(weapon.Name, func.convert_rgba_to_AGBR(textColor))
+                                func.tooltip("Show/Hide the " .. weapon.Name .. " in the Preset Manager.")
+                            end
+                            imgui.tree_pop()
+                        end
+                    end
+                end
                 imgui.tree_pop()
             end
 

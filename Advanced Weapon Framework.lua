@@ -2,8 +2,8 @@
 local modName = "Advanced Weapon Framework"
 
 local modAuthor = "SilverEzredes"
-local modUpdated = "08/27/2024"
-local modVersion = "v3.3.00"
+local modUpdated = "09/03/2024"
+local modVersion = "v3.3.30"
 local modCredits = "praydog; alphaZomega; MrBoobieBuyer; Lotiuss"
 
 --/////////////////////////////////////--
@@ -194,7 +194,8 @@ local function check_for_loading_screen_RE4()
 
         if loading_screen_RE4 and isPlayerInScene then
             if os.clock() - last_time < tick_interval then return end
-           
+            log.info("[AWF] [--------------------- Loading... All AWF Data Updated!]")
+            log.info("[AWF] [--------------------- Version: " .. modVersion .. " Updated: " .. modUpdated .. "]")
             NowLoading = true
             for _, weapon in pairs(AWF.AWF_settings.RE4.Weapons) do
                 weapon.isUpdated = true
@@ -223,8 +224,6 @@ local function check_for_loading_screen_RE4()
                     AWFNS.toggle_night_sights_RE4(AWF.AWF_settings.RE4.Weapons, AWFNS.AWFNS_Settings.RE4_Night_Sights)
                 end
             end
-            log.info("[AWF] [--------------------- Loading... All AWF Data Updated!]")
-            log.info("[AWF] [--------------------- Version: " .. modVersion .. " Updated: " .. modUpdated .. "]")
             last_time = os.clock()
         elseif not loading_screen_RE4 and NowLoading and isPlayerInScene then
             AWF.cache_AWF_json_files_RE4(AWF.AWF_settings.RE4.Weapons)

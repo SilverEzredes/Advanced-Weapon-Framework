@@ -2,8 +2,8 @@
 local modName = "Advanced Weapon Framework - Gunsmith"
 
 local modAuthor = "SilverEzredes"
-local modUpdated = "08/27/2024"
-local modVersion = "v3.3.00"
+local modUpdated = "09/03/2024"
+local modVersion = "v3.3.30"
 local modCredits = "praydog; alphaZomega"
 
 --/////////////////////////////////////--
@@ -352,9 +352,8 @@ end
 local function update_MaterialParams_RE4(weaponData, WPM_table)
     for _, weapon in pairs(weaponData) do
         if WPM_table[weapon.ID] and WPM_table[weapon.ID].isUpdated then
-            
             local Weapon_GameObject_RE4 = scene:call("findGameObject(System.String)", weapon.ID)
-            local weaponInventoryID = string.format("AC_ItemModel_" .. weapon.ID)
+            local weaponInventoryID = string.format("AC_ItemModel_wp" .. weapon.Enum)
             local Weapon_Inventory_GameObject_RE4 = scene:call("findGameObject(System.String)", weaponInventoryID)
 
             if Weapon_GameObject_RE4 and Weapon_GameObject_RE4:get_Valid() then
@@ -396,48 +395,48 @@ local function update_MaterialParams_RE4(weaponData, WPM_table)
                         end
                     end
                 end
-            end
-        
-            if Weapon_Inventory_GameObject_RE4 then
-                local ac_item = Weapon_Inventory_GameObject_RE4:call("getComponent(System.Type)", sdk.typeof("chainsaw.AcItemModelController"))
-                
-                if ac_item then
-                    local ac_mesh = ac_item:call("get_MeshController")
-                    
-                    if ac_mesh then
-                        local render_mesh = ac_mesh:get_field("_Mesh")
 
-                        if render_mesh then
-                            local MatCount = render_mesh:call("get_MaterialNum")
-                            
-                            if MatCount then
-                                for i = 0, MatCount - 1 do
-                                    local MatName = render_mesh:call("getMaterialName", i)
-                                    local MatParam = render_mesh:call("getMaterialVariableNum", i)
-                                    local EnabledMat = render_mesh:call("getMaterialsEnableIndices", i)
-                                    
-                                    if MatName then
-                                        if MatParam then
-                                            for k = 0, MatParam - 1 do
-                                                local MatParamNames = render_mesh:call("getMaterialVariableName", i, k)
-                                                local MatType = render_mesh:call("getMaterialVariableType", i, k)
-                                                if MatParamNames then
-                                                    if MatType then
-                                                        if MatType == 1 then
-                                                            render_mesh:call("setMaterialFloat", i, k,WPM_table[weapon.ID].Materials[MatName][MatParamNames][1])
-                                                        end
-                                                        if MatType == 4 then
-                                                            local vec4 = WPM_table[weapon.ID].Materials[MatName][MatParamNames][1]
-                                                            render_mesh:call("setMaterialFloat4", i, k, Vector4f.new(vec4[1], vec4[2], vec4[3], vec4[4]))
+                if Weapon_Inventory_GameObject_RE4 then
+                    local ac_item = Weapon_Inventory_GameObject_RE4:call("getComponent(System.Type)", sdk.typeof("chainsaw.AcItemModelController"))
+    
+                    if ac_item then
+                        local ac_mesh = ac_item:call("get_MeshController")
+                        
+                        if ac_mesh then
+                            local render_mesh = ac_mesh:get_field("_Mesh")
+    
+                            if render_mesh then
+                                local MatCount = render_mesh:call("get_MaterialNum")
+                                
+                                if MatCount then
+                                    for i = 0, MatCount - 1 do
+                                        local MatName = render_mesh:call("getMaterialName", i)
+                                        local MatParam = render_mesh:call("getMaterialVariableNum", i)
+                                        local EnabledMat = render_mesh:call("getMaterialsEnableIndices", i)
+                                        
+                                        if MatName then
+                                            if MatParam then
+                                                for k = 0, MatParam - 1 do
+                                                    local MatParamNames = render_mesh:call("getMaterialVariableName", i, k)
+                                                    local MatType = render_mesh:call("getMaterialVariableType", i, k)
+                                                    if MatParamNames then
+                                                        if MatType then
+                                                            if MatType == 1 then
+                                                                render_mesh:call("setMaterialFloat", i, k,WPM_table[weapon.ID].Materials[MatName][MatParamNames][1])
+                                                            end
+                                                            if MatType == 4 then
+                                                                local vec4 = WPM_table[weapon.ID].Materials[MatName][MatParamNames][1]
+                                                                render_mesh:call("setMaterialFloat4", i, k, Vector4f.new(vec4[1], vec4[2], vec4[3], vec4[4]))
+                                                            end
                                                         end
                                                     end
                                                 end
                                             end
                                         end
-                                    end
-                                    if EnabledMat then
-                                        for j = 0, EnabledMat do
-                                            render_mesh:call("setMaterialsEnable", j, WPM_table[weapon.ID].Enabled[j + 1])
+                                        if EnabledMat then
+                                            for j = 0, EnabledMat do
+                                                render_mesh:call("setMaterialsEnable", j, WPM_table[weapon.ID].Enabled[j + 1])
+                                            end
                                         end
                                     end
                                 end
@@ -616,7 +615,8 @@ local function draw_AWFGSEditor_GUI_RE4(weaponOrder)
             
         local gameModeLabels = {
             Main = "Main Game",
-            SW = "Separate Ways"
+            SW = "Separate Ways",
+            Mercs = "Mercenaries"
         }
 
         for _, weaponName in ipairs(weaponOrder) do
@@ -629,6 +629,8 @@ local function draw_AWFGSEditor_GUI_RE4(weaponOrder)
                     textColor = {255, 187, 0, 255}
                 elseif weapon.Game == "SW" then
                     textColor = {245, 56, 81, 255}
+                elseif weapon.Game == "Mercs" then
+                    textColor = {0, 255, 219, 255}
                 end
 
                 if weapon.Game ~= lastGame then
@@ -714,7 +716,7 @@ local function draw_AWFGSEditor_GUI_RE4(weaponOrder)
                             else
                                 log.info("[AWF-GS] [Parts do not match, skipping the update.]")
                                 AWF_settings.RE4_Gunsmith[weapon.ID].current_preset_indx = 1
-                                consoleLoadFail_RE4 = "[ERORR]\nCouldn't load the data from " .. selected_preset .. " for " .. weapon.Name .. ".\nThe material count of the preset doesn't match the material count of the " .. weapon.Name
+                                consoleLoadFail_RE4 = "[ERROR]\nCouldn't load the data from " .. selected_preset .. " for " .. weapon.Name .. ".\nThe material count of the preset doesn't match the material count of the " .. weapon.Name
                             end
                         end
                         update_MaterialParams_RE4(AWF.AWF_settings.RE4.Weapons, AWF_settings.RE4_Gunsmith)
@@ -918,6 +920,7 @@ local function draw_AWFGSEditor_GUI_RE4(weaponOrder)
         imgui.end_window()
     end
 end
+
 local function draw_AWFGSPreset_GUI_RE4(weaponOrder)
     imgui.spacing()
     local weaponsByGame = {}
@@ -936,7 +939,8 @@ local function draw_AWFGSPreset_GUI_RE4(weaponOrder)
         
     local gameModeLabels = {
         Main = "Main Game",
-        SW = "Separate Ways"
+        SW = "Separate Ways",
+        Mercs = "Mercenaries"
     }
     
     if AWFGS_settings.showConsole then
@@ -964,6 +968,8 @@ local function draw_AWFGSPreset_GUI_RE4(weaponOrder)
             textColor = {255, 187, 0, 255}
         elseif weapon.Game == "SW" then
             textColor = {245, 56, 81, 255}
+        elseif weapon.Game == "Mercs" then
+            textColor = {0, 255, 219, 255}
         end
     
         if weapon.Game ~= lastGame then
@@ -1017,9 +1023,9 @@ local function draw_AWFGSPreset_GUI_RE4(weaponOrder)
                             AWF_settings.RE4_Gunsmith[weapon.ID][key] = value
                         end
                     else
-                        log.info("[AWF-GS] [ERORR] [Parts do not match, skipping the update.]")
+                        log.info("[AWF-GS] [ERROR] [Parts do not match, skipping the update.]")
                         AWF_settings.RE4_Gunsmith[weapon.ID].current_preset_indx = 1
-                        consoleLoadFail_RE4 = "[ERORR]\nCouldn't load the data from " .. selected_preset .. " for " .. weapon.Name .. ".\nThe material count of the preset doesn't match the material count of the " .. weapon.Name
+                        consoleLoadFail_RE4 = "[ERROR]\nCouldn't load the data from " .. selected_preset .. " for " .. weapon.Name .. ".\nThe material count of the preset doesn't match the material count of the " .. weapon.Name
                     end
                 end
                 AWF_settings.RE4_Gunsmith[weapon.ID].isUpdated = true
@@ -1030,6 +1036,26 @@ local function draw_AWFGSPreset_GUI_RE4(weaponOrder)
     end
     imgui.text_colored(ui.draw_line("=", 60), 0xFFFFFFFF)
 end
+
+local function load_AWFGSEditorAndPreset_GUI_RE4()
+    imgui.same_line()
+    changed, AWFGS_settings.show_AWF_Gunsmith_editor = imgui.checkbox("Open AWF Gunsmith Editor", AWFGS_settings.show_AWF_Gunsmith_editor)
+    func.tooltip("Show/Hide the AWF Gunsmith Editor.")
+    if not AWFGS_settings.show_AWF_Gunsmith_editor or imgui.begin_window("Advanced Weapon Framework: Gunsmith Editor", true, 0) == false  then
+        AWFGS_settings.show_AWF_Gunsmith_editor = false
+    else
+        imgui.spacing()
+        imgui.indent()
+        
+        draw_AWFGSEditor_GUI_RE4(AWF.AWF_settings.RE4.Weapon_Order)
+        
+        imgui.unindent()
+        imgui.end_window()
+    end
+    
+    draw_AWFGSPreset_GUI_RE4(AWF.AWF_settings.RE4.Weapon_Order)
+end
+
 local function draw_AWFGS_GUI_RE4()
     if reframework.get_game_name() == "re4" then
         if imgui.tree_node("Advanced Weapon Framework: Gunsmith") then
@@ -1045,22 +1071,9 @@ local function draw_AWFGS_GUI_RE4()
                 cache_AWFGS_json_files_RE4(AWF.AWF_settings.RE4.Weapons)
             end
             func.tooltip("Reset every weapon part.")
-            imgui.same_line()
-            changed, AWFGS_settings.show_AWF_Gunsmith_editor = imgui.checkbox("Open AWF Gunsmith Editor", AWFGS_settings.show_AWF_Gunsmith_editor)
-            func.tooltip("Show/Hide the AWF Gunsmith Editor.")
-            if not AWFGS_settings.show_AWF_Gunsmith_editor or imgui.begin_window("Advanced Weapon Framework: Gunsmith Editor", true, 0) == false  then
-                AWFGS_settings.show_AWF_Gunsmith_editor = false
-            else
-                imgui.spacing()
-                imgui.indent()
-                
-                draw_AWFGSEditor_GUI_RE4(AWF.AWF_settings.RE4.Weapon_Order)
-                
-                imgui.unindent()
-                imgui.end_window()
+            if isDefaultsDumped then
+                load_AWFGSEditorAndPreset_GUI_RE4()
             end
-            
-            draw_AWFGSPreset_GUI_RE4(AWF.AWF_settings.RE4.Weapon_Order)
 
             if imgui.tree_node("AWF:GS Settings") then
                 imgui.begin_rect()
@@ -1121,9 +1134,9 @@ end)
 
 --MARK:On Draw UI
 re.on_draw_ui(function()
-    if isDefaultsDumped then
+    --if isDefaultsDumped then
         draw_AWFGS_GUI_RE4()
-    end
+    --end
 end)
 
 AWFGS = {
