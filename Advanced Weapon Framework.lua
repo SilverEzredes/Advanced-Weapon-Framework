@@ -2,8 +2,8 @@
 local modName = "Advanced Weapon Framework"
 
 local modAuthor = "SilverEzredes"
-local modUpdated = "09/03/2024"
-local modVersion = "v3.3.30"
+local modUpdated = "09/08/2024"
+local modVersion = "v3.3.40"
 local modCredits = "praydog; alphaZomega; MrBoobieBuyer; Lotiuss"
 
 --/////////////////////////////////////--
@@ -413,11 +413,6 @@ end
 --////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 --MARK: On Frame
 re.on_frame(function()
-    if reframework.get_game_name() == "re7" then
-        check_for_inventory_RE7()
-        check_for_loading_screen_RE7()
-        AWF.update_cached_weapon_gameobjects_RE7()
-    end
 	if reframework.get_game_name() == "re2" then
         check_for_inventory_RE2()
         check_for_loading_screen_RE2()
@@ -428,14 +423,19 @@ re.on_frame(function()
         check_for_loading_screen_RE3()
         AWF.update_cached_weapon_gameobjects_RE3()
     end
-    if reframework.get_game_name() == "re8" then
-        check_for_inventory_RE8()
-        check_for_loading_screen_RE8()
-        AWF.update_cached_weapon_gameobjects_RE8()
-    end
     if reframework.get_game_name() == "re4" then
         check_for_inventory_RE4()
         check_for_loading_screen_RE4()
         AWF.update_WeaponData_RE4()
+    end
+    if reframework.get_game_name() == "re7" then
+        check_for_inventory_RE7()
+        check_for_loading_screen_RE7()
+        AWF.update_cached_weapon_gameobjects_RE7()
+    end
+    if reframework.get_game_name() == "re8" then
+        check_for_inventory_RE8()
+        check_for_loading_screen_RE8()
+        AWF.update_cached_weapon_gameobjects_RE8()
     end
 end)

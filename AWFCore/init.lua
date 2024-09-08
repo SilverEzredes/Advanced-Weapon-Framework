@@ -2,8 +2,8 @@
 local modName = "Advanced Weapon Framework Core"
 
 local modAuthor = "SilverEzredes"
-local modUpdated = "09/03/2024"
-local modVersion = "v3.3.31"
+local modUpdated = "09/08/2024"
+local modVersion = "v3.3.40"
 local modCredits = "praydog; alphaZomega; MrBoobieBuyer; Lotiuss"
 
 --/////////////////////////////////////--
@@ -60,6 +60,15 @@ local AWF_default_settings = {
         wp5001 = true,
         wp5001_MC = true,
         wp5006 = true,
+        wp5400 = true,
+        wp5400_MC = true,
+        wp5401 = true,
+        wp5401_MC = true,
+        wp5402 = true,
+        wp5402_MC = true,
+        wp5403 = true,
+        wp5404 = true,
+        wp5405 = true,
         wp6000 = true,
         wp6001 = true,
         wp6100 = true,
@@ -2687,6 +2696,7 @@ local RE4_Cache = {
         [801] = "X-BOW (Type-801)",
         [901] = "RPG (Type-901)",
         [1001] = "Knife (Type-1001)",
+        [9000] = "Throw (Type-9000)",
         [100000] = "None (100000)",
     },
     ammoTypes = {
@@ -3018,6 +3028,59 @@ local function get_WeaponData_RE4(weaponData)
                                                                 end
                                                             end
                                                         end
+                                                        if weapon.Type == "THRW" then
+                                                            local Weapon_GrenadeShellInfoUserData_RE4 = Weapon_ShellGenerator_UserData_RE4._GrenadeShellInfoUserData
+
+                                                            if Weapon_GrenadeShellInfoUserData_RE4 then
+                                                                local Weapon_LifeInfo_RE4 = Weapon_GrenadeShellInfoUserData_RE4._LifeInfo
+                                                                local Weapon_MoveInfo_RE4 = Weapon_GrenadeShellInfoUserData_RE4._MoveInfo
+                                                                local Weapon_AttackInfo_RE4 = Weapon_GrenadeShellInfoUserData_RE4._AttackInfo
+
+                                                                if subParamName_2nd == "LifeInfo" then
+                                                                    for subParamName_3rd, subParamValue_3rd in pairs(subParamValue_2nd) do
+                                                                        Weapon_LifeInfo_RE4[subParamName_3rd] = subParamValue_3rd
+                                                                    end 
+                                                                end
+                                                                if subParamName_2nd == "MoveInfo" then
+                                                                    for subParamName_3rd, subParamValue_3rd in pairs(subParamValue_2nd) do
+                                                                        Weapon_MoveInfo_RE4[subParamName_3rd] = subParamValue_3rd
+                                                                    end 
+                                                                end
+                                                                if subParamName_2nd == "AttackInfo" then
+                                                                    for subParamName_3rd, subParamValue_3rd in pairs(subParamValue_2nd) do
+                                                                        local Weapon_AttackInfo_DamageRate_RE4 = Weapon_AttackInfo_RE4._DamageRate
+                                                                        local Weapon_AttackInfo_WinceRate_RE4 = Weapon_AttackInfo_RE4._WinceRate
+                                                                        local Weapon_AttackInfo_BreakRate_RE4 = Weapon_AttackInfo_RE4._BreakRate
+                                                                        local Weapon_AttackInfo_StoppingRate_RE4 = Weapon_AttackInfo_RE4._StoppingRate
+                                                                        
+                                                                        if subParamName_3rd == "_ColliderRadius" then
+                                                                            Weapon_AttackInfo_RE4[subParamName_3rd] = subParamValue_3rd
+                                                                        end
+
+                                                                        if subParamName_3rd == "DamageRate" then
+                                                                            for subParamName_4th, subParamValue_4th in pairs(subParamValue_3rd) do
+                                                                                Weapon_AttackInfo_DamageRate_RE4[subParamName_4th] = subParamValue_4th
+                                                                            end
+                                                                        end
+                                                                        if subParamName_3rd == "WinceRate" then
+                                                                            for subParamName_4th, subParamValue_4th in pairs(subParamValue_3rd) do
+                                                                                Weapon_AttackInfo_WinceRate_RE4[subParamName_4th] = subParamValue_4th
+                                                                            end
+                                                                        end
+                                                                        if subParamName_3rd == "BreakRate" then
+                                                                            for subParamName_4th, subParamValue_4th in pairs(subParamValue_3rd) do
+                                                                                Weapon_AttackInfo_BreakRate_RE4[subParamName_4th] = subParamValue_4th
+                                                                            end
+                                                                        end
+                                                                        if subParamName_3rd == "StoppingRate" then
+                                                                            for subParamName_4th, subParamValue_4th in pairs(subParamValue_3rd) do
+                                                                                Weapon_AttackInfo_StoppingRate_RE4[subParamName_4th] = subParamValue_4th
+                                                                            end
+                                                                        end
+                                                                    end
+                                                                end
+                                                            end
+                                                        end
                                                     end
                                                     if weapon.Type == "GL" then
                                                         local Weapon_RocketLauncherShellInfoUserData_RE4 = Weapon_ShellGenerator_UserData_RE4:get_field("_RocketLauncherShellInfoUserData")
@@ -3072,15 +3135,17 @@ local function get_WeaponData_RE4(weaponData)
                                                             end
                                                         end
                                                     end
-                                                    -- if weapon.Type == "XBOW" then
-                                                    --     local Weapon_ShellGenerator_ArrowUserData_RE4 = Weapon_ShellGenerator_RE4:get_field("_ArrowBombShellGeneratorUserData")
+                                                    if weapon.Type == "XBOW" then
+                                                        local Weapon_ShellGenerator_ArrowUserData_RE4 = Weapon_ShellGenerator_RE4:get_field("_ArrowBombShellGeneratorUserData")
 
-                                                    --     if Weapon_ShellGenerator_ArrowUserData_RE4 then
-                                                    --         if subParamName_2nd == "Arrow" then
-                                                    --             Weapon_ShellGenerator_ArrowUserData_RE4[subParamName_2nd] = subParamValue_2nd
-                                                    --         end
-                                                    --     end
-                                                    -- end
+                                                        if Weapon_ShellGenerator_ArrowUserData_RE4 then
+                                                            if subParamName_2nd == "Arrow" then
+                                                                for subParamName_3rd, subParamValue_3rd in pairs(subParamValue_2nd) do
+                                                                    Weapon_ShellGenerator_ArrowUserData_RE4[subParamName_3rd] = subParamValue_3rd
+                                                                end
+                                                            end
+                                                        end
+                                                    end
                                                 end
                                             end
                                         end
@@ -3173,7 +3238,7 @@ local function get_WeaponData_RE4(weaponData)
                                         local Weapon_CustomLevel_Common_items_RE4 = Weapon_CustomLevel_Common_RE4:get_field("_items")
 
                                         for i in pairs(Weapon_CustomLevel_Common_items_RE4) do   
-                                            if i == 0 and weapon.Type ~= "GL" and weapon.ID ~= "wp6304" then
+                                            if i == 0 and weapon.Type ~= "GL" and weapon.ID ~= "wp6304" and weapon.Type ~= "THRW" then
                                                 weaponParams[paramName].CurrentLevel.DMG = Weapon_CustomLevel_Common_items_RE4[0]:get_field("_DamageRateLevel") + 1
                                             end
                                         end
@@ -4140,7 +4205,7 @@ local function get_WeaponData_RE4(weaponData)
                                                                 end
                                                             end
 
-                                                            if Weapon_WeaponCustomCatalog_UserData_AttachmentCustom_Category_RE4 == 501 and not weapon.ID == "wp4401" then
+                                                            if Weapon_WeaponCustomCatalog_UserData_AttachmentCustom_Category_RE4 == 501 and weapon.ID ~= "wp4401" then
                                                                 Weapon_WeaponCustomCatalog_UserData_AttachmentParams_Category_RE4[k]._ReticleGuiType = AWF_settings.RE4.Weapon_Params[weapon.ID].CustomCatalog.CustomParts._ReticleGuiType
 
                                                                 if AWF_tool_settings.isHideReticle then
@@ -4232,7 +4297,7 @@ local function get_WeaponData_RE4(weaponData)
         weapon.isInventoryUpdated = false
     end
 end
-
+--Prevents knives to lose durability
 sdk.hook(sdk.find_type_definition("chainsaw.Item"):get_method("reduceDurability(System.Int32)"),
 function(args)
     if AWF_tool_settings.RE4.isUnbreakable then
@@ -4651,6 +4716,18 @@ local function draw_AWF_RE4Editor_GUI(weaponOrder)
                                     changed, AWF_settings.RE4.Weapon_Params[weapon.ID].BaseStats.ShellGenerator.AroundSetting.AroundScatter.Horizontal.r = imgui.drag_float("Around Scatter X Max", AWF_settings.RE4.Weapon_Params[weapon.ID].BaseStats.ShellGenerator.AroundSetting.AroundScatter.Horizontal.r, 0.01, 0.0, 100.0); wc = wc or changed
                                     func.tooltip("TBD")
 
+                                end
+                                if weapon.Type == "XBOW" then
+                                    imgui.spacing()
+
+                                    changed, AWF_settings.RE4.Weapon_Params[weapon.ID].BaseStats.ShellGenerator.Arrow._BombStartTime = imgui.drag_float("Bomb Start Time", AWF_settings.RE4.Weapon_Params[weapon.ID].BaseStats.ShellGenerator.Arrow._BombStartTime, 0.01, 0.0, 100.0); wc = wc or changed
+                                    func.tooltip("TBD")
+                                    changed, AWF_settings.RE4.Weapon_Params[weapon.ID].BaseStats.ShellGenerator.Arrow._SensorTime = imgui.drag_float("Sensor Time", AWF_settings.RE4.Weapon_Params[weapon.ID].BaseStats.ShellGenerator.Arrow._SensorTime, 0.01, 0.0, 100.0); wc = wc or changed
+                                    func.tooltip("TBD")
+                                    changed, AWF_settings.RE4.Weapon_Params[weapon.ID].BaseStats.ShellGenerator.Arrow._SensorRadius = imgui.drag_float("Sensor Radius", AWF_settings.RE4.Weapon_Params[weapon.ID].BaseStats.ShellGenerator.Arrow._SensorRadius, 0.01, 0.0, 100.0); wc = wc or changed
+                                    func.tooltip("TBD")
+                                    changed, AWF_settings.RE4.Weapon_Params[weapon.ID].BaseStats.ShellGenerator.Arrow._LightLoopTime = imgui.drag_float("Light Loop Time", AWF_settings.RE4.Weapon_Params[weapon.ID].BaseStats.ShellGenerator.Arrow._LightLoopTime, 0.01, 0.0, 100.0); wc = wc or changed
+                                    func.tooltip("TBD")
                                 end
                                 changed, AWF_settings.RE4.Weapon_Params[weapon.ID].BaseStats.ThinkPlayerParam.RangeDistance = imgui.drag_float("Think Range Distance", AWF_settings.RE4.Weapon_Params[weapon.ID].BaseStats.ThinkPlayerParam.RangeDistance,  1.0, 0.0, 1000.0); wc = wc or changed
                                 func.tooltip("TBD")
@@ -5316,25 +5393,12 @@ local function draw_AWF_RE4_GUI()
                     SW = "Separate Ways",
                     Mercs = "Mercenaries"
                 }
-                
-                for gameMode, label in pairs(gameModeLabels) do
+
+                for gameMode, label in func.orderedPairs(gameModeLabels) do
                     if weaponsByGame[gameMode] then
                         if imgui.tree_node(label) then
                             for _, weapon in ipairs(weaponsByGame[gameMode]) do
-                                local textColor = {255,255,255,255}
-            
-                                if weapon.Game == "Main" then
-                                    textColor = {255, 187, 0, 255}
-                                elseif weapon.Game == "SW" then
-                                    textColor = {245, 56, 81, 255}
-                                elseif weapon.Game == "Mercs" then
-                                    textColor = {0, 255, 219, 255}
-                                end
-                                
-                                local changed
-                                changed, AWF_tool_settings.RE4[weapon.ID] = imgui.checkbox("", AWF_tool_settings.RE4[weapon.ID]); wc = wc or changed
-                                imgui.same_line()
-                                imgui.text_colored(weapon.Name, func.convert_rgba_to_AGBR(textColor))
+                                changed, AWF_tool_settings.RE4[weapon.ID] = imgui.checkbox(weapon.Name, AWF_tool_settings.RE4[weapon.ID]); wc = wc or changed
                                 func.tooltip("Show/Hide the " .. weapon.Name .. " in the Preset Manager.")
                             end
                             imgui.tree_pop()

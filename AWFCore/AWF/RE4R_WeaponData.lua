@@ -23,9 +23,21 @@ local RE4R_WeaponData = {
         CKNF    =   {ID = "wp5000",     Enum = 5000,    Name = "Combat Knife",                  Type = "KNF",   Game = "Main",  isUseCustom = true,     isUseCustomPart = false},
         FKNF    =   {ID = "wp5001",     Enum = 5001,    Name = "Fighting Knife",                Type = "KNF",   Game = "Main",  isUseCustom = true,     isUseCustomPart = false},
         PKNF    =   {ID = "wp5006",     Enum = 5006,    Name = "Primal Knife",                  Type = "KNF",   Game = "Main",  isUseCustom = true,     isUseCustomPart = false},
+        NADE    =   {ID = "wp5400",     Enum = 5400,    Name = "Hand Grenade",                  Type = "THRW",  Game = "Main",  isUseCustom = false,    isUseCustomPart = false},
+        HNADE   =   {ID = "wp5401",     Enum = 5401,    Name = "Heavy Grenade",                 Type = "THRW",  Game = "Main",  isUseCustom = false,    isUseCustomPart = false},
+        FNADE   =   {ID = "wp5402",     Enum = 5402,    Name = "Flash Grenade",                 Type = "THRW",  Game = "Main",  isUseCustom = false,    isUseCustomPart = false},
+        EGG     =   {ID = "wp5403",     Enum = 5403,    Name = "Chicken Egg",                   Type = "THRW",  Game = "Main",  isUseCustom = false,    isUseCustomPart = false},
+        BEGG    =   {ID = "wp5404",     Enum = 5404,    Name = "Brown Chicken Egg",             Type = "THRW",  Game = "Main",  isUseCustom = false,    isUseCustomPart = false},
+        GEGG    =   {ID = "wp5405",     Enum = 5405,    Name = "Gold Chicken Egg",              Type = "THRW",  Game = "Main",  isUseCustom = false,    isUseCustomPart = false},
         SEN9    =   {ID = "wp6000",     Enum = 6000,    Name = "Sentinel Nine",                 Type = "HG",    Game = "Main",  isUseCustom = true,     isUseCustomPart = true},
         SKUL    =   {ID = "wp6001",     Enum = 6001,    Name = "Skull Shaker",                  Type = "SG",    Game = "Main",  isUseCustom = true,     isUseCustomPart = false},
         -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------| SW
+        NADEAO  =   {ID = "wp5400",     Enum = 5400,    Name = "Hand Grenade",                  Type = "THRW",  Game = "SW",    isUseCustom = false,    isUseCustomPart = false},
+        HNADEAO =   {ID = "wp5401",     Enum = 5401,    Name = "Heavy Grenade",                 Type = "THRW",  Game = "SW",    isUseCustom = false,    isUseCustomPart = false},
+        FNADEAO =   {ID = "wp5402",     Enum = 5402,    Name = "Flash Grenade",                 Type = "THRW",  Game = "SW",    isUseCustom = false,    isUseCustomPart = false},
+        EGGAO   =   {ID = "wp5403",     Enum = 5403,    Name = "Chicken Egg",                   Type = "THRW",  Game = "SW",    isUseCustom = false,    isUseCustomPart = false},
+        BEGGAO  =   {ID = "wp5404",     Enum = 5404,    Name = "Brown Chicken Egg",             Type = "THRW",  Game = "SW",    isUseCustom = false,    isUseCustomPart = false},
+        GEGGAO  =   {ID = "wp5405",     Enum = 5405,    Name = "Gold Chicken Egg",              Type = "THRW",  Game = "SW",    isUseCustom = false,    isUseCustomPart = false},
         SW870AO =   {ID = "wp6100",     Enum = 6100,    Name = "Sawed-off W-870",               Type = "SG",    Game = "SW",    isUseCustom = true,     isUseCustomPart = false},
         CTWAO   =   {ID = "wp6101",     Enum = 6101,    Name = "Chicago Sweeper SW",            Type = "SMG",   Game = "SW",    isUseCustom = true,     isUseCustomPart = false},
         XBOW    =   {ID = "wp6102",     Enum = 6102,    Name = "Blast Crossbow",                Type = "XBOW",  Game = "SW",    isUseCustom = true,     isUseCustomPart = false},
@@ -53,6 +65,9 @@ local RE4R_WeaponData = {
         KIL7MRC  =  {ID = "wp4501_MC",  Enum = 4501,    Name = "Killer7 MRC",                   Type = "MAG",   Game = "Mercs", isUseCustom = true,     isUseCustomPart = false},
         CKNFMRC  =  {ID = "wp5000_MC",  Enum = 5000,    Name = "Combat Knife MRC",              Type = "KNF",   Game = "Mercs", isUseCustom = true,     isUseCustomPart = false},
         FKNFMRC  =  {ID = "wp5001_MC",  Enum = 5001,    Name = "Fighting Knife MRC",            Type = "KNF",   Game = "Mercs", isUseCustom = true,     isUseCustomPart = false},
+        NADEMRC  =  {ID = "wp5400_MC",  Enum = 5400,    Name = "Hand Grenade MRC",              Type = "THRW",  Game = "Mercs", isUseCustom = false,    isUseCustomPart = false},
+        HNADEMRC =  {ID = "wp5401_MC",  Enum = 5401,    Name = "Heavy Grenade MRC",             Type = "THRW",  Game = "Mercs", isUseCustom = false,    isUseCustomPart = false},
+        FNADEMRC =  {ID = "wp5402_MC",  Enum = 5402,    Name = "Flash Grenade MRC",             Type = "THRW",  Game = "Mercs", isUseCustom = false,    isUseCustomPart = false},
         SW870MRC =  {ID = "wp6100_MC",  Enum = 6100,    Name = "Sawed-off W-870 MRC",           Type = "SG",    Game = "Mercs", isUseCustom = true,     isUseCustomPart = false},
         XBOWMRC  =  {ID = "wp6102_MC",  Enum = 6102,    Name = "Blast Crossbow MRC",            Type = "XBOW",  Game = "Mercs", isUseCustom = true,     isUseCustomPart = false},
         BTMRC    =  {ID = "wp6103_MC",  Enum = 6103,    Name = "Blacktail AC MRC",              Type = "HG",    Game = "Mercs", isUseCustom = true,     isUseCustomPart = false},
@@ -152,7 +167,7 @@ local RE4R_WeaponData = {
                 CameraShakeParam = {
                     _Type = 1,
                     Life = {
-                       _LifeTime = 0.5, 
+                       _LifeTime = 0.5,
                     },
                     Move = {
                         Period = {
@@ -2197,7 +2212,7 @@ local RE4R_WeaponData = {
                     CameraShakeParam = {
                         _Type = 1,
                         Life = {
-                            _LifeTime = 5.0, 
+                            _LifeTime = 5.0,
                         },
                         Move = {
                             Period = {
@@ -7434,9 +7449,10 @@ local RE4R_WeaponData = {
                         },
                     },
                     Arrow = {
-                        _BombStartTimer = 2.0,
+                        _BombStartTime = 2.0,
                         _SensorTime = 30.0,
                         _SensorRadius = 1.5,
+                        _LightLoopTime = 0.5,
                     },
                 },
                 WeaponStructureParam = {
@@ -8459,6 +8475,1545 @@ local RE4R_WeaponData = {
                     _SliderDurabilityMaxValue = 2000,
                     _DefaultDurabilityMax = 1600,
                     _ItemSize = 14,
+                    _StackMax = 1,
+                },
+            },
+        },
+        wp5400 = {
+            Weapon_Presets = {},
+            current_param_indx = 1,
+            LevelTracker = {
+                CurrentLevel = {
+                    DMG = 0,
+                },
+                CurrentStats = {
+                    DMG = 0.0,
+                }
+            },
+            UnlimitedCapacity = false,
+            BaseStats = {
+                ShellGenerator = {
+                    LifeInfo = {
+                        _Type = 1.,
+                        _Time = 1.25,
+                        _Distance = 20.0
+                    },
+                    MoveInfo = {
+                        _RandomRadius = 0.00,
+                        _RandomRadius_Fit = 0.00,
+                        _Speed = 14.0,
+                        _Gravity = 14.7,
+                        _IgnoreGravityDistance = 0.0,
+                    },
+                    AttackInfo = {
+                        _ColliderRadius = 0.04,
+                        DamageRate = {
+                            _BaseValue = 1.0
+                        },
+                        WinceRate = {
+                            _BaseValue = 1.0
+                        },
+                        BreakRate = {
+                            _BaseValue = 1.0
+                        },
+                        StoppingRate = {
+                            _BaseValue = 1.0
+                        },
+                    },
+                },
+                WeaponStructureParam = {
+                    TypeOfReload = 0,
+                    TypeOfShoot = 0,
+                    ReloadNum = -1,
+                    _ReloadSpeedRate = 1.0,
+                    _RapidSpeed = 1.0,
+                    _RapidBaseFrame = -1.0,
+                    _PumpActionRapidSpeed = 1.0,
+                },
+                ThinkPlayerParam = {
+                    RangeDistance = 10.0
+                },
+                ReticleFitParam = {
+                    PointRange = {
+                        s = 0.0,
+                        r = 100.0,
+                    },
+                    _HoldAddPoint = 0.0,
+                    _MoveSubPoint = 0.0,
+                    _CameraSubPoint = 0.0,
+                    _KeepFitLimitPoint = 100.0,
+                    _ShootSubPoint = 0.0,
+                },
+            },
+            Catalog = {
+                ReticleFitParamTable = {
+                    _ReticleShape = 9000,
+                },
+                CameraRecoilParam = {
+                    _Yaw = 0.0,
+                    _Pitch = 0.0,
+                    YawRangeDeg = {
+                        s = 0.0,
+                        r = 0.0,
+                    },
+                    PitchRangeDeg = {
+                        s = 0.0,
+                        r = 0.0,
+                    },
+                    _CurveTime = 1.0,
+                },
+                CameraShakeParam = {
+                    _Type = 0,
+                    Life = {
+                       _LifeTime = 1.0,
+                    },
+                    Move = {
+                        Period = {
+                            s = 0.010,
+                            r = 0.0,
+                        },
+                        TranslationXRange = {
+                            s = 0.0,
+                            r = 0.0,
+                        },
+                        TranslationYRange = {
+                            s = 0.0,
+                            r = 0.0,
+                        },
+                        TranslationZRange = {
+                            s = -0.004,
+                            r = 0.002,
+                        },
+                        RotationXRange = {
+                            s = 0.0,
+                            r = 0.0,
+                        },
+                        RotationYRange = {
+                            s = 0.0,
+                            r = 0.0,
+                        },
+                        RotationZRange = {
+                            s = 0.0,
+                            r = 0.0,
+                        },
+                    },
+                },
+                ScopeParam = {
+                    _FOVMin = 5.0,
+                    _FOVMax = 25.0,
+                    --_CameraOffSet = {0.0, 0.0, 0.0},
+                    SpeedAtFovMin = 1.0,
+                    SpeedAtFovMax = 1.0,
+                    PCSpeedScale = 1.0,
+                    CameraJoint = "scope_00",
+                    -- _Rates = {},
+                },
+                HandShakeParam = {
+                    Time = 1.0,
+                    RStickOffset = -1.0,
+                },
+                AdaptiveFeedBackParam = {
+                    Left = {
+                        _Power = 0.0,
+                        _Frequency = 0.0,
+                        Range = {
+                            s = 0.0,
+                            r = 1.0,
+                        },
+                    },
+                    Right = {
+                        _Power = 0.2,
+                        _Frequency = 0.0,
+                        Range = {
+                            s = 0.2,
+                            r = 0.3,
+                        },
+                    },
+                },
+                KnifeCombatSpeedParam = {
+                    _KnifeCombatSpeed = 1.0,
+                },
+            },
+            CustomCatalog = {
+                CustomParts = {},
+            },
+            Inventory = {
+                _CurrentAmmo = -1,
+                Define = {
+                    _AmmoMax = 1,
+                    _AmmoCost = 1,
+                    DefaultDurabilityMaxValue = 1000,
+                    _SliderDurabilityMaxValue = 2000,
+                    --DefaultDurabilityMax = 1000,
+                    _ItemSize = 0,
+                    _StackMax = 1,
+                },
+            },
+        },
+        wp5400_MC = {
+            Weapon_Presets = {},
+            current_param_indx = 1,
+            LevelTracker = {
+                CurrentLevel = {
+                    DMG = 0,
+                },
+                CurrentStats = {
+                    DMG = 0.0,
+                }
+            },
+            UnlimitedCapacity = false,
+            BaseStats = {
+                ShellGenerator = {
+                    LifeInfo = {
+                        _Type = 1.,
+                        _Time = 1.25,
+                        _Distance = 20.0
+                    },
+                    MoveInfo = {
+                        _RandomRadius = 0.00,
+                        _RandomRadius_Fit = 0.00,
+                        _Speed = 14.0,
+                        _Gravity = 14.7,
+                        _IgnoreGravityDistance = 0.0,
+                    },
+                    AttackInfo = {
+                        _ColliderRadius = 0.04,
+                        DamageRate = {
+                            _BaseValue = 1.0
+                        },
+                        WinceRate = {
+                            _BaseValue = 1.0
+                        },
+                        BreakRate = {
+                            _BaseValue = 1.0
+                        },
+                        StoppingRate = {
+                            _BaseValue = 1.0
+                        },
+                    },
+                },
+                WeaponStructureParam = {
+                    TypeOfReload = 0,
+                    TypeOfShoot = 0,
+                    ReloadNum = -1,
+                    _ReloadSpeedRate = 1.0,
+                    _RapidSpeed = 1.0,
+                    _RapidBaseFrame = -1.0,
+                    _PumpActionRapidSpeed = 1.0,
+                },
+                ThinkPlayerParam = {
+                    RangeDistance = 10.0
+                },
+                ReticleFitParam = {
+                    PointRange = {
+                        s = 0.0,
+                        r = 100.0,
+                    },
+                    _HoldAddPoint = 0.0,
+                    _MoveSubPoint = 0.0,
+                    _CameraSubPoint = 0.0,
+                    _KeepFitLimitPoint = 100.0,
+                    _ShootSubPoint = 0.0,
+                },
+            },
+            Catalog = {
+                ReticleFitParamTable = {
+                    _ReticleShape = 9000,
+                },
+                CameraRecoilParam = {
+                    _Yaw = 0.0,
+                    _Pitch = 0.0,
+                    YawRangeDeg = {
+                        s = 0.0,
+                        r = 0.0,
+                    },
+                    PitchRangeDeg = {
+                        s = 0.0,
+                        r = 0.0,
+                    },
+                    _CurveTime = 1.0,
+                },
+                CameraShakeParam = {
+                    _Type = 0,
+                    Life = {
+                       _LifeTime = 1.0,
+                    },
+                    Move = {
+                        Period = {
+                            s = 0.010,
+                            r = 0.0,
+                        },
+                        TranslationXRange = {
+                            s = 0.0,
+                            r = 0.0,
+                        },
+                        TranslationYRange = {
+                            s = 0.0,
+                            r = 0.0,
+                        },
+                        TranslationZRange = {
+                            s = -0.004,
+                            r = 0.002,
+                        },
+                        RotationXRange = {
+                            s = 0.0,
+                            r = 0.0,
+                        },
+                        RotationYRange = {
+                            s = 0.0,
+                            r = 0.0,
+                        },
+                        RotationZRange = {
+                            s = 0.0,
+                            r = 0.0,
+                        },
+                    },
+                },
+                ScopeParam = {
+                    _FOVMin = 5.0,
+                    _FOVMax = 25.0,
+                    --_CameraOffSet = {0.0, 0.0, 0.0},
+                    SpeedAtFovMin = 1.0,
+                    SpeedAtFovMax = 1.0,
+                    PCSpeedScale = 1.0,
+                    CameraJoint = "scope_00",
+                    -- _Rates = {},
+                },
+                HandShakeParam = {
+                    Time = 1.0,
+                    RStickOffset = -1.0,
+                },
+                AdaptiveFeedBackParam = {
+                    Left = {
+                        _Power = 0.0,
+                        _Frequency = 0.0,
+                        Range = {
+                            s = 0.0,
+                            r = 1.0,
+                        },
+                    },
+                    Right = {
+                        _Power = 0.2,
+                        _Frequency = 0.0,
+                        Range = {
+                            s = 0.2,
+                            r = 0.3,
+                        },
+                    },
+                },
+                KnifeCombatSpeedParam = {
+                    _KnifeCombatSpeed = 1.0,
+                },
+            },
+            CustomCatalog = {
+                CustomParts = {},
+            },
+            Inventory = {
+                _CurrentAmmo = -1,
+                Define = {
+                    _AmmoMax = 1,
+                    _AmmoCost = 1,
+                    DefaultDurabilityMaxValue = 1000,
+                    _SliderDurabilityMaxValue = 2000,
+                    --DefaultDurabilityMax = 1000,
+                    _ItemSize = 0,
+                    _StackMax = 1,
+                },
+            },
+        },
+        wp5401 = {
+            Weapon_Presets = {},
+            current_param_indx = 1,
+            LevelTracker = {
+                CurrentLevel = {
+                    DMG = 0,
+                },
+                CurrentStats = {
+                    DMG = 0.0,
+                }
+            },
+            UnlimitedCapacity = false,
+            BaseStats = {
+                ShellGenerator = {
+                    LifeInfo = {
+                        _Type = 1.,
+                        _Time = 1.25,
+                        _Distance = 20.0
+                    },
+                    MoveInfo = {
+                        _RandomRadius = 0.00,
+                        _RandomRadius_Fit = 0.00,
+                        _Speed = 14.0,
+                        _Gravity = 14.7,
+                        _IgnoreGravityDistance = 0.0,
+                    },
+                    AttackInfo = {
+                        _ColliderRadius = 0.04,
+                        DamageRate = {
+                            _BaseValue = 1.0
+                        },
+                        WinceRate = {
+                            _BaseValue = 1.0
+                        },
+                        BreakRate = {
+                            _BaseValue = 1.0
+                        },
+                        StoppingRate = {
+                            _BaseValue = 1.0
+                        },
+                    },
+                },
+                WeaponStructureParam = {
+                    TypeOfReload = 0,
+                    TypeOfShoot = 0,
+                    ReloadNum = -1,
+                    _ReloadSpeedRate = 1.0,
+                    _RapidSpeed = 1.0,
+                    _RapidBaseFrame = -1.0,
+                    _PumpActionRapidSpeed = 1.0,
+                },
+                ThinkPlayerParam = {
+                    RangeDistance = 10.0
+                },
+                ReticleFitParam = {
+                    PointRange = {
+                        s = 0.0,
+                        r = 100.0,
+                    },
+                    _HoldAddPoint = 0.0,
+                    _MoveSubPoint = 0.0,
+                    _CameraSubPoint = 0.0,
+                    _KeepFitLimitPoint = 100.0,
+                    _ShootSubPoint = 0.0,
+                },
+            },
+            Catalog = {
+                ReticleFitParamTable = {
+                    _ReticleShape = 9000,
+                },
+                CameraRecoilParam = {
+                    _Yaw = 0.0,
+                    _Pitch = 0.0,
+                    YawRangeDeg = {
+                        s = 0.0,
+                        r = 0.0,
+                    },
+                    PitchRangeDeg = {
+                        s = 0.0,
+                        r = 0.0,
+                    },
+                    _CurveTime = 1.0,
+                },
+                CameraShakeParam = {
+                    _Type = 0,
+                    Life = {
+                       _LifeTime = 1.0,
+                    },
+                    Move = {
+                        Period = {
+                            s = 0.010,
+                            r = 0.0,
+                        },
+                        TranslationXRange = {
+                            s = 0.0,
+                            r = 0.0,
+                        },
+                        TranslationYRange = {
+                            s = 0.0,
+                            r = 0.0,
+                        },
+                        TranslationZRange = {
+                            s = -0.004,
+                            r = 0.002,
+                        },
+                        RotationXRange = {
+                            s = 0.0,
+                            r = 0.0,
+                        },
+                        RotationYRange = {
+                            s = 0.0,
+                            r = 0.0,
+                        },
+                        RotationZRange = {
+                            s = 0.0,
+                            r = 0.0,
+                        },
+                    },
+                },
+                ScopeParam = {
+                    _FOVMin = 5.0,
+                    _FOVMax = 25.0,
+                    --_CameraOffSet = {0.0, 0.0, 0.0},
+                    SpeedAtFovMin = 1.0,
+                    SpeedAtFovMax = 1.0,
+                    PCSpeedScale = 1.0,
+                    CameraJoint = "scope_00",
+                    -- _Rates = {},
+                },
+                HandShakeParam = {
+                    Time = 1.0,
+                    RStickOffset = -1.0,
+                },
+                AdaptiveFeedBackParam = {
+                    Left = {
+                        _Power = 0.0,
+                        _Frequency = 0.0,
+                        Range = {
+                            s = 0.0,
+                            r = 1.0,
+                        },
+                    },
+                    Right = {
+                        _Power = 0.2,
+                        _Frequency = 0.0,
+                        Range = {
+                            s = 0.2,
+                            r = 0.3,
+                        },
+                    },
+                },
+                KnifeCombatSpeedParam = {
+                    _KnifeCombatSpeed = 1.0,
+                },
+            },
+            CustomCatalog = {
+                CustomParts = {},
+            },
+            Inventory = {
+                _CurrentAmmo = -1,
+                Define = {
+                    _AmmoMax = 1,
+                    _AmmoCost = 1,
+                    DefaultDurabilityMaxValue = 1000,
+                    _SliderDurabilityMaxValue = 2000,
+                    --DefaultDurabilityMax = 1000,
+                    _ItemSize = 6,
+                    _StackMax = 1,
+                },
+            },
+        },
+        wp5401_MC = {
+            Weapon_Presets = {},
+            current_param_indx = 1,
+            LevelTracker = {
+                CurrentLevel = {
+                    DMG = 0,
+                },
+                CurrentStats = {
+                    DMG = 0.0,
+                }
+            },
+            UnlimitedCapacity = false,
+            BaseStats = {
+                ShellGenerator = {
+                    LifeInfo = {
+                        _Type = 1.,
+                        _Time = 1.25,
+                        _Distance = 20.0
+                    },
+                    MoveInfo = {
+                        _RandomRadius = 0.00,
+                        _RandomRadius_Fit = 0.00,
+                        _Speed = 14.0,
+                        _Gravity = 14.7,
+                        _IgnoreGravityDistance = 0.0,
+                    },
+                    AttackInfo = {
+                        _ColliderRadius = 0.04,
+                        DamageRate = {
+                            _BaseValue = 1.0
+                        },
+                        WinceRate = {
+                            _BaseValue = 1.0
+                        },
+                        BreakRate = {
+                            _BaseValue = 1.0
+                        },
+                        StoppingRate = {
+                            _BaseValue = 1.0
+                        },
+                    },
+                },
+                WeaponStructureParam = {
+                    TypeOfReload = 0,
+                    TypeOfShoot = 0,
+                    ReloadNum = -1,
+                    _ReloadSpeedRate = 1.0,
+                    _RapidSpeed = 1.0,
+                    _RapidBaseFrame = -1.0,
+                    _PumpActionRapidSpeed = 1.0,
+                },
+                ThinkPlayerParam = {
+                    RangeDistance = 10.0
+                },
+                ReticleFitParam = {
+                    PointRange = {
+                        s = 0.0,
+                        r = 100.0,
+                    },
+                    _HoldAddPoint = 0.0,
+                    _MoveSubPoint = 0.0,
+                    _CameraSubPoint = 0.0,
+                    _KeepFitLimitPoint = 100.0,
+                    _ShootSubPoint = 0.0,
+                },
+            },
+            Catalog = {
+                ReticleFitParamTable = {
+                    _ReticleShape = 9000,
+                },
+                CameraRecoilParam = {
+                    _Yaw = 0.0,
+                    _Pitch = 0.0,
+                    YawRangeDeg = {
+                        s = 0.0,
+                        r = 0.0,
+                    },
+                    PitchRangeDeg = {
+                        s = 0.0,
+                        r = 0.0,
+                    },
+                    _CurveTime = 1.0,
+                },
+                CameraShakeParam = {
+                    _Type = 0,
+                    Life = {
+                       _LifeTime = 1.0,
+                    },
+                    Move = {
+                        Period = {
+                            s = 0.010,
+                            r = 0.0,
+                        },
+                        TranslationXRange = {
+                            s = 0.0,
+                            r = 0.0,
+                        },
+                        TranslationYRange = {
+                            s = 0.0,
+                            r = 0.0,
+                        },
+                        TranslationZRange = {
+                            s = -0.004,
+                            r = 0.002,
+                        },
+                        RotationXRange = {
+                            s = 0.0,
+                            r = 0.0,
+                        },
+                        RotationYRange = {
+                            s = 0.0,
+                            r = 0.0,
+                        },
+                        RotationZRange = {
+                            s = 0.0,
+                            r = 0.0,
+                        },
+                    },
+                },
+                ScopeParam = {
+                    _FOVMin = 5.0,
+                    _FOVMax = 25.0,
+                    --_CameraOffSet = {0.0, 0.0, 0.0},
+                    SpeedAtFovMin = 1.0,
+                    SpeedAtFovMax = 1.0,
+                    PCSpeedScale = 1.0,
+                    CameraJoint = "scope_00",
+                    -- _Rates = {},
+                },
+                HandShakeParam = {
+                    Time = 1.0,
+                    RStickOffset = -1.0,
+                },
+                AdaptiveFeedBackParam = {
+                    Left = {
+                        _Power = 0.0,
+                        _Frequency = 0.0,
+                        Range = {
+                            s = 0.0,
+                            r = 1.0,
+                        },
+                    },
+                    Right = {
+                        _Power = 0.2,
+                        _Frequency = 0.0,
+                        Range = {
+                            s = 0.2,
+                            r = 0.3,
+                        },
+                    },
+                },
+                KnifeCombatSpeedParam = {
+                    _KnifeCombatSpeed = 1.0,
+                },
+            },
+            CustomCatalog = {
+                CustomParts = {},
+            },
+            Inventory = {
+                _CurrentAmmo = -1,
+                Define = {
+                    _AmmoMax = 1,
+                    _AmmoCost = 1,
+                    DefaultDurabilityMaxValue = 1000,
+                    _SliderDurabilityMaxValue = 2000,
+                    --DefaultDurabilityMax = 1000,
+                    _ItemSize = 6,
+                    _StackMax = 1,
+                },
+            },
+        },
+        wp5402 = {
+            Weapon_Presets = {},
+            current_param_indx = 1,
+            LevelTracker = {
+                CurrentLevel = {
+                    DMG = 0,
+                },
+                CurrentStats = {
+                    DMG = 0.0,
+                }
+            },
+            UnlimitedCapacity = false,
+            BaseStats = {
+                ShellGenerator = {
+                    LifeInfo = {
+                        _Type = 1.,
+                        _Time = 1.25,
+                        _Distance = 20.0
+                    },
+                    MoveInfo = {
+                        _RandomRadius = 0.00,
+                        _RandomRadius_Fit = 0.00,
+                        _Speed = 14.0,
+                        _Gravity = 14.7,
+                        _IgnoreGravityDistance = 0.0,
+                    },
+                    AttackInfo = {
+                        _ColliderRadius = 0.04,
+                        DamageRate = {
+                            _BaseValue = 1.0
+                        },
+                        WinceRate = {
+                            _BaseValue = 1.0
+                        },
+                        BreakRate = {
+                            _BaseValue = 1.0
+                        },
+                        StoppingRate = {
+                            _BaseValue = 1.0
+                        },
+                    },
+                },
+                WeaponStructureParam = {
+                    TypeOfReload = 0,
+                    TypeOfShoot = 0,
+                    ReloadNum = -1,
+                    _ReloadSpeedRate = 1.0,
+                    _RapidSpeed = 1.0,
+                    _RapidBaseFrame = -1.0,
+                    _PumpActionRapidSpeed = 1.0,
+                },
+                ThinkPlayerParam = {
+                    RangeDistance = 10.0
+                },
+                ReticleFitParam = {
+                    PointRange = {
+                        s = 0.0,
+                        r = 100.0,
+                    },
+                    _HoldAddPoint = 0.0,
+                    _MoveSubPoint = 0.0,
+                    _CameraSubPoint = 0.0,
+                    _KeepFitLimitPoint = 100.0,
+                    _ShootSubPoint = 0.0,
+                },
+            },
+            Catalog = {
+                ReticleFitParamTable = {
+                    _ReticleShape = 9000,
+                },
+                CameraRecoilParam = {
+                    _Yaw = 0.0,
+                    _Pitch = 0.0,
+                    YawRangeDeg = {
+                        s = 0.0,
+                        r = 0.0,
+                    },
+                    PitchRangeDeg = {
+                        s = 0.0,
+                        r = 0.0,
+                    },
+                    _CurveTime = 1.0,
+                },
+                CameraShakeParam = {
+                    _Type = 0,
+                    Life = {
+                       _LifeTime = 1.0,
+                    },
+                    Move = {
+                        Period = {
+                            s = 0.010,
+                            r = 0.0,
+                        },
+                        TranslationXRange = {
+                            s = 0.0,
+                            r = 0.0,
+                        },
+                        TranslationYRange = {
+                            s = 0.0,
+                            r = 0.0,
+                        },
+                        TranslationZRange = {
+                            s = -0.004,
+                            r = 0.002,
+                        },
+                        RotationXRange = {
+                            s = 0.0,
+                            r = 0.0,
+                        },
+                        RotationYRange = {
+                            s = 0.0,
+                            r = 0.0,
+                        },
+                        RotationZRange = {
+                            s = 0.0,
+                            r = 0.0,
+                        },
+                    },
+                },
+                ScopeParam = {
+                    _FOVMin = 5.0,
+                    _FOVMax = 25.0,
+                    --_CameraOffSet = {0.0, 0.0, 0.0},
+                    SpeedAtFovMin = 1.0,
+                    SpeedAtFovMax = 1.0,
+                    PCSpeedScale = 1.0,
+                    CameraJoint = "scope_00",
+                    -- _Rates = {},
+                },
+                HandShakeParam = {
+                    Time = 1.0,
+                    RStickOffset = -1.0,
+                },
+                AdaptiveFeedBackParam = {
+                    Left = {
+                        _Power = 0.0,
+                        _Frequency = 0.0,
+                        Range = {
+                            s = 0.0,
+                            r = 1.0,
+                        },
+                    },
+                    Right = {
+                        _Power = 0.2,
+                        _Frequency = 0.0,
+                        Range = {
+                            s = 0.2,
+                            r = 0.3,
+                        },
+                    },
+                },
+                KnifeCombatSpeedParam = {
+                    _KnifeCombatSpeed = 1.0,
+                },
+            },
+            CustomCatalog = {
+                CustomParts = {},
+            },
+            Inventory = {
+                _CurrentAmmo = -1,
+                Define = {
+                    _AmmoMax = 1,
+                    _AmmoCost = 1,
+                    DefaultDurabilityMaxValue = 1000,
+                    _SliderDurabilityMaxValue = 2000,
+                    --DefaultDurabilityMax = 1000,
+                    _ItemSize = 6,
+                    _StackMax = 1,
+                },
+            },
+        },
+        wp5402_MC = {
+            Weapon_Presets = {},
+            current_param_indx = 1,
+            LevelTracker = {
+                CurrentLevel = {
+                    DMG = 0,
+                },
+                CurrentStats = {
+                    DMG = 0.0,
+                }
+            },
+            UnlimitedCapacity = false,
+            BaseStats = {
+                ShellGenerator = {
+                    LifeInfo = {
+                        _Type = 1.,
+                        _Time = 1.25,
+                        _Distance = 20.0
+                    },
+                    MoveInfo = {
+                        _RandomRadius = 0.00,
+                        _RandomRadius_Fit = 0.00,
+                        _Speed = 14.0,
+                        _Gravity = 14.7,
+                        _IgnoreGravityDistance = 0.0,
+                    },
+                    AttackInfo = {
+                        _ColliderRadius = 0.04,
+                        DamageRate = {
+                            _BaseValue = 1.0
+                        },
+                        WinceRate = {
+                            _BaseValue = 1.0
+                        },
+                        BreakRate = {
+                            _BaseValue = 1.0
+                        },
+                        StoppingRate = {
+                            _BaseValue = 1.0
+                        },
+                    },
+                },
+                WeaponStructureParam = {
+                    TypeOfReload = 0,
+                    TypeOfShoot = 0,
+                    ReloadNum = -1,
+                    _ReloadSpeedRate = 1.0,
+                    _RapidSpeed = 1.0,
+                    _RapidBaseFrame = -1.0,
+                    _PumpActionRapidSpeed = 1.0,
+                },
+                ThinkPlayerParam = {
+                    RangeDistance = 10.0
+                },
+                ReticleFitParam = {
+                    PointRange = {
+                        s = 0.0,
+                        r = 100.0,
+                    },
+                    _HoldAddPoint = 0.0,
+                    _MoveSubPoint = 0.0,
+                    _CameraSubPoint = 0.0,
+                    _KeepFitLimitPoint = 100.0,
+                    _ShootSubPoint = 0.0,
+                },
+            },
+            Catalog = {
+                ReticleFitParamTable = {
+                    _ReticleShape = 9000,
+                },
+                CameraRecoilParam = {
+                    _Yaw = 0.0,
+                    _Pitch = 0.0,
+                    YawRangeDeg = {
+                        s = 0.0,
+                        r = 0.0,
+                    },
+                    PitchRangeDeg = {
+                        s = 0.0,
+                        r = 0.0,
+                    },
+                    _CurveTime = 1.0,
+                },
+                CameraShakeParam = {
+                    _Type = 0,
+                    Life = {
+                       _LifeTime = 1.0,
+                    },
+                    Move = {
+                        Period = {
+                            s = 0.010,
+                            r = 0.0,
+                        },
+                        TranslationXRange = {
+                            s = 0.0,
+                            r = 0.0,
+                        },
+                        TranslationYRange = {
+                            s = 0.0,
+                            r = 0.0,
+                        },
+                        TranslationZRange = {
+                            s = -0.004,
+                            r = 0.002,
+                        },
+                        RotationXRange = {
+                            s = 0.0,
+                            r = 0.0,
+                        },
+                        RotationYRange = {
+                            s = 0.0,
+                            r = 0.0,
+                        },
+                        RotationZRange = {
+                            s = 0.0,
+                            r = 0.0,
+                        },
+                    },
+                },
+                ScopeParam = {
+                    _FOVMin = 5.0,
+                    _FOVMax = 25.0,
+                    --_CameraOffSet = {0.0, 0.0, 0.0},
+                    SpeedAtFovMin = 1.0,
+                    SpeedAtFovMax = 1.0,
+                    PCSpeedScale = 1.0,
+                    CameraJoint = "scope_00",
+                    -- _Rates = {},
+                },
+                HandShakeParam = {
+                    Time = 1.0,
+                    RStickOffset = -1.0,
+                },
+                AdaptiveFeedBackParam = {
+                    Left = {
+                        _Power = 0.0,
+                        _Frequency = 0.0,
+                        Range = {
+                            s = 0.0,
+                            r = 1.0,
+                        },
+                    },
+                    Right = {
+                        _Power = 0.2,
+                        _Frequency = 0.0,
+                        Range = {
+                            s = 0.2,
+                            r = 0.3,
+                        },
+                    },
+                },
+                KnifeCombatSpeedParam = {
+                    _KnifeCombatSpeed = 1.0,
+                },
+            },
+            CustomCatalog = {
+                CustomParts = {},
+            },
+            Inventory = {
+                _CurrentAmmo = -1,
+                Define = {
+                    _AmmoMax = 1,
+                    _AmmoCost = 1,
+                    DefaultDurabilityMaxValue = 1000,
+                    _SliderDurabilityMaxValue = 2000,
+                    --DefaultDurabilityMax = 1000,
+                    _ItemSize = 6,
+                    _StackMax = 1,
+                },
+            },
+        },
+        wp5403 = {
+            Weapon_Presets = {},
+            current_param_indx = 1,
+            LevelTracker = {
+                CurrentLevel = {
+                    DMG = 0,
+                },
+                CurrentStats = {
+                    DMG = 0.0,
+                }
+            },
+            UnlimitedCapacity = false,
+            BaseStats = {
+                ShellGenerator = {
+                    LifeInfo = {
+                        _Type = 1,
+                        _Time = 10.0,
+                        _Distance = 20.0
+                    },
+                    MoveInfo = {
+                        _RandomRadius = 0.00,
+                        _RandomRadius_Fit = 0.00,
+                        _Speed = 14.0,
+                        _Gravity = 14.7,
+                        _IgnoreGravityDistance = 0.0,
+                    },
+                    AttackInfo = {
+                        _ColliderRadius = 0.04,
+                        DamageRate = {
+                            _BaseValue = 1.0
+                        },
+                        WinceRate = {
+                            _BaseValue = 1.0
+                        },
+                        BreakRate = {
+                            _BaseValue = 1.0
+                        },
+                        StoppingRate = {
+                            _BaseValue = 1.0
+                        },
+                    },
+                },
+                WeaponStructureParam = {
+                    TypeOfReload = 0,
+                    TypeOfShoot = 0,
+                    ReloadNum = -1,
+                    _ReloadSpeedRate = 1.0,
+                    _RapidSpeed = 1.0,
+                    _RapidBaseFrame = -1.0,
+                    _PumpActionRapidSpeed = 1.0,
+                },
+                ThinkPlayerParam = {
+                    RangeDistance = 10.0
+                },
+                ReticleFitParam = {
+                    PointRange = {
+                        s = 0.0,
+                        r = 100.0,
+                    },
+                    _HoldAddPoint = 0.0,
+                    _MoveSubPoint = 0.0,
+                    _CameraSubPoint = 0.0,
+                    _KeepFitLimitPoint = 100.0,
+                    _ShootSubPoint = 0.0,
+                },
+            },
+            Catalog = {
+                ReticleFitParamTable = {
+                    _ReticleShape = 9000,
+                },
+                CameraRecoilParam = {
+                    _Yaw = 0.0,
+                    _Pitch = 0.0,
+                    YawRangeDeg = {
+                        s = 0.0,
+                        r = 0.0,
+                    },
+                    PitchRangeDeg = {
+                        s = 0.0,
+                        r = 0.0,
+                    },
+                    _CurveTime = 1.0,
+                },
+                CameraShakeParam = {
+                    _Type = 0,
+                    Life = {
+                       _LifeTime = 1.0,
+                    },
+                    Move = {
+                        Period = {
+                            s = 0.010,
+                            r = 0.0,
+                        },
+                        TranslationXRange = {
+                            s = 0.0,
+                            r = 0.0,
+                        },
+                        TranslationYRange = {
+                            s = 0.0,
+                            r = 0.0,
+                        },
+                        TranslationZRange = {
+                            s = -0.004,
+                            r = 0.002,
+                        },
+                        RotationXRange = {
+                            s = 0.0,
+                            r = 0.0,
+                        },
+                        RotationYRange = {
+                            s = 0.0,
+                            r = 0.0,
+                        },
+                        RotationZRange = {
+                            s = 0.0,
+                            r = 0.0,
+                        },
+                    },
+                },
+                ScopeParam = {
+                    _FOVMin = 5.0,
+                    _FOVMax = 25.0,
+                    --_CameraOffSet = {0.0, 0.0, 0.0},
+                    SpeedAtFovMin = 1.0,
+                    SpeedAtFovMax = 1.0,
+                    PCSpeedScale = 1.0,
+                    CameraJoint = "scope_00",
+                    -- _Rates = {},
+                },
+                HandShakeParam = {
+                    Time = 1.0,
+                    RStickOffset = -1.0,
+                },
+                AdaptiveFeedBackParam = {
+                    Left = {
+                        _Power = 0.0,
+                        _Frequency = 0.0,
+                        Range = {
+                            s = 0.0,
+                            r = 1.0,
+                        },
+                    },
+                    Right = {
+                        _Power = 0.2,
+                        _Frequency = 0.0,
+                        Range = {
+                            s = 0.2,
+                            r = 0.3,
+                        },
+                    },
+                },
+                KnifeCombatSpeedParam = {
+                    _KnifeCombatSpeed = 1.0,
+                },
+            },
+            CustomCatalog = {
+                CustomParts = {},
+            },
+            Inventory = {
+                _CurrentAmmo = -1,
+                Define = {
+                    _AmmoMax = 1,
+                    _AmmoCost = 1,
+                    DefaultDurabilityMaxValue = 1000,
+                    _SliderDurabilityMaxValue = 2000,
+                    --DefaultDurabilityMax = 1000,
+                    _ItemSize = 0,
+                    _StackMax = 1,
+                },
+            },
+        },
+        wp5404 = {
+            Weapon_Presets = {},
+            current_param_indx = 1,
+            LevelTracker = {
+                CurrentLevel = {
+                    DMG = 0,
+                },
+                CurrentStats = {
+                    DMG = 0.0,
+                }
+            },
+            UnlimitedCapacity = false,
+            BaseStats = {
+                ShellGenerator = {
+                    LifeInfo = {
+                        _Type = 1,
+                        _Time = 10.0,
+                        _Distance = 20.0
+                    },
+                    MoveInfo = {
+                        _RandomRadius = 0.00,
+                        _RandomRadius_Fit = 0.00,
+                        _Speed = 14.0,
+                        _Gravity = 14.7,
+                        _IgnoreGravityDistance = 0.0,
+                    },
+                    AttackInfo = {
+                        _ColliderRadius = 0.04,
+                        DamageRate = {
+                            _BaseValue = 1.0
+                        },
+                        WinceRate = {
+                            _BaseValue = 1.0
+                        },
+                        BreakRate = {
+                            _BaseValue = 1.0
+                        },
+                        StoppingRate = {
+                            _BaseValue = 1.0
+                        },
+                    },
+                },
+                WeaponStructureParam = {
+                    TypeOfReload = 0,
+                    TypeOfShoot = 0,
+                    ReloadNum = -1,
+                    _ReloadSpeedRate = 1.0,
+                    _RapidSpeed = 1.0,
+                    _RapidBaseFrame = -1.0,
+                    _PumpActionRapidSpeed = 1.0,
+                },
+                ThinkPlayerParam = {
+                    RangeDistance = 10.0
+                },
+                ReticleFitParam = {
+                    PointRange = {
+                        s = 0.0,
+                        r = 100.0,
+                    },
+                    _HoldAddPoint = 0.0,
+                    _MoveSubPoint = 0.0,
+                    _CameraSubPoint = 0.0,
+                    _KeepFitLimitPoint = 100.0,
+                    _ShootSubPoint = 0.0,
+                },
+            },
+            Catalog = {
+                ReticleFitParamTable = {
+                    _ReticleShape = 9000,
+                },
+                CameraRecoilParam = {
+                    _Yaw = 0.0,
+                    _Pitch = 0.0,
+                    YawRangeDeg = {
+                        s = 0.0,
+                        r = 0.0,
+                    },
+                    PitchRangeDeg = {
+                        s = 0.0,
+                        r = 0.0,
+                    },
+                    _CurveTime = 1.0,
+                },
+                CameraShakeParam = {
+                    _Type = 0,
+                    Life = {
+                       _LifeTime = 1.0,
+                    },
+                    Move = {
+                        Period = {
+                            s = 0.010,
+                            r = 0.0,
+                        },
+                        TranslationXRange = {
+                            s = 0.0,
+                            r = 0.0,
+                        },
+                        TranslationYRange = {
+                            s = 0.0,
+                            r = 0.0,
+                        },
+                        TranslationZRange = {
+                            s = -0.004,
+                            r = 0.002,
+                        },
+                        RotationXRange = {
+                            s = 0.0,
+                            r = 0.0,
+                        },
+                        RotationYRange = {
+                            s = 0.0,
+                            r = 0.0,
+                        },
+                        RotationZRange = {
+                            s = 0.0,
+                            r = 0.0,
+                        },
+                    },
+                },
+                ScopeParam = {
+                    _FOVMin = 5.0,
+                    _FOVMax = 25.0,
+                    --_CameraOffSet = {0.0, 0.0, 0.0},
+                    SpeedAtFovMin = 1.0,
+                    SpeedAtFovMax = 1.0,
+                    PCSpeedScale = 1.0,
+                    CameraJoint = "scope_00",
+                    -- _Rates = {},
+                },
+                HandShakeParam = {
+                    Time = 1.0,
+                    RStickOffset = -1.0,
+                },
+                AdaptiveFeedBackParam = {
+                    Left = {
+                        _Power = 0.0,
+                        _Frequency = 0.0,
+                        Range = {
+                            s = 0.0,
+                            r = 1.0,
+                        },
+                    },
+                    Right = {
+                        _Power = 0.2,
+                        _Frequency = 0.0,
+                        Range = {
+                            s = 0.2,
+                            r = 0.3,
+                        },
+                    },
+                },
+                KnifeCombatSpeedParam = {
+                    _KnifeCombatSpeed = 1.0,
+                },
+            },
+            CustomCatalog = {
+                CustomParts = {},
+            },
+            Inventory = {
+                _CurrentAmmo = -1,
+                Define = {
+                    _AmmoMax = 1,
+                    _AmmoCost = 1,
+                    DefaultDurabilityMaxValue = 1000,
+                    _SliderDurabilityMaxValue = 2000,
+                    --DefaultDurabilityMax = 1000,
+                    _ItemSize = 0,
+                    _StackMax = 1,
+                },
+            },
+        },
+        wp5405 = {
+            Weapon_Presets = {},
+            current_param_indx = 1,
+            LevelTracker = {
+                CurrentLevel = {
+                    DMG = 0,
+                },
+                CurrentStats = {
+                    DMG = 0.0,
+                }
+            },
+            UnlimitedCapacity = false,
+            BaseStats = {
+                ShellGenerator = {
+                    LifeInfo = {
+                        _Type = 1,
+                        _Time = 10.0,
+                        _Distance = 20.0
+                    },
+                    MoveInfo = {
+                        _RandomRadius = 0.00,
+                        _RandomRadius_Fit = 0.00,
+                        _Speed = 14.0,
+                        _Gravity = 14.7,
+                        _IgnoreGravityDistance = 0.0,
+                    },
+                    AttackInfo = {
+                        _ColliderRadius = 0.04,
+                        DamageRate = {
+                            _BaseValue = 1.0
+                        },
+                        WinceRate = {
+                            _BaseValue = 1.0
+                        },
+                        BreakRate = {
+                            _BaseValue = 1.0
+                        },
+                        StoppingRate = {
+                            _BaseValue = 1.0
+                        },
+                    },
+                },
+                WeaponStructureParam = {
+                    TypeOfReload = 0,
+                    TypeOfShoot = 0,
+                    ReloadNum = -1,
+                    _ReloadSpeedRate = 1.0,
+                    _RapidSpeed = 1.0,
+                    _RapidBaseFrame = -1.0,
+                    _PumpActionRapidSpeed = 1.0,
+                },
+                ThinkPlayerParam = {
+                    RangeDistance = 10.0
+                },
+                ReticleFitParam = {
+                    PointRange = {
+                        s = 0.0,
+                        r = 100.0,
+                    },
+                    _HoldAddPoint = 0.0,
+                    _MoveSubPoint = 0.0,
+                    _CameraSubPoint = 0.0,
+                    _KeepFitLimitPoint = 100.0,
+                    _ShootSubPoint = 0.0,
+                },
+            },
+            Catalog = {
+                ReticleFitParamTable = {
+                    _ReticleShape = 9000,
+                },
+                CameraRecoilParam = {
+                    _Yaw = 0.0,
+                    _Pitch = 0.0,
+                    YawRangeDeg = {
+                        s = 0.0,
+                        r = 0.0,
+                    },
+                    PitchRangeDeg = {
+                        s = 0.0,
+                        r = 0.0,
+                    },
+                    _CurveTime = 1.0,
+                },
+                CameraShakeParam = {
+                    _Type = 0,
+                    Life = {
+                       _LifeTime = 1.0,
+                    },
+                    Move = {
+                        Period = {
+                            s = 0.010,
+                            r = 0.0,
+                        },
+                        TranslationXRange = {
+                            s = 0.0,
+                            r = 0.0,
+                        },
+                        TranslationYRange = {
+                            s = 0.0,
+                            r = 0.0,
+                        },
+                        TranslationZRange = {
+                            s = -0.004,
+                            r = 0.002,
+                        },
+                        RotationXRange = {
+                            s = 0.0,
+                            r = 0.0,
+                        },
+                        RotationYRange = {
+                            s = 0.0,
+                            r = 0.0,
+                        },
+                        RotationZRange = {
+                            s = 0.0,
+                            r = 0.0,
+                        },
+                    },
+                },
+                ScopeParam = {
+                    _FOVMin = 5.0,
+                    _FOVMax = 25.0,
+                    --_CameraOffSet = {0.0, 0.0, 0.0},
+                    SpeedAtFovMin = 1.0,
+                    SpeedAtFovMax = 1.0,
+                    PCSpeedScale = 1.0,
+                    CameraJoint = "scope_00",
+                    -- _Rates = {},
+                },
+                HandShakeParam = {
+                    Time = 1.0,
+                    RStickOffset = -1.0,
+                },
+                AdaptiveFeedBackParam = {
+                    Left = {
+                        _Power = 0.0,
+                        _Frequency = 0.0,
+                        Range = {
+                            s = 0.0,
+                            r = 1.0,
+                        },
+                    },
+                    Right = {
+                        _Power = 0.2,
+                        _Frequency = 0.0,
+                        Range = {
+                            s = 0.2,
+                            r = 0.3,
+                        },
+                    },
+                },
+                KnifeCombatSpeedParam = {
+                    _KnifeCombatSpeed = 1.0,
+                },
+            },
+            CustomCatalog = {
+                CustomParts = {},
+            },
+            Inventory = {
+                _CurrentAmmo = -1,
+                Define = {
+                    _AmmoMax = 1,
+                    _AmmoCost = 1,
+                    DefaultDurabilityMaxValue = 1000,
+                    _SliderDurabilityMaxValue = 2000,
+                    --DefaultDurabilityMax = 1000,
+                    _ItemSize = 0,
                     _StackMax = 1,
                 },
             },
@@ -9894,9 +11449,10 @@ local RE4R_WeaponData = {
                         },
                     },
                     Arrow = {
-                        _BombStartTimer = 0.0,
+                        _BombStartTime = 0.0,
                         _SensorTime = 0.0,
                         _SensorRadius = 2.5,
+                        _LightLoopTime = 0.5,
                     },
                 },
                 WeaponStructureParam = {
@@ -10110,9 +11666,10 @@ local RE4R_WeaponData = {
                         },
                     },
                     Arrow = {
-                        _BombStartTimer = 0.0,
+                        _BombStartTime = 0.0,
                         _SensorTime = 0.0,
                         _SensorRadius = 2.5,
+                        _LightLoopTime = 0.5,
                     },
                 },
                 WeaponStructureParam = {
@@ -12845,12 +14402,12 @@ local RE4R_WeaponData = {
                         _Yaw = 0.0,
                         _Pitch = 0.0,
                         YawRangeDeg = {
-                            s = 0.0,
-                            r = 42.220,
+                            s = -0.20,
+                            r = 0.4,
                         },
                         PitchRangeDeg = {
-                            s = 0.0,
-                            r = 39.820,
+                            s = 1.0,
+                            r = 0.5,
                         },
                         _CurveTime = 3.0,
                     },
@@ -13743,9 +15300,10 @@ local RE4R_WeaponData = {
                         },
                     },
                     Arrow = {
-                        _BombStartTimer = 0.0,
+                        _BombStartTime = 0.0,
                         _SensorTime = 0.0,
                         _SensorRadius = 2.5,
+                        _LightLoopTime = 0.5,
                     },
                 },
                 WeaponStructureParam = {
@@ -13904,6 +15462,12 @@ local RE4R_WeaponData = {
         "CKNF",
         "FKNF",
         "PKNF",
+        "NADE",
+        "HNADE",
+        "FNADE",
+        "EGG",
+        "BEGG",
+        "GEGG",
         --------| SW
         "BTAO",
         "PUNAO",
@@ -13918,6 +15482,12 @@ local RE4R_WeaponData = {
         "RPGIAO",
         "TKNF",
         "EKNF",
+        "NADEAO",
+        "HNADEAO",
+        "FNADEAO",
+        "EGGAO",
+        "BEGGAO",
+        "GEGGAO",
         --------| MERCS
         "SG09RMRC",
         "RED9MRC",
@@ -13941,6 +15511,9 @@ local RE4R_WeaponData = {
         "CKNFMRC",
         "FKNFMRC",
         "TKNFMRC",
+        "NADEMRC",
+        "HNADEMRC",
+        "FNADEMRC",
     },
 }
 

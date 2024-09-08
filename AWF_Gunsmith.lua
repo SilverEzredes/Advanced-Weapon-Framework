@@ -2,8 +2,8 @@
 local modName = "Advanced Weapon Framework - Gunsmith"
 
 local modAuthor = "SilverEzredes"
-local modUpdated = "09/03/2024"
-local modVersion = "v3.3.30"
+local modUpdated = "09/08/2024"
+local modVersion = "v3.3.40"
 local modCredits = "praydog; alphaZomega"
 
 --/////////////////////////////////////--
