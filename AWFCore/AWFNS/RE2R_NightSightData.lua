@@ -385,7 +385,187 @@ local RE2_NightSightData = {
         },
     
     },
+    wp4100 = {
+        night_sight_toggled = false,
+        flashlight_toggled = false,
+        dotsight_toggled = false,
+        ns_material_params = {
+            EmissiveColor = {
+                R = 0,
+                G = 255,
+                B = 0,
+                A = 255,
+            },
+            EmissiveIntensity = 150.0,
+            EmissiveRate = 0.0,
+        },
+        fl_material_params = {
+            EmissiveColor = {
+                R = 255,
+                G = 255,
+                B = 255,
+                A = 255,
+            },
+            EmissiveIntensity = 150.0,
+            EmissiveRate = 0.0,
+        },
+        ds_material_params = {
+            EmissiveColor = {
+                R = 255,
+                G = 0,
+                B = 0,
+                A = 255,
+            },
+            EmissiveIntensity = 1500.0,
+            EmissiveRate = 0.0,
+        },
+    
+    },
+    wp4200 = {
+        night_sight_toggled = false,
+        flashlight_toggled = false,
+        dotsight_toggled = false,
+        ns_material_params = {
+            EmissiveColor = {
+                R = 0,
+                G = 255,
+                B = 0,
+                A = 255,
+            },
+            EmissiveIntensity = 150.0,
+            EmissiveRate = 0.0,
+        },
+        fl_material_params = {
+            EmissiveColor = {
+                R = 255,
+                G = 255,
+                B = 255,
+                A = 255,
+            },
+            EmissiveIntensity = 150.0,
+            EmissiveRate = 0.0,
+        },
+        ds_material_params = {
+            EmissiveColor = {
+                R = 255,
+                G = 0,
+                B = 0,
+                A = 255,
+            },
+            EmissiveIntensity = 1500.0,
+            EmissiveRate = 0.0,
+        },
+    
+    },
     wp4300 = {
+        night_sight_toggled = false,
+        flashlight_toggled = false,
+        dotsight_toggled = false,
+        ns_material_params = {
+            EmissiveColor = {
+                R = 0,
+                G = 255,
+                B = 0,
+                A = 255,
+            },
+            EmissiveIntensity = 150.0,
+            EmissiveRate = 0.0,
+        },
+        fl_material_params = {
+            EmissiveColor = {
+                R = 255,
+                G = 255,
+                B = 255,
+                A = 255,
+            },
+            EmissiveIntensity = 150.0,
+            EmissiveRate = 0.0,
+        },
+        ds_material_params = {
+            EmissiveColor = {
+                R = 255,
+                G = 0,
+                B = 0,
+                A = 255,
+            },
+            EmissiveIntensity = 1500.0,
+            EmissiveRate = 0.0,
+        },
+    
+    },
+    wp4400 = {
+        night_sight_toggled = false,
+        flashlight_toggled = false,
+        dotsight_toggled = false,
+        ns_material_params = {
+            EmissiveColor = {
+                R = 0,
+                G = 255,
+                B = 0,
+                A = 255,
+            },
+            EmissiveIntensity = 150.0,
+            EmissiveRate = 0.0,
+        },
+        fl_material_params = {
+            EmissiveColor = {
+                R = 255,
+                G = 255,
+                B = 255,
+                A = 255,
+            },
+            EmissiveIntensity = 150.0,
+            EmissiveRate = 0.0,
+        },
+        ds_material_params = {
+            EmissiveColor = {
+                R = 255,
+                G = 0,
+                B = 0,
+                A = 255,
+            },
+            EmissiveIntensity = 1500.0,
+            EmissiveRate = 0.0,
+        },
+    
+    },
+    wp4600 = {
+        night_sight_toggled = false,
+        flashlight_toggled = false,
+        dotsight_toggled = false,
+        ns_material_params = {
+            EmissiveColor = {
+                R = 0,
+                G = 255,
+                B = 0,
+                A = 255,
+            },
+            EmissiveIntensity = 150.0,
+            EmissiveRate = 0.0,
+        },
+        fl_material_params = {
+            EmissiveColor = {
+                R = 255,
+                G = 255,
+                B = 255,
+                A = 255,
+            },
+            EmissiveIntensity = 150.0,
+            EmissiveRate = 0.0,
+        },
+        ds_material_params = {
+            EmissiveColor = {
+                R = 255,
+                G = 0,
+                B = 0,
+                A = 255,
+            },
+            EmissiveIntensity = 1500.0,
+            EmissiveRate = 0.0,
+        },
+    
+    },
+    wp4700 = {
         night_sight_toggled = false,
         flashlight_toggled = false,
         dotsight_toggled = false,
@@ -560,6 +740,78 @@ local RE2_NightSightData = {
             EmissiveIntensity = 1500.0,
             EmissiveRate = 0.0,
         },
+    },
+    wp8400 = {
+        night_sight_toggled = false,
+        flashlight_toggled = false,
+        dotsight_toggled = false,
+        ns_material_params = {
+            EmissiveColor = {
+                R = 0,
+                G = 255,
+                B = 0,
+                A = 255,
+            },
+            EmissiveIntensity = 150.0,
+            EmissiveRate = 0.0,
+        },
+        fl_material_params = {
+            EmissiveColor = {
+                R = 255,
+                G = 255,
+                B = 255,
+                A = 255,
+            },
+            EmissiveIntensity = 150.0,
+            EmissiveRate = 0.0,
+        },
+        ds_material_params = {
+            EmissiveColor = {
+                R = 255,
+                G = 0,
+                B = 0,
+                A = 255,
+            },
+            EmissiveIntensity = 1500.0,
+            EmissiveRate = 0.0,
+        },
+    
+    },
+    wp8700 = {
+        night_sight_toggled = false,
+        flashlight_toggled = false,
+        dotsight_toggled = false,
+        ns_material_params = {
+            EmissiveColor = {
+                R = 0,
+                G = 255,
+                B = 0,
+                A = 255,
+            },
+            EmissiveIntensity = 150.0,
+            EmissiveRate = 0.0,
+        },
+        fl_material_params = {
+            EmissiveColor = {
+                R = 255,
+                G = 255,
+                B = 255,
+                A = 255,
+            },
+            EmissiveIntensity = 150.0,
+            EmissiveRate = 0.0,
+        },
+        ds_material_params = {
+            EmissiveColor = {
+                R = 255,
+                G = 0,
+                B = 0,
+                A = 255,
+            },
+            EmissiveIntensity = 1500.0,
+            EmissiveRate = 0.0,
+        },
+    
     },
 }
 

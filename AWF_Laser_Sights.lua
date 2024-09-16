@@ -2,23 +2,20 @@
 local modName = "Advanced Weapon Framework: Laser Sights"
 
 local modAuthor = "SilverEzredes"
-local modUpdated = "09/08/2024"
-local modVersion = "v3.3.40"
+local modUpdated = "09/13/2024"
+local modVersion = "v3.4.00"
 local modCredits = "praydog; alphaZomega"
 
 --/////////////////////////////////////--
 local AWF = require("AWFCore")
 local hk = require("Hotkeys/Hotkeys")
 local func = require("_SharedCore/Functions")
+local ui = require("_SharedCore/Imgui")
 
 local scene = func.get_CurrentScene()
 local changed = false
 local wc = false
 local show_AWFLS_editor = false
-
-local AWF_RE2_Cache = {
-    LaserSightController = sdk.typeof("app.ropeway.LaserSightController"),
-}
 
 local AWF_LS_default_settings = {
     input_mode_idx =  1,
@@ -30,7 +27,7 @@ local AWF_LS_default_settings = {
 		["Modifier"] = "R Mouse",
 		["Laser Sight Switch"] = "T",
 		["Pad Modifier"] = "LT (L2)",
-		["Pad Laser Sight Switch"] = "LStickPush",
+		["Pad Laser Sight Switch"] = "RStickPush",
 	},
 }
 
@@ -41,23 +38,39 @@ AWFWeapons.RE2_Laser_Sights = require("AWFCore/AWFLS/RE2R_LaserData")
 
 local AWF_LS_settings = hk.merge_tables({}, AWF_LS_default_settings) and hk.recurse_def_settings(json.load_file("AWF/AWF_LaserSights/AWF_LaserSight_Settings.json") or {}, AWF_LS_default_settings)
 hk.setup_hotkeys(AWF_LS_settings.hotkeys)
-
 local AWF_settings = hk.merge_tables({}, AWFWeapons) and hk.recurse_def_settings(json.load_file("AWF/AWF_LaserSights/AWF_LaserSight_ParamSettings.json") or {}, AWFWeapons)
 
 --////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 --MARK: RE2R
+local playerContext_RE2 = nil
+local isPlayerInScene_RE2 = false
+local RE2_Cache = {
+    LaserSightController = sdk.typeof("app.ropeway.LaserSightController"),
+}
+local function get_playerContext_RE2()
+    local playerManager
+    playerManager = sdk.get_managed_singleton(sdk.game_namespace("PlayerManager"))
+    playerContext_RE2 = playerManager and playerManager:call("get_CurrentPlayer")
+    return playerContext_RE2
+end
+local function check_if_playerIsInScene_RE2()
+    get_playerContext_RE2()
+
+    if playerContext_RE2 ~= nil then
+        isPlayerInScene_RE2 = true
+    elseif playerContext_RE2 == nil or {} then
+        isPlayerInScene_RE2 = false
+    end
+end
 local function cache_reticle_GUI_RE2()
     local ReticleGUI_GameObject_RE2 = scene:call("findGameObject(System.String)", "GUI_Reticle")
 
     if ReticleGUI_GameObject_RE2 then
-        AWF_RE2_Cache.ReticleGUI = ReticleGUI_GameObject_RE2
+        RE2_Cache.ReticleGUI = ReticleGUI_GameObject_RE2
     end
 end
-if reframework.get_game_name() == "re2" then
-    cache_reticle_GUI_RE2()
-end
 local function get_reticle_GUI(weaponData, LS_table)
-    local ReticleGUI_GameObject_RE2 = AWF_RE2_Cache.ReticleGUI
+    local ReticleGUI_GameObject_RE2 = RE2_Cache.ReticleGUI
 
     if (ReticleGUI_GameObject_RE2 and NowLoading) or (not ReticleGUI_GameObject_RE2 and NowLoading) then
         cache_reticle_GUI_RE2()
@@ -80,8 +93,8 @@ local function get_laser_sights_RE2(weaponData, LS_table)
         if LS_table[weapon.ID] and LS_table[weapon.ID].isUpdated then
             local Laser_GameObject_RE2 = scene:call("findGameObject(System.String)", "LaserSight_" .. weapon.ID)
 
-            if Laser_GameObject_RE2 then
-                local LaserSight_Controller_RE2 = Laser_GameObject_RE2:call("getComponent(System.Type)", AWF_RE2_Cache.LaserSightController)
+            if Laser_GameObject_RE2 and Laser_GameObject_RE2:get_Valid() then
+                local LaserSight_Controller_RE2 = Laser_GameObject_RE2:call("getComponent(System.Type)", RE2_Cache.LaserSightController)
 
                 if LaserSight_Controller_RE2 then
                     LaserSight_Controller_RE2.WeaponPartsBits = LS_table[weapon.ID].isEnabled and 0 or 7652
@@ -97,6 +110,7 @@ local function get_laser_sights_RE2(weaponData, LS_table)
     end
 end
 if reframework.get_game_name() == "re2" then
+    cache_reticle_GUI_RE2()
     get_laser_sights_RE2(AWF.AWF_settings.RE2.Weapons, AWF_settings.RE2_Laser_Sights)
 end
 local function toggle_laser_sights_RE2(weaponData)
@@ -119,11 +133,11 @@ local function toggle_laser_sights_RE2(weaponData)
                     AWF.AWF_settings.RE2.Weapon_Params[weapon.ID].Reticle._ShootPoint = 0.0
                     AWF.AWF_settings.RE2.Weapon_Params[weapon.ID].Reticle._MovePoint = 0.0
                     AWF.AWF_settings.RE2.Weapon_Params[weapon.ID].Reticle._WatchPoint = 0.0
-                    AWF.cache_weapon_gameobjects_RE2(AWF.AWF_settings.RE2.Weapons)
+                    AWF.get_WeaponData_RE2(AWF.AWF_settings.RE2.Weapons)
                 elseif not LS_Params.isEnabled then
                     weapon.isUpdated = true
                     AWF.AWF_settings.RE2.Weapon_Params[weapon.ID].Reticle = hk.recurse_def_settings({}, AWF.AWF_Master.RE2.Weapon_Params[weapon.ID].Reticle)
-                    AWF.cache_weapon_gameobjects_RE2(AWF.AWF_settings.RE2.Weapons)
+                    AWF.get_WeaponData_RE2(AWF.AWF_settings.RE2.Weapons)
                 end
                 weapon.isUpdated = false
                 LS_Params.isUpdated = false
@@ -132,18 +146,20 @@ local function toggle_laser_sights_RE2(weaponData)
     end
 end
 local function draw_AWFLS_RE2Editor_GUI(weaponOrder)
-    if imgui.begin_window("AWF Laser Sight Editor") then
+    if imgui.begin_window("Advanced Weapon Framework: Laser Sight Editor") then
         imgui.begin_rect()
-        imgui.button("[==============| AWF LASER SIGHT EDITOR |==============]")
-
+        local textColor = {0, 255, 255, 255}
+        imgui.text_colored("  [ " .. ui.draw_line("=", 35) ..  " | " .. ui.draw_line("=", 35) .. " ] ", func.convert_rgba_to_AGBR(textColor))
         for _, weaponName in ipairs(weaponOrder) do
             local weapon = AWF.AWF_settings.RE2.Weapons[weaponName]
-
-            if imgui.tree_node(string.upper(weapon.Name)) then
-                imgui.begin_rect()
-                imgui.spacing()
-
-                if imgui.button("Reset to Defaults") then
+            
+            if weapon and weapon.Type ~= "KNF" and weapon.Type ~= "THRW" then
+                
+                if imgui.tree_node(weapon.Name) then
+                    imgui.begin_rect()
+                    imgui.spacing()
+                    imgui.indent(5)
+                    if imgui.button("Reset to Defaults") then
                     wc = true
                     AWF_settings.RE2_Laser_Sights[weapon.ID] = hk.recurse_def_settings({}, AWFWeapons.RE2_Laser_Sights[weapon.ID]); wc = wc or changed
                 end
@@ -163,18 +179,25 @@ local function draw_AWFLS_RE2Editor_GUI(weaponOrder)
                 changed, AWF_settings.RE2_Laser_Sights[weapon.ID].ShowLength = imgui.drag_float("Show Length", AWF_settings.RE2_Laser_Sights[weapon.ID].ShowLength, 1.0, -1000.0, 1000.0); wc = wc or changed
                 changed, AWF_settings.RE2_Laser_Sights[weapon.ID].SightEmitJointName = imgui.input_text("Emitter Joint Name", AWF_settings.RE2_Laser_Sights[weapon.ID].SightEmitJointName); wc = wc or changed
 
+                imgui.indent(-5)
+                imgui.spacing()
                 imgui.end_rect(2)
                 imgui.tree_pop()
+                end
+
+                imgui.text_colored("  " .. ui.draw_line("-", 100) .."  ", func.convert_rgba_to_AGBR(textColor))
             end
-            imgui.separator()
         end
+        imgui.text_colored("  [ " .. ui.draw_line("=", 35) ..  " | " .. ui.draw_line("=", 35) .. " ] ", func.convert_rgba_to_AGBR(textColor))
         imgui.end_rect(1)
         imgui.end_window()
     end
 end
 local function draw_AWFLS_GUI_RE2()
-    if imgui.tree_node("AWF - Laser Sights") then
+    if imgui.tree_node(modName) then
         imgui.begin_rect()
+        imgui.spacing()
+        imgui.indent(5)
         if imgui.button("Reset to Defaults") then
             wc = true
             changed = true
@@ -185,13 +208,21 @@ local function draw_AWFLS_GUI_RE2()
         end
         func.tooltip("Reset every parameter.")
         
-        imgui.spacing()
+        imgui.same_line()
 
         changed, show_AWFLS_editor = imgui.checkbox("Open AWF Laser Sight Editor", show_AWFLS_editor)
         func.tooltip("Show/Hide the AWF Laser Sight Editor.")
 
-        if show_AWFLS_editor then
+        if not show_AWFLS_editor or imgui.begin_window("Advanced Weapon Framework: Laser Sight Editor", true, 0) == false  then
+            show_AWFLS_editor = false
+        else
+            imgui.spacing()
+            imgui.indent()
+
             draw_AWFLS_RE2Editor_GUI(AWF.AWF_settings.RE2.Weapon_Order)
+
+            imgui.unindent()
+            imgui.end_window()
         end
         
         imgui.spacing()
@@ -220,16 +251,18 @@ local function draw_AWFLS_GUI_RE2()
         end
         imgui.end_rect(2)
 
-        ui.button_n_colored_txt("Current Version:", "v1.8.0 | 03/05/2024", 0xFF00FF00)
+        ui.button_n_colored_txt("Current Version:", modVersion .. " | " .. modUpdated, func.convert_rgba_to_AGBR(0, 255, 0, 255))
         imgui.same_line()
-        imgui.text("| by SilverEzredes")
+        imgui.text("| by " .. modAuthor .. " ")
         
-        if show_AWFLS_editor and (changed or wc) then
+        if show_AWFLS_editor and changed or wc then
             hk.update_hotkey_table(AWF_LS_settings.hotkeys)
             json.dump_file("AWF/AWF_LaserSights/AWF_LaserSight_Settings.json", AWF_LS_settings)
             json.dump_file("AWF/AWF_LaserSights/AWF_LaserSight_ParamSettings.json", AWF_settings)
         end
         
+        imgui.indent(-5)
+        imgui.spacing()
         imgui.end_rect(1)
         imgui.tree_pop()
     end
@@ -264,7 +297,7 @@ local function draw_AWFLS_GUI_RE4()
         imgui.spacing()
         imgui.indent(5)
 
-        if imgui.button("press me uwu")  then
+        if imgui.button("test button")  then
             testTrigger = true
         end
 
@@ -278,20 +311,25 @@ end
 --MARK:On Frame
 re.on_frame(function()
     if reframework.get_game_name() == "re2" then
-        get_reticle_GUI(AWF.AWF_settings.RE2.Weapons, AWF_settings.RE2_Laser_Sights)
-        toggle_laser_sights_RE2(AWF.AWF_settings.RE2.Weapons)
+        check_if_playerIsInScene_RE2()
+        if playerContext_RE2 ~= nil then
+            get_reticle_GUI(AWF.AWF_settings.RE2.Weapons, AWF_settings.RE2_Laser_Sights)
+            toggle_laser_sights_RE2(AWF.AWF_settings.RE2.Weapons)
+        end
     end
 end)
 
-re.on_application_entry("LateUpdateBehavior", function()
-    create_LaserSight_RE4()
-end)
+-- re.on_application_entry("LateUpdateBehavior", function()
+--     create_LaserSight_RE4()
+-- end)
 
 re.on_draw_ui(function()
     if reframework.get_game_name() == "re2" then
         draw_AWFLS_GUI_RE2()
     end
-    draw_AWFLS_GUI_RE4()
+    if reframework.get_game_name() == "re4" then
+        draw_AWFLS_GUI_RE4()
+    end
 end)
 
 AWFLS = {

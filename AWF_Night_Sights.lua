@@ -1,9 +1,9 @@
 --/////////////////////////////////////--
-local modName =  "Advanced Weapon Framework - Night Sights"
+local modName =  "Advanced Weapon Framework: Night Sights"
 
 local modAuthor = "SilverEzredes"
-local modUpdated = "09/03/2024"
-local modVersion = "v3.3.30"
+local modUpdated = "09/13/2024"
+local modVersion = "v3.4.00"
 local modCredits = "praydog; alphaZomega"
 
 --/////////////////////////////////////--
@@ -56,8 +56,8 @@ AWFWeapons.RE8_Night_Sights = require("AWFCore/AWFNS/RE8_NightSightData")
 
 local AWF_NS_settings = hk.merge_tables({}, AWF_NS_default_settings) and hk.recurse_def_settings(json.load_file("AWF/AWF_NightSights/AWF_NightSight_Settings.json") or {}, AWF_NS_default_settings)
 hk.setup_hotkeys(AWF_NS_settings.hotkeys)
-
 local AWF_settings = hk.merge_tables({}, AWFWeapons) and hk.recurse_def_settings(json.load_file("AWF/AWF_NightSights/AWF_NightSight_ColorSettings.json") or {}, AWFWeapons)
+
 --////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 --MARK:RE2R
 local function toggle_night_sights_RE2(weaponData, NS_table)
@@ -150,64 +150,183 @@ local function update_night_sights_RE2(weaponData)
         for _, weapon in pairs(weaponData) do
             local NS_Params = AWF_settings.RE2_Night_Sights[weapon.ID]
 
-            if NS_Params then
+            if NS_Params and AWF_RE2.currentWeaponEnum == weapon.Enum then
                 NS_Params.ns_material_params.EmissiveRate = NS_Params.night_sight_toggled and 0.0 or 1.0
                 NS_Params.night_sight_toggled = not NS_Params.night_sight_toggled
                 NS_Params.ds_material_params.EmissiveRate = NS_Params.dotsight_toggled and 0.0 or 1.0
                 NS_Params.dotsight_toggled = not NS_Params.dotsight_toggled
                 toggle_night_sights_RE2(AWF.AWF_settings.RE2.Weapons, AWF_settings.RE2_Night_Sights)
+                json.dump_file("AWF/AWF_NightSights/AWF_NightSight_ColorSettings.json", AWF_settings)
             end
         end
     end
 end
 local function draw_AWFNS_RE2Editor_GUI(weaponOrder)
-    if imgui.begin_window("AWF Night Sight Editor") then
+    if imgui.begin_window("Advanced Weapon Framework: Night and Dot Sight Editor") then
         imgui.begin_rect()
-        imgui.button("[==============| AWF NIGHT SIGHT EDITOR |==============]")
-
+        local textColor = {0, 255, 255, 255}
+        imgui.text_colored("  [ " .. ui.draw_line("=", 35) ..  " | " .. ui.draw_line("=", 35) .. " ] ", func.convert_rgba_to_AGBR(textColor))
         for _, weaponName in ipairs(weaponOrder) do
             local weapon = AWF.AWF_settings.RE2.Weapons[weaponName]
+            
+            if weapon and weapon.Type ~= "KNF" and weapon.Type ~= "THRW" then
+                if imgui.tree_node(weapon.Name) then
+                    imgui.begin_rect()
+                    imgui.spacing()
+                    imgui.indent(5)
+                    if imgui.button("Reset to Defaults") then
+                        AWF_settings.RE2_Night_Sights[weapon.ID] = hk.recurse_def_settings({}, AWFWeapons.RE2_Night_Sights[weapon.ID]); wc = wc or changed
+                    end
 
-            if (not weapon.ID:match("^wp4%d%d%d$") and not weapon.ID:match("^wp8%d%d%d$") or weapon.ID == "wp4300") and imgui.tree_node(string.upper(weapon.Name)) then
-                imgui.begin_rect()
-                imgui.spacing()
+                    changed, AWF_settings.RE2_Night_Sights[weapon.ID].ns_material_params.EmissiveIntensity = imgui.drag_float("Night Sight Intensity", AWF_settings.RE2_Night_Sights[weapon.ID].ns_material_params.EmissiveIntensity, 1.0, 0.0, 1000.0); wc = wc or changed
 
-                if imgui.button("Reset to Defaults") then
-                    wc = true
-                    AWF_settings.RE2_Night_Sights[weapon.ID] = hk.recurse_def_settings({}, AWFWeapons.RE2_Night_Sights[weapon.ID]); wc = wc or changed
+                    local NS_EmissiveColor = func.convert_rgba_to_vector4f(AWF_settings.RE2_Night_Sights[weapon.ID].ns_material_params.EmissiveColor.R, AWF_settings.RE2_Night_Sights[weapon.ID].ns_material_params.EmissiveColor.G, AWF_settings.RE2_Night_Sights[weapon.ID].ns_material_params.EmissiveColor.B, AWF_settings.RE2_Night_Sights[weapon.ID].ns_material_params.EmissiveColor.A)
+                    changed, NS_EmissiveColor = imgui.color_edit4("Night Sight Color", NS_EmissiveColor); wc = wc or changed
+                    
+                    local R, G, B, A = func.convert_vector4f_to_rgba(NS_EmissiveColor)
+                    AWF_settings.RE2_Night_Sights[weapon.ID].ns_material_params.EmissiveColor.R = R
+                    AWF_settings.RE2_Night_Sights[weapon.ID].ns_material_params.EmissiveColor.G = G
+                    AWF_settings.RE2_Night_Sights[weapon.ID].ns_material_params.EmissiveColor.B = B
+                    AWF_settings.RE2_Night_Sights[weapon.ID].ns_material_params.EmissiveColor.A = A
+
+                    imgui.spacing()
+
+                    changed, AWF_settings.RE2_Night_Sights[weapon.ID].ds_material_params.EmissiveIntensity = imgui.drag_float("Dot Sight Intensity", AWF_settings.RE2_Night_Sights[weapon.ID].ds_material_params.EmissiveIntensity, 5.0, 0.0, 10000.0); wc = wc or changed
+
+                    local DS_EmissiveColor = func.convert_rgba_to_vector4f(AWF_settings.RE2_Night_Sights[weapon.ID].ds_material_params.EmissiveColor.R, AWF_settings.RE2_Night_Sights[weapon.ID].ds_material_params.EmissiveColor.G, AWF_settings.RE2_Night_Sights[weapon.ID].ds_material_params.EmissiveColor.B, AWF_settings.RE2_Night_Sights[weapon.ID].ds_material_params.EmissiveColor.A)
+                    changed, DS_EmissiveColor = imgui.color_edit4("Dot Sight Color", DS_EmissiveColor); wc = wc or changed
+                    
+                    local R2, G2, B2, A2 = func.convert_vector4f_to_rgba(DS_EmissiveColor)
+                    AWF_settings.RE2_Night_Sights[weapon.ID].ds_material_params.EmissiveColor.R = R2
+                    AWF_settings.RE2_Night_Sights[weapon.ID].ds_material_params.EmissiveColor.G = G2
+                    AWF_settings.RE2_Night_Sights[weapon.ID].ds_material_params.EmissiveColor.B = B2
+                    AWF_settings.RE2_Night_Sights[weapon.ID].ds_material_params.EmissiveColor.A = A2
+                    
+                    -- if weapon.ID == "ri3124_Inventory" then
+                    --     imgui.spacing()
+
+                    --     changed, AWF_settings.RE2_Night_Sights[weapon.ID].fl_material_params.EmissiveIntensity = imgui.drag_float("Gun Light Intensity", AWF_settings.RE2_Night_Sights[weapon.ID].fl_material_params.EmissiveIntensity, 5.0, 0.0, 10000.0); wc = wc or changed
+
+                    --     local FL_EmissiveColor = func.convert_rgba_to_vector4f(AWF_settings.RE2_Night_Sights[weapon.ID].fl_material_params.EmissiveColor.R, AWF_settings.RE2_Night_Sights[weapon.ID].fl_material_params.EmissiveColor.G, AWF_settings.RE2_Night_Sights[weapon.ID].fl_material_params.EmissiveColor.B, AWF_settings.RE2_Night_Sights[weapon.ID].fl_material_params.EmissiveColor.A)
+                    --     changed, FL_EmissiveColor = imgui.color_picker4("Gun Light Color", FL_EmissiveColor); wc = wc or changed
+                        
+                    --     local R3, G3, B3, A3 = func.convert_vector4f_to_rgba(FL_EmissiveColor)
+                    --     AWF_settings.RE2_Night_Sights[weapon.ID].fl_material_params.EmissiveColor.R = R3
+                    --     AWF_settings.RE2_Night_Sights[weapon.ID].fl_material_params.EmissiveColor.G = G3
+                    --     AWF_settings.RE2_Night_Sights[weapon.ID].fl_material_params.EmissiveColor.B = B3
+                    --     AWF_settings.RE2_Night_Sights[weapon.ID].fl_material_params.EmissiveColor.A = A3
+                    -- end
+                    imgui.indent(-5)
+                    imgui.spacing()
+                    imgui.end_rect(2)
+                    imgui.tree_pop()
                 end
 
-                changed, AWF_settings.RE2_Night_Sights[weapon.ID].ns_material_params.EmissiveIntensity = imgui.drag_float("Intensity", AWF_settings.RE2_Night_Sights[weapon.ID].ns_material_params.EmissiveIntensity, 1.0, 0.0, 1000.0); wc = wc or changed
-
-                local NS_EmissiveColor = func.convert_rgba_to_vector4f(AWF_settings.RE2_Night_Sights[weapon.ID].ns_material_params.EmissiveColor.R, AWF_settings.RE2_Night_Sights[weapon.ID].ns_material_params.EmissiveColor.G, AWF_settings.RE2_Night_Sights[weapon.ID].ns_material_params.EmissiveColor.B, AWF_settings.RE2_Night_Sights[weapon.ID].ns_material_params.EmissiveColor.A)
-                changed, NS_EmissiveColor = imgui.color_picker4("Night Sight Color", NS_EmissiveColor); wc = wc or changed
-                
-                local R, G, B, A = func.convert_vector4f_to_rgba(NS_EmissiveColor)
-                AWF_settings.RE2_Night_Sights[weapon.ID].ns_material_params.EmissiveColor.R = R
-                AWF_settings.RE2_Night_Sights[weapon.ID].ns_material_params.EmissiveColor.G = G
-                AWF_settings.RE2_Night_Sights[weapon.ID].ns_material_params.EmissiveColor.B = B
-                AWF_settings.RE2_Night_Sights[weapon.ID].ns_material_params.EmissiveColor.A = A
-                
-                imgui.spacing()
-
-                changed, AWF_settings.RE2_Night_Sights[weapon.ID].ds_material_params.EmissiveIntensity = imgui.drag_float("Dot Sight Intensity", AWF_settings.RE2_Night_Sights[weapon.ID].ds_material_params.EmissiveIntensity, 5.0, 0.0, 10000.0); wc = wc or changed
-
-                local DS_EmissiveColor = func.convert_rgba_to_vector4f(AWF_settings.RE2_Night_Sights[weapon.ID].ds_material_params.EmissiveColor.R, AWF_settings.RE2_Night_Sights[weapon.ID].ds_material_params.EmissiveColor.G, AWF_settings.RE2_Night_Sights[weapon.ID].ds_material_params.EmissiveColor.B, AWF_settings.RE2_Night_Sights[weapon.ID].ds_material_params.EmissiveColor.A)
-                changed, DS_EmissiveColor = imgui.color_picker4("Dot Sight Color", DS_EmissiveColor); wc = wc or changed
-                
-                local R2, G2, B2, A2 = func.convert_vector4f_to_rgba(DS_EmissiveColor)
-                AWF_settings.RE2_Night_Sights[weapon.ID].ds_material_params.EmissiveColor.R = R2
-                AWF_settings.RE2_Night_Sights[weapon.ID].ds_material_params.EmissiveColor.G = G2
-                AWF_settings.RE2_Night_Sights[weapon.ID].ds_material_params.EmissiveColor.B = B2
-                AWF_settings.RE2_Night_Sights[weapon.ID].ds_material_params.EmissiveColor.A = A2
-
-                imgui.end_rect(2)
-                imgui.tree_pop()
+                imgui.text_colored("  " .. ui.draw_line("-", 100) .."  ", func.convert_rgba_to_AGBR(textColor))
             end
-            imgui.separator()
         end
+        imgui.text_colored("  [ " .. ui.draw_line("=", 35) ..  " | " .. ui.draw_line("=", 35) .. " ] ", func.convert_rgba_to_AGBR(textColor))
         imgui.end_rect(1)
         imgui.end_window()
+    end
+end
+local function draw_AWFNS_GUI_RE2()
+    if imgui.tree_node(modName) then
+        imgui.begin_rect()
+        imgui.spacing()
+        imgui.indent(5)
+        if imgui.button("Reset to Defaults") then
+            AWF_NS_settings = hk.recurse_def_settings({}, AWF_NS_default_settings); wc = wc or changed
+            hk.reset_from_defaults_tbl(AWF_NS_default_settings.hotkeys)
+            AWF_settings = hk.recurse_def_settings({}, AWFWeapons); wc = wc or changed
+        end
+        func.tooltip("Reset every parameter.")
+        
+        imgui.same_line()
+
+        changed, show_AWFNS_editor = imgui.checkbox("Open AWF Night Sight Editor", show_AWFNS_editor)
+        func.tooltip("Show/Hide the AWF Night Sight Editor.")
+
+        if not show_AWFNS_editor or imgui.begin_window("Advanced Weapon Framework: Night and Dot Sight Editor", true, 0) == false  then
+            show_AWFNS_editor = false
+        else
+            imgui.spacing()
+            imgui.indent()
+
+            draw_AWFNS_RE2Editor_GUI(AWF.AWF_settings.RE2.Weapon_Order)
+
+            imgui.unindent()
+            imgui.end_window()
+        end
+        
+        imgui.spacing()
+
+        imgui.begin_rect()
+        changed, AWF_NS_settings.input_mode_idx = imgui.combo("Input Settings", AWF_NS_settings.input_mode_idx, {"Default", "Custom"}); wc = wc or changed
+        func.tooltip("Set the control scheme for the mod")
+        if AWF_NS_settings.input_mode_idx == 2 then
+            if imgui.tree_node("Keyboard and Mouse Settings") then
+                changed, AWF_NS_settings.use_modifier = imgui.checkbox(" ", AWF_NS_settings.use_modifier); wc = wc or changed
+                func.tooltip("Require that you hold down this button")
+                imgui.same_line()
+                changed = hk.hotkey_setter("Night Sight Modifier"); wc = wc or changed
+                changed = hk.hotkey_setter("Night Sight Switch", AWF_NS_settings.use_modifier and "Night Sight Modifier"); wc = wc or changed
+                imgui.tree_pop()
+            end
+            
+            if imgui.tree_node("Gamepad Settings") then
+                changed, AWF_NS_settings.use_pad_modifier = imgui.checkbox(" ", AWF_NS_settings.use_pad_modifier); wc = wc or changed
+                func.tooltip("Require that you hold down this button")
+                imgui.same_line()
+                changed = hk.hotkey_setter("Pad Night Sight Modifier"); wc = wc or changed
+                changed = hk.hotkey_setter("Pad Night Sight Switch", AWF_NS_settings.use_pad_modifier and "Pad Night Sight Modifier"); wc = wc or changed
+                imgui.tree_pop()
+            end
+        end
+        imgui.end_rect(2)
+        
+        -- imgui.spacing()
+
+        -- imgui.begin_rect()
+        -- changed, AWF_NS_settings.fl_input_mode_idx = imgui.combo("Gun Light: Input Settings", AWF_NS_settings.fl_input_mode_idx, {"Default", "Custom"}); wc = wc or changed
+        -- func.tooltip("Set the control scheme for the mod")
+        -- if AWF_NS_settings.fl_input_mode_idx == 2 then
+        --     if imgui.tree_node("Keyboard and Mouse Settings") then
+        --         changed, AWF_NS_settings.fl_use_modifier = imgui.checkbox(" ", AWF_NS_settings.fl_use_modifier); wc = wc or changed
+        --         func.tooltip("Require that you hold down this button")
+        --         imgui.same_line()
+        --         changed = hk.hotkey_setter("Gun Light Modifier"); wc = wc or changed
+        --         changed = hk.hotkey_setter("Gun Light Switch", AWF_NS_settings.fl_use_modifier and "Gun Light Modifier"); wc = wc or changed
+        --         imgui.tree_pop()
+        --     end
+            
+        --     if imgui.tree_node("Gamepad Settings") then
+        --         changed, AWF_NS_settings.fl_use_pad_modifier = imgui.checkbox(" ", AWF_NS_settings.fl_use_pad_modifier); wc = wc or changed
+        --         func.tooltip("Require that you hold down this button")
+        --         imgui.same_line()
+        --         changed = hk.hotkey_setter("Pad Gun Light Modifier"); wc = wc or changed
+        --         changed = hk.hotkey_setter("Pad Gun Light Switch", AWF_NS_settings.fl_use_pad_modifier and "Pad Gun Light Modifier"); wc = wc or changed
+        --         imgui.tree_pop()
+        --     end
+        -- end
+        -- imgui.end_rect(3)
+
+        ui.button_n_colored_txt("Current Version:", modVersion .. " | " .. modUpdated, func.convert_rgba_to_AGBR(0, 255, 0, 255))
+        imgui.same_line()
+        imgui.text("| by " .. modAuthor .. " ")
+        
+        if show_AWFNS_editor and changed or wc then
+            hk.update_hotkey_table(AWF_NS_settings.hotkeys)
+            json.dump_file("AWF/AWF_NightSights/AWF_NightSight_Settings.json", AWF_NS_settings)
+            json.dump_file("AWF/AWF_NightSights/AWF_NightSight_ColorSettings.json", AWF_settings)
+            changed = false
+            wc = false
+        end
+
+        imgui.indent(-5)
+        imgui.spacing()
+        imgui.end_rect(1)
+        imgui.tree_pop()
     end
 end
 --////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -367,12 +486,6 @@ end
 local RE4_Cache = {
     currentWeaponEnum = nil
 }
---Returns the weapon.Enum values of the current weapons stored in the player inventory
-sdk.hook(sdk.find_type_definition("chainsaw.Equipment"):get_method("getWeapon"),
-    function(args)
-        RE4_Cache.currentWeaponEnum = sdk.to_int64(args[3])
-    end
-)
 --Sets the material params for the Night- and Dot Sights
 local function toggle_night_sights_RE4(weaponData, NS_table)
     for _, weapon in pairs(weaponData) do
@@ -456,6 +569,12 @@ local function toggle_night_sights_RE4(weaponData, NS_table)
 end
 --Calls the material param setter function when the script is called for the first time
 if reframework.get_game_name() == "re4" then
+    --Returns the weapon.Enum values of the current weapons stored in the player inventory
+    sdk.hook(sdk.find_type_definition("chainsaw.Equipment"):get_method("getWeapon"),
+    function(args)
+        RE4_Cache.currentWeaponEnum = sdk.to_int64(args[3])
+    end
+    )
     toggle_night_sights_RE4(AWF.AWF_settings.RE4.Weapons, AWF_settings.RE4_Night_Sights)
 end
 --Updates the current state of the Night- and Dot Sights
@@ -581,7 +700,7 @@ local function draw_AWFNS_RE4Editor_GUI(weaponOrder)
     end
 end
 --Draws the AWFNS GUI for the 'Script Generated UI' tab in the main REF Window
-local function draw_AWFNS_GUI()
+local function draw_AWFNS_GUI_RE4()
     if imgui.tree_node("Advanced Weapon Framework: Night Sights") then
         imgui.begin_rect()
         imgui.spacing()
@@ -1052,65 +1171,7 @@ end)
 --MARK:On Draw UI
 re.on_draw_ui(function()
     if reframework.get_game_name() == "re2" then
-        if imgui.tree_node("AWF - Night Sights") then
-            imgui.begin_rect()
-            if imgui.button("Reset to Defaults") then
-                wc = true
-                changed = true
-                AWF_NS_settings = hk.recurse_def_settings({}, AWF_NS_default_settings); wc = wc or changed
-                hk.reset_from_defaults_tbl(AWF_NS_default_settings.hotkeys)
-                AWF_settings = hk.recurse_def_settings({}, AWFWeapons); wc = wc or changed
-            end
-            func.tooltip("Reset every parameter.")
-            
-            imgui.spacing()
-
-            changed, show_AWFNS_editor = imgui.checkbox("Open AWF Night Sight Editor", show_AWFNS_editor)
-            func.tooltip("Show/Hide the AWF Night Sight Editor.")
-
-            if show_AWFNS_editor then
-                draw_AWFNS_RE2Editor_GUI(AWF.AWF_settings.RE2.Weapon_Order)
-            end
-            
-            imgui.spacing()
-
-            imgui.begin_rect()
-            changed, AWF_NS_settings.input_mode_idx = imgui.combo("Input Settings", AWF_NS_settings.input_mode_idx, {"Default", "Custom"}); wc = wc or changed
-            func.tooltip("Set the control scheme for the mod")
-            if AWF_NS_settings.input_mode_idx == 2 then
-                if imgui.tree_node("Keyboard and Mouse Settings") then
-                    changed, AWF_NS_settings.use_modifier = imgui.checkbox(" ", AWF_NS_settings.use_modifier); wc = wc or changed
-                    func.tooltip("Require that you hold down this button")
-                    imgui.same_line()
-                    changed = hk.hotkey_setter("Night Sight Modifier"); wc = wc or changed
-                    changed = hk.hotkey_setter("Night Sight Switch", AWF_NS_settings.use_modifier and "Night Sight Modifier"); wc = wc or changed
-                    imgui.tree_pop()
-                end
-                
-                if imgui.tree_node("Gamepad Settings") then
-                    changed, AWF_NS_settings.use_pad_modifier = imgui.checkbox(" ", AWF_NS_settings.use_pad_modifier); wc = wc or changed
-                    func.tooltip("Require that you hold down this button")
-                    imgui.same_line()
-                    changed = hk.hotkey_setter("Pad Night Sight Modifier"); wc = wc or changed
-                    changed = hk.hotkey_setter("Pad Night Sight Switch", AWF_NS_settings.use_pad_modifier and "Pad Night Sight Modifier"); wc = wc or changed
-                    imgui.tree_pop()
-                end
-            end
-            imgui.end_rect(2)
-
-            ui.button_n_colored_txt("Current Version:", "v1.8.0 | 03/05/2024", 0xFF00FF00)
-            imgui.same_line()
-            imgui.text("| by SilverEzredes")
-            
-            if show_AWFNS_editor and (changed or wc) then
-                hk.update_hotkey_table(AWF_NS_settings.hotkeys)
-                json.dump_file("AWF/AWF_NightSights/AWF_NightSight_Settings.json", AWF_NS_settings)
-                json.dump_file("AWF/AWF_NightSights/AWF_NightSight_ColorSettings.json", AWF_settings)
-            end
-            
-            imgui.end_rect(1)
-            imgui.tree_pop()
-        end
+        draw_AWFNS_GUI_RE2()
     end
     if reframework.get_game_name() == "re3" then
         if imgui.tree_node("AWF - Night Sights") then
@@ -1174,7 +1235,7 @@ re.on_draw_ui(function()
         end
     end
     if reframework.get_game_name() == "re4" then
-        draw_AWFNS_GUI()
+        draw_AWFNS_GUI_RE4()
     end
     if reframework.get_game_name() == "re7" then
         imgui.begin_rect()

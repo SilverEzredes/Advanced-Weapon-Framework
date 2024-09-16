@@ -2,8 +2,8 @@
 local modName = "Advanced Weapon Framework Core"
 
 local modAuthor = "SilverEzredes"
-local modUpdated = "09/08/2024"
-local modVersion = "v3.3.40"
+local modUpdated = "09/13/2024"
+local modVersion = "v3.4.00"
 local modCredits = "praydog; alphaZomega; MrBoobieBuyer; Lotiuss"
 
 --/////////////////////////////////////--
@@ -22,6 +22,33 @@ local AWF_default_settings = {
     isDebug = true,
     isInheritPresetName = false,
     isHideReticle = false,
+    RE2 ={
+        wp0000 = true,
+        wp0100 = true,
+        wp0200 = true,
+        wp0300 = true,
+        wp0600 = true,
+        wp0700 = true,
+        wp0800 = true,
+        wp1000 = true,
+        wp2000 = true,
+        wp2200 = true,
+        wp3000 = true,
+        wp4100 = true,
+        wp4200 = true,
+        wp4300 = true,
+        wp4400 = true,
+        wp4500 = true,
+        wp4510 = true,
+        wp4600 = true,
+        wp4700 = true,
+        wp7000 = true,
+        wp7010 = true,
+        wp7020 = true,
+        wp7030 = true,
+        wp8400 = true,
+        wp8700 = true,
+    },
     RE4 = {
         isUnbreakable = false,
         wp4000 = true,
@@ -115,6 +142,9 @@ local AWF_tool_settings = hk.merge_tables({}, AWF_default_settings) and hk.recur
 --////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 --MARK: RE2R
 local cached_weapon_GameObjects_RE2 = {}
+local cached_jsonPaths_RE2 = {}
+local playerContext_RE2 = nil
+local isPlayerInScene_RE2 = false
 local RE2_Cache = {
     InventoryMaster = scene:call("findGameObject(System.String)", "50_InventoryMaster"),
     ImplementGunRE2 = sdk.typeof("app.ropeway.implement.Gun"),
@@ -128,28 +158,47 @@ local RE2_Cache = {
         "Around",
     },
 }
+local function get_playerContext_RE2()
+    local playerManager
+    playerManager = sdk.get_managed_singleton(sdk.game_namespace("PlayerManager"))
+    playerContext_RE2 = playerManager and playerManager:call("get_CurrentPlayer")
+    return playerContext_RE2
+end
+local function check_if_playerIsInScene_RE2()
+    get_playerContext_RE2()
 
-local function dump_default_weapon_params_RE2(weaponData)
+    if playerContext_RE2 ~= nil then
+        isPlayerInScene_RE2 = true
+    elseif playerContext_RE2 == nil or {} then
+        isPlayerInScene_RE2 = false
+    end
+end
+
+local function dump_Default_WeaponParam_json_RE2(weaponData)
     for _, weapon in pairs(weaponData) do
         local weaponParams = AWFWeapons.RE2.Weapon_Params[weapon.ID]
         
         if weaponParams then
             json.dump_file("AWF/AWF_Weapons/".. weapon.Name .. "/" .. weapon.Name .. " Default".. ".json", weaponParams)
-            log.info("AWF Default Weapon Params Dumped")
+            if AWF_tool_settings.isDebug then
+                log.info("[AWF] [Default Weapon Params for " .. weapon.Name .. " dumped.]")
+            end
         end
     end
 end
-local function cache_weapon_gameobjects_RE2(weaponData)
+local function get_WeaponData_RE2(weaponData)
+    get_playerContext_RE2()
     local Inventory_GameObject_RE2 = RE2_Cache.InventoryMaster
 
     for _, weapon in pairs(weaponData) do
         if weapon.isUpdated then
             local Weapon_GameObject_RE2 = scene:call("findGameObject(System.String)", weapon.ID)
             
-            if Weapon_GameObject_RE2 then
+            if Weapon_GameObject_RE2 and Weapon_GameObject_RE2:get_Valid() then
                 cached_weapon_GameObjects_RE2[weapon.ID] = Weapon_GameObject_RE2
-                
-                log.info("Cached " .. weapon.Name .. " Game Object")
+                if AWF_tool_settings.isDebug then
+                    log.info("[AWF] [ " .. weapon.ID .. " Base data updated.]")
+                end
 
                 -- Main Game
                 local Weapon_Stats_RE2 = Weapon_GameObject_RE2:call("getComponent(System.Type)", RE2_Cache.ImplementGunRE2)
@@ -692,49 +741,51 @@ local function cache_weapon_gameobjects_RE2(weaponData)
                         end
                     end
                 end
-            end
 
-            if Inventory_GameObject_RE2 then
-                local EquipmentManager_RE2 = Inventory_GameObject_RE2:call("getComponent(System.Type)", sdk.typeof("app.ropeway.EquipmentManager"))
-                
-                if EquipmentManager_RE2 then
-                    local weaponParams = AWF_settings.RE2.Weapon_Params[weapon.ID]
-
-                    if weaponParams then
-                        for paramName, paramValue in pairs(weaponParams) do
-                            if paramName == "Inventory" then
-                                for subParamName, subParamValue in pairs(paramValue) do
-                                    local EquipmentManager_WeaponBulletData_RE2 = EquipmentManager_RE2:get_field("_WeaponBulletUserdata")
-
-                                    if EquipmentManager_WeaponBulletData_RE2 then
-                                        local EquipmentManager_LoadingPartsCombos_RE2 = EquipmentManager_WeaponBulletData_RE2:get_field("_LoadingPartsCombos")
-                                        EquipmentManager_LoadingPartsCombos_RE2 = EquipmentManager_LoadingPartsCombos_RE2 and EquipmentManager_LoadingPartsCombos_RE2:get_elements() or {}
-                                        
-                                        for i, WeaponNames in ipairs(EquipmentManager_LoadingPartsCombos_RE2) do
-                                            local WeaponDisplayNames = WeaponNames:call("get_DisplayName")
+                if Inventory_GameObject_RE2 then
+                    local EquipmentManager_RE2 = Inventory_GameObject_RE2:call("getComponent(System.Type)", sdk.typeof("app.ropeway.EquipmentManager"))
+                    
+                    if EquipmentManager_RE2 then
+                        local weaponParams = AWF_settings.RE2.Weapon_Params[weapon.ID]
+                        if AWF_tool_settings.isDebug then
+                            log.info("[AWF] [ " .. weapon.ID .. " Inventory data updated.]")
+                        end
+    
+                        if weaponParams then
+                            for paramName, paramValue in pairs(weaponParams) do
+                                if paramName == "Inventory" then
+                                    for subParamName, subParamValue in pairs(paramValue) do
+                                        local EquipmentManager_WeaponBulletData_RE2 = EquipmentManager_RE2:get_field("_WeaponBulletUserdata")
+    
+                                        if EquipmentManager_WeaponBulletData_RE2 then
+                                            local EquipmentManager_LoadingPartsCombos_RE2 = EquipmentManager_WeaponBulletData_RE2:get_field("_LoadingPartsCombos")
+                                            EquipmentManager_LoadingPartsCombos_RE2 = EquipmentManager_LoadingPartsCombos_RE2 and EquipmentManager_LoadingPartsCombos_RE2:get_elements() or {}
                                             
-                                            if WeaponDisplayNames and WeaponDisplayNames:find(string.upper(weapon.ID)) then
-                                                local Weapon_LoadingPartsCombos_RE2 = WeaponNames:call("get_LoadingPartsCombosForm")
-                                                Weapon_LoadingPartsCombos_RE2 = Weapon_LoadingPartsCombos_RE2 and Weapon_LoadingPartsCombos_RE2:get_elements() or {}
+                                            for i, WeaponNames in ipairs(EquipmentManager_LoadingPartsCombos_RE2) do
+                                                local WeaponDisplayNames = WeaponNames:call("get_DisplayName")
                                                 
-                                                for j, PartSettings in ipairs(Weapon_LoadingPartsCombos_RE2) do
-                                                    if (subParamName ~= "AlwaysReloadableVariable") and (subParamName ~= "_NumberEX") then
-                                                        PartSettings[subParamName] = subParamValue
-                                                        
-                                                        if j == 2 then
-                                                            PartSettings["_Number"] = weaponParams.Inventory._NumberEX
+                                                if WeaponDisplayNames and WeaponDisplayNames:find(string.upper(weapon.ID)) then
+                                                    local Weapon_LoadingPartsCombos_RE2 = WeaponNames:call("get_LoadingPartsCombosForm")
+                                                    Weapon_LoadingPartsCombos_RE2 = Weapon_LoadingPartsCombos_RE2 and Weapon_LoadingPartsCombos_RE2:get_elements() or {}
+                                                    
+                                                    for j, PartSettings in ipairs(Weapon_LoadingPartsCombos_RE2) do
+                                                        if (subParamName ~= "AlwaysReloadableVariable") and (subParamName ~= "_NumberEX") then
+                                                            PartSettings[subParamName] = subParamValue
+                                                            
+                                                            if j == 2 then
+                                                                PartSettings["_Number"] = weaponParams.Inventory._NumberEX
+                                                            end
                                                         end
-                                                    end
-                                                    if subParamName == "AlwaysReloadableVariable" then
-                                                        for subParamName_2nd, subParamValue_2nd in pairs(subParamValue) do
-                                                            local AlwaysReloadableVariable_RE2 = PartSettings:get_field("_AlwaysReloadableVariable")
-
-                                                            if AlwaysReloadableVariable_RE2 and weaponParams.Inventory._AlwaysReloadable == true then
-                                                                AlwaysReloadableVariable_RE2[subParamName_2nd] = weaponParams.Inventory.AlwaysReloadableVariable
-                                                                func.write_valuetype(PartSettings, 0x38, AlwaysReloadableVariable_RE2)
-                                                            elseif AlwaysReloadableVariable_RE2 and weaponParams.Inventory._AlwaysReloadable == false then
-                                                                AlwaysReloadableVariable_RE2[subParamName_2nd] = weaponParams.Inventory.AlwaysReloadableVariable.mData1 + 1
-                                                                func.write_valuetype(PartSettings, 0x38, AlwaysReloadableVariable_RE2)
+                                                        if subParamName == "AlwaysReloadableVariable" then
+                                                            for subParamName_2nd, subParamValue_2nd in pairs(subParamValue) do
+                                                                local AlwaysReloadableVariable_RE2 = PartSettings:get_field("_AlwaysReloadableVariable")
+                                                                if AlwaysReloadableVariable_RE2 and weaponParams.Inventory._AlwaysReloadable == true then
+                                                                    AlwaysReloadableVariable_RE2[subParamName_2nd] = weaponParams.Inventory.AlwaysReloadableVariable
+                                                                    func.write_valuetype(PartSettings, 0x38, AlwaysReloadableVariable_RE2)
+                                                                elseif AlwaysReloadableVariable_RE2 and weaponParams.Inventory._AlwaysReloadable == false then
+                                                                    AlwaysReloadableVariable_RE2[subParamName_2nd] = weaponParams.Inventory.AlwaysReloadableVariable.mData1 + 1
+                                                                    func.write_valuetype(PartSettings, 0x38, AlwaysReloadableVariable_RE2)
+                                                                end
                                                             end
                                                         end
                                                     end
@@ -752,20 +803,42 @@ local function cache_weapon_gameobjects_RE2(weaponData)
         weapon.isUpdated = false
     end
 end
-local function cache_json_files_RE2(weaponData)
+local function clear_AWF_json_cache_RE2(weaponData)
+    for _, weapon in pairs(weaponData) do
+        if weapon.isUpdated then
+            local cacheKey = "AWF\\AWF_Weapons\\" .. weapon.Name
+            cached_jsonPaths_RE2[cacheKey] = nil
+
+            if AWF_tool_settings.isDebug then
+                log.info("[AWF] [Preset path cache cleared for " .. weapon.Name .. " | " .. weapon.ID .. " ]")
+            end
+        end
+    end
+end
+local function cache_AWF_json_files_RE2(weaponData)
     for _, weapon in pairs(weaponData) do
         local weaponParams = AWF_settings.RE2.Weapon_Params[weapon.ID]
         
         if weaponParams then
-            local json_names = AWF_settings.RE2.Weapon_Params[weapon.ID].Weapon_Presets or {}
-            local json_filepaths = fs.glob([[AWF\\AWF_Weapons\\]] .. weapon.Name .. [[\\.*.json]])
+            local json_names = weaponParams.Weapon_Presets or {}
+            local cacheKey = "AWF\\AWF_Weapons\\" .. weapon.Name
+
+            if not cached_jsonPaths_RE2[cacheKey] then
+                local path = [[AWF\\AWF_Weapons\\]] .. weapon.Name .. [[\\.*.json]]
+                cached_jsonPaths_RE2[cacheKey] =  fs.glob(path)
+            end
+
+            local json_filepaths = cached_jsonPaths_RE2[cacheKey]
             
             if json_filepaths then
+                local defaultName = weapon.Name .. " Default"
+                local defaultNameInserted = false
+
                 for i, filepath in ipairs(json_filepaths) do
                     local name = filepath:match("^.+\\(.+)%.")
                     local nameExists = false
                     
-                    for _, existingName in ipairs(json_names) do
+                    for j, existingName in ipairs(json_names) do
                         if existingName == name then
                             nameExists = true
                             break
@@ -773,99 +846,158 @@ local function cache_json_files_RE2(weaponData)
                     end
                     
                     if not nameExists then
-                        log.info("Loaded " .. filepath .. " for " .. weapon.Name)
-                        table.insert(json_names, 1, name)
+                        if name == defaultName then
+                            table.insert(json_names, 1, name)
+                            defaultNameInserted = true
+                        else
+                            table.insert(json_names, name)
+                        end
+
+                        if AWF_tool_settings.isDebug then
+                            log.info("[AWF] [Loaded " .. filepath .. " for "  .. weapon.Name .. "]")
+                        end
+                    end
+                end
+                
+                if not defaultNameInserted then
+                    for i, name in ipairs(json_names) do
+                        if name == defaultName then
+                            table.remove(json_names, i)
+                            table.insert(json_names, 1, name)
+                            break
+                        end
+                    end
+                end
+
+                for i = #json_names, 1, -1 do
+                    local nameExists = false
+                    local name = json_names[i]
+                    for _, filepath in ipairs(json_filepaths) do
+                        if filepath:match("^.+\\(.+)%.") == name then
+                            nameExists = true
+                            break
+                        end
+                    end
+                    if not nameExists then
+                        if AWF_tool_settings.isDebug then
+                            log.info("[AWF] [Removed " .. name .. " from " .. weapon.Name .. "]")
+                        end
+                        table.remove(json_names, i)
                     end
                 end
             else
-                log.info("No JSON files found for " .. weapon.Name)
+                if AWF_tool_settings.isDebug then
+                    log.info("[AWF] [No AWF JSON files found.]")
+                end
             end
         end
     end
 end
 if reframework.get_game_name() == "re2" then
-    dump_default_weapon_params_RE2(AWFWeapons.RE2.Weapons)
-    cache_json_files_RE2(AWF_settings.RE2.Weapons)
+    dump_Default_WeaponParam_json_RE2(AWFWeapons.RE2.Weapons)
+    cache_AWF_json_files_RE2(AWF_settings.RE2.Weapons)
 end
-local function get_weapon_gameobject_RE2(weaponData)
+local function check_if_WeaponDataIsCached_RE2(weaponData)
     for _, weapon in pairs(weaponData) do
         local Weapon_GameObject_RE2 = cached_weapon_GameObjects_RE2[weapon.ID]
         
         if Weapon_GameObject_RE2 and weapon.isUpdated then
-            log.info("Loaded " .. weapon.Name .. " Game Object from cache")
+            log.info("[AWF] [Loaded " .. weapon.Name .. " Game Object from cache.]")
         end
     end
 end
-local function update_cached_weapon_gameobjects_RE2()
+local function update_WeaponData_RE2()
     if changed or wc or not cached_weapon_GameObjects_RE2 then
         changed = false
         wc = false
         AWF_Weapons_Found = true
-        cache_weapon_gameobjects_RE2(AWF_settings.RE2.Weapons)
-        get_weapon_gameobject_RE2(AWF_settings.RE2.Weapons)
-        log.info("------------ AWF Weapon Data Updated!")
+        get_WeaponData_RE2(AWF_settings.RE2.Weapons)
+        check_if_WeaponDataIsCached_RE2(AWF_settings.RE2.Weapons)
+        log.info("[AWF] [------------ AWF Weapon Data Updated!]")
     end
 end
 local function draw_AWF_RE2Editor_GUI(weaponOrder)
-    if imgui.begin_window("Advanced Weapon Framework") then
+    if imgui.begin_window("Advanced Weapon Framework: Weapon Stat Editor") then
         imgui.begin_rect()
-        imgui.button("[===============================| AWF WEAPON STAT EDITOR |===============================]")
+        local textColor = {0, 255, 255, 255}
+        imgui.text_colored("  [ " .. ui.draw_line("=", 50) ..  " | " .. ui.draw_line("=", 50) .. " ] ", func.convert_rgba_to_AGBR(textColor))
         for _, weaponName in ipairs(weaponOrder) do
             local weapon = AWF_settings.RE2.Weapons[weaponName]
 
-            if weapon and imgui.tree_node(string.upper(weapon.Name)) then
+            if weapon and imgui.tree_node(weapon.Name) then
+                if imgui.begin_popup_context_item() then
+                    if imgui.menu_item("Reset") then
+                        wc = true
+                        AWF_settings.RE2.Weapon_Params[weapon.ID] = hk.recurse_def_settings({}, AWFWeapons.RE2.Weapon_Params[weapon.ID])
+                        cache_AWF_json_files_RE2(AWF_settings.RE2.Weapons)
+                    end
+                    func.tooltip("Reset all of the parameters of " .. weapon.Name)
+
+                    imgui.end_popup()
+                end
                 imgui.begin_rect()
-                if imgui.button("Reset to Defaults") then
-                    wc = true
-                    AWF_settings.RE2.Weapon_Params[weapon.ID] = hk.recurse_def_settings({}, AWFWeapons.RE2.Weapon_Params[weapon.ID])
-                    cache_json_files_RE2(AWF_settings.RE2.Weapons)
-                end
-                func.tooltip("Reset the parameters of " .. weapon.Name)
-                
-                imgui.same_line()
-                imgui.button(" | ")
+                imgui.text_colored("  " .. ui.draw_line("=", 100) .."  ", func.convert_rgba_to_AGBR(textColor))
+                imgui.indent(10)
 
-                imgui.same_line()
                 if imgui.button("Update Preset List") then
-                    cache_json_files_RE2(AWF_settings.RE2.Weapons)
+                    cache_AWF_json_files_RE2(AWF_settings.RE2.Weapons)
                 end
 
-                if imgui.button("Save Preset") then
-                    json.dump_file("AWF/AWF_Weapons/".. weapon.Name .. "/" .. weapon.Name .. " Custom".. ".json", AWF_settings.RE2.Weapon_Params[weapon.ID])
-                    log.info("AWF Custom " .. weapon.Name ..  " Params Saved")
-                end
-                func.tooltip("Save the current parameters of the " .. weapon.Name .. " to a .json file found in [RESIDENT EVIL 2  BIOHAZARD RE2/reframework/data/AWF/AWF_Weapons/".. weapon.Name .. "]")
-
-                imgui.same_line()
                 changed, AWF_settings.RE2.Weapon_Params[weapon.ID].current_param_indx = imgui.combo("Preset", AWF_settings.RE2.Weapon_Params[weapon.ID].current_param_indx or 1, AWF_settings.RE2.Weapon_Params[weapon.ID].Weapon_Presets); wc = wc or changed
                 func.tooltip("Select a file from the dropdown menu to load the weapon stats from that file.")
                 if changed then
-                    local selected_profile = AWF_settings.RE2.Weapon_Params[weapon.ID].Weapon_Presets[AWF_settings.RE2.Weapon_Params[weapon.ID].current_param_indx]
-                    local json_filepath = [[AWF\\AWF_Weapons\\]] .. weapon.Name .. [[\\]] .. selected_profile .. [[.json]]
+                    local selected_preset = AWF_settings.RE2.Weapon_Params[weapon.ID].Weapon_Presets[AWF_settings.RE2.Weapon_Params[weapon.ID].current_param_indx]
+                    local json_filepath = [[AWF\\AWF_Weapons\\]] .. weapon.Name .. [[\\]] .. selected_preset .. [[.json]]
                     local temp_params = json.load_file(json_filepath)
                     
+                    if AWF_tool_settings.isDebug then
+                        log.info("[AWF] [--------------------- [Manual Preset Loader] Loaded '" .. selected_preset .. "' for " .. weapon.Name .. "]")
+                    end
+
+                    if AWF_tool_settings.isInheritPresetName then
+                        presetName = selected_preset
+                    end
+
                     temp_params.Weapon_Presets = nil
                     temp_params.current_param_indx = nil
 
                     for key, value in pairs(temp_params) do
                         AWF_settings.RE2.Weapon_Params[weapon.ID][key] = value
                     end
+                    cache_AWF_json_files_RE2(AWF_settings.RE2.Weapons)
                 end
+
+                imgui.push_id(_)
+                changed, presetName = imgui.input_text("", presetName); wc = wc or changed
+                imgui.pop_id()
+
+                imgui.same_line()
+                if imgui.button("Save Preset") then
+                    json.dump_file("AWF/AWF_Weapons/".. weapon.Name .. "/" .. presetName .. ".json", AWF_settings.RE2.Weapon_Params[weapon.ID])
+                    log.info("[AWF] [Custom " .. weapon.Name ..  " params saved with the preset name " .. presetName .. " ]")
+                    weapon.isUpdated = true
+                    clear_AWF_json_cache_RE2(AWF_settings.RE2.Weapons)
+                    cache_AWF_json_files_RE2(AWF_settings.RE2.Weapons)
+                end
+                func.tooltip("Save the current parameters of the " .. weapon.Name .. " to " .. presetName .. ".json found in [RESIDENT EVIL 2  BIOHAZARD RE2/reframework/data/AWF/AWF_Weapons/".. weapon.Name .. "]")
+
 
                 imgui.spacing()
 
                 if AWF_settings.RE2.Weapon_Params[weapon.ID].Inventory then
+                    imgui.text_colored(ui.draw_line("=", 95) .. "| Inventory" , func.convert_rgba_to_AGBR(textColor))
+
                     if imgui.button("Reset Inventory Parameters") then
                         wc = true
                         AWF_settings.RE2.Weapon_Params[weapon.ID].Inventory = hk.recurse_def_settings({}, AWFWeapons.RE2.Weapon_Params[weapon.ID].Inventory)
                     end
 
-                    if AWF_tool_settings.isDebug then
-                        changed, AWF_settings.RE2.Weapon_Params[weapon.ID].EnableExecuteFire = imgui.checkbox("[DEBUG] Enable Fire", AWF_settings.RE2.Weapon_Params[weapon.ID].EnableExecuteFire); wc = wc or changed
-                        func.tooltip("[DEBUG] If disabled, the weapon can't fire. Also a debug option so if you see this IDK what you are doing.")
+                    -- if AWF_tool_settings.isDebug then
+                    --     changed, AWF_settings.RE2.Weapon_Params[weapon.ID].EnableExecuteFire = imgui.checkbox("[DEBUG] Enable Fire", AWF_settings.RE2.Weapon_Params[weapon.ID].EnableExecuteFire); wc = wc or changed
+                    --     func.tooltip("[DEBUG] If disabled, the weapon can't fire. Also a debug option so if you see this IDK what you are doing.")
 
-                        imgui.same_line()
-                    end
+                    --     imgui.same_line()
+                    -- end
                     changed, AWF_settings.RE2.Weapon_Params[weapon.ID].Inventory._Infinity = imgui.checkbox("Unlimited Capacity", AWF_settings.RE2.Weapon_Params[weapon.ID].Inventory._Infinity); wc = wc or changed
                     func.tooltip("If enabled, the weapon does not need to be reloaded.")
 
@@ -897,6 +1029,7 @@ local function draw_AWF_RE2Editor_GUI(weaponOrder)
 
                     for k, i in pairs(sortedKeys) do
                         if i:match("^BallisticSettingNormal") then
+                            imgui.text_colored(ui.draw_line("=", 95) .. "| Bullet Ballistic" , func.convert_rgba_to_AGBR(textColor))
                             if AWF_settings.RE2.Weapon_Params[weapon.ID].ShellGenerator[i] then
                                 imgui.spacing()
                                 if imgui.button("Reset Bullet Ballistic Parameters") then
@@ -927,6 +1060,7 @@ local function draw_AWF_RE2Editor_GUI(weaponOrder)
                         end
 
                         if i:match("^BallisticSettingEx") then
+                            imgui.text_colored(ui.draw_line("=", 95) .. "| EX Bullet Ballistic" , func.convert_rgba_to_AGBR(textColor))
                             if AWF_settings.RE2.Weapon_Params[weapon.ID].ShellGenerator[i] then
                                 imgui.spacing()
                                 if imgui.button("Reset EX Bullet Ballistic Parameters") then
@@ -962,6 +1096,7 @@ local function draw_AWF_RE2Editor_GUI(weaponOrder)
                         end
 
                         if i:match("^BallisticSettingAcid") then
+                            imgui.text_colored(ui.draw_line("=", 95) .. "| Acid Bullet Ballistic" , func.convert_rgba_to_AGBR(textColor))
                             if AWF_settings.RE2.Weapon_Params[weapon.ID].ShellGenerator[i] then
                                 imgui.spacing()
                                 if imgui.button("Reset Acid Bullet Ballistic Parameters") then
@@ -995,6 +1130,7 @@ local function draw_AWF_RE2Editor_GUI(weaponOrder)
                         end
 
                         if i:match("^BallisticSettingFire") then
+                            imgui.text_colored(ui.draw_line("=", 95) .. "| Fire Bullet Ballistic" , func.convert_rgba_to_AGBR(textColor))
                             if AWF_settings.RE2.Weapon_Params[weapon.ID].ShellGenerator[i] then
                                 imgui.spacing()
                                 if imgui.button("Reset Fire Bullet Ballistic Parameters") then
@@ -1028,6 +1164,7 @@ local function draw_AWF_RE2Editor_GUI(weaponOrder)
                         end
 
                         if i:match("^AttackSettingNormal") then
+                            imgui.text_colored(ui.draw_line("=", 95) .. "| Attack Settings" , func.convert_rgba_to_AGBR(textColor))
                             if AWF_settings.RE2.Weapon_Params[weapon.ID].ShellGenerator[i] then
                                 imgui.spacing()
                                 if imgui.button("Reset Attack Settings") then
@@ -1068,6 +1205,7 @@ local function draw_AWF_RE2Editor_GUI(weaponOrder)
                         end
 
                         if i:match("^AttackSettingEx") then
+                            imgui.text_colored(ui.draw_line("=", 95) .. "| EX Attack Settings" , func.convert_rgba_to_AGBR(textColor))
                             if AWF_settings.RE2.Weapon_Params[weapon.ID].ShellGenerator[i] then
                                 imgui.spacing()
                                 if imgui.button("Reset EX Attack Settings") then
@@ -1113,6 +1251,7 @@ local function draw_AWF_RE2Editor_GUI(weaponOrder)
 
                         if i:match("^AttackSettingAcid") then
                             if AWF_settings.RE2.Weapon_Params[weapon.ID].ShellGenerator[i] then
+                                imgui.text_colored(ui.draw_line("=", 95) .. "| Acid Attack Settings" , func.convert_rgba_to_AGBR(textColor))
                                 imgui.spacing()
                                 if imgui.button("Reset Acid Attack Settings") then
                                     wc = true
@@ -1151,6 +1290,7 @@ local function draw_AWF_RE2Editor_GUI(weaponOrder)
                         end
 
                         if i:match("^AttackSettingFire") then
+                            imgui.text_colored(ui.draw_line("=", 95) .. "| Fire Attack Settings" , func.convert_rgba_to_AGBR(textColor))
                             if AWF_settings.RE2.Weapon_Params[weapon.ID].ShellGenerator[i] then
                                 imgui.spacing()
                                 if imgui.button("Reset Fire Attack Settings") then
@@ -1190,6 +1330,7 @@ local function draw_AWF_RE2Editor_GUI(weaponOrder)
                         end
 
                         if i:match("^Normal") then
+                            imgui.text_colored(ui.draw_line("=", 95) .. "| Around Pellet Ballistic" , func.convert_rgba_to_AGBR(textColor))
                             if AWF_settings.RE2.Weapon_Params[weapon.ID].ShellGenerator[i] then
                                 imgui.spacing()
                                 if imgui.button("Reset Around Pellet Ballistic Parameters") then
@@ -1206,6 +1347,7 @@ local function draw_AWF_RE2Editor_GUI(weaponOrder)
                         end
 
                         if i:match("^Fit") then
+                            imgui.text_colored(ui.draw_line("=", 95) .. "| Center Pellet Ballistic" , func.convert_rgba_to_AGBR(textColor))
                             if AWF_settings.RE2.Weapon_Params[weapon.ID].ShellGenerator[i] then
                                 imgui.spacing()
                                 if imgui.button("Reset Center Pellet Ballistic Parameters") then
@@ -1222,6 +1364,7 @@ local function draw_AWF_RE2Editor_GUI(weaponOrder)
                         end
 
                         if i:match("^RadiateSettings") then
+                            imgui.text_colored(ui.draw_line("=", 95) .. "| Radiate" , func.convert_rgba_to_AGBR(textColor))
                             if AWF_settings.RE2.Weapon_Params[weapon.ID].ShellGenerator[i] then
                                 imgui.spacing()
                                 if imgui.button("Reset Radiate Parameters") then
@@ -1229,9 +1372,7 @@ local function draw_AWF_RE2Editor_GUI(weaponOrder)
                                     AWF_settings.RE2.Weapon_Params[weapon.ID].ShellGenerator[i] = hk.recurse_def_settings({}, AWFWeapons.RE2.Weapon_Params[weapon.ID].ShellGenerator[i])
                                 end
                                 changed, AWF_settings.RE2.Weapon_Params[weapon.ID].ShellGenerator[i].RadiateLength = imgui.drag_float("Flame Jet Length", AWF_settings.RE2.Weapon_Params[weapon.ID].ShellGenerator[i].RadiateLength, 0.1, 0.0, 100.0); wc = wc or changed
-                                --func.tooltip("LOREM IPSUM")
                                 changed, AWF_settings.RE2.Weapon_Params[weapon.ID].ShellGenerator[i].Radius._BaseValue = imgui.drag_float("Flame Jet Radius", AWF_settings.RE2.Weapon_Params[weapon.ID].ShellGenerator[i].Radius._BaseValue, 0.1, 0.0, 100.0); wc = wc or changed
-                                --func.tooltip("LOREM IPSUM")
                             end
                         end
                     end
@@ -1240,6 +1381,8 @@ local function draw_AWF_RE2Editor_GUI(weaponOrder)
                 imgui.spacing()
 
                 if AWF_settings.RE2.Weapon_Params[weapon.ID].Recoil then
+                    imgui.text_colored(ui.draw_line("=", 95) .. "| Recoil" , func.convert_rgba_to_AGBR(textColor))
+                            
                     if imgui.button("Reset Recoil Parameters") then
                         wc = true
                         AWF_settings.RE2.Weapon_Params[weapon.ID].Recoil = hk.recurse_def_settings({}, AWFWeapons.RE2.Weapon_Params[weapon.ID].Recoil)
@@ -1257,6 +1400,7 @@ local function draw_AWF_RE2Editor_GUI(weaponOrder)
                 imgui.spacing()
 
                 if AWF_settings.RE2.Weapon_Params[weapon.ID].LoopFire then
+                    imgui.text_colored(ui.draw_line("=", 95) .. "| Loop Fire" , func.convert_rgba_to_AGBR(textColor))
                     if imgui.button("Reset Loop Fire Parameters") then
                         wc = true
                         AWF_settings.RE2.Weapon_Params[weapon.ID].LoopFire = hk.recurse_def_settings({}, AWFWeapons.RE2.Weapon_Params[weapon.ID].LoopFire)
@@ -1270,6 +1414,7 @@ local function draw_AWF_RE2Editor_GUI(weaponOrder)
                 imgui.spacing()
 
                 if AWF_settings.RE2.Weapon_Params[weapon.ID].Reticle then
+                    imgui.text_colored(ui.draw_line("=", 95) .. "| Reticle" , func.convert_rgba_to_AGBR(textColor))
                     if imgui.button("Reset Reticle Parameters") then
                         wc = true
                         AWF_settings.RE2.Weapon_Params[weapon.ID].Reticle = hk.recurse_def_settings({}, AWFWeapons.RE2.Weapon_Params[weapon.ID].Reticle)
@@ -1293,6 +1438,7 @@ local function draw_AWF_RE2Editor_GUI(weaponOrder)
                 imgui.spacing()
 
                 if AWF_settings.RE2.Weapon_Params[weapon.ID].Deviate then
+                    imgui.text_colored(ui.draw_line("=", 95) .. "| Deviate" , func.convert_rgba_to_AGBR(textColor))
                     if imgui.button("Reset Deviate Parameters") then
                         wc = true
                         AWF_settings.RE2.Weapon_Params[weapon.ID].Deviate = hk.recurse_def_settings({}, AWFWeapons.RE2.Weapon_Params[weapon.ID].Deviate)
@@ -1318,11 +1464,11 @@ local function draw_AWF_RE2Editor_GUI(weaponOrder)
                     end
                     table.sort(sortedKeys)
 
-                    if imgui.tree_node(string.upper(weapon.Name) .. " UPGRADE SETTINGS") then
+                    if imgui.tree_node((weapon.Name) .. " Upgrade Settings") then
                         for k, i in pairs(sortedKeys) do
                             if i:match("^Reticle_LVL_(%d+)$") then
                                 local j = i:match("%d+$")
-                                
+                                imgui.text_colored(ui.draw_line("=", 95) .. "| [ Level-" .. j .. " Reticle ]" , func.convert_rgba_to_AGBR(textColor))
                                 imgui.spacing()
 
                                 if imgui.button("Reset Level-" .. j .. " Reticle Parameters") then
@@ -1330,23 +1476,24 @@ local function draw_AWF_RE2Editor_GUI(weaponOrder)
                                     AWF_settings.RE2.Weapon_Params[weapon.ID].UserData.Gun[i] = hk.recurse_def_settings({}, AWFWeapons.RE2.Weapon_Params[weapon.ID].UserData.Gun[i])
                                 end
                                 changed, AWF_settings.RE2.Weapon_Params[weapon.ID].UserData.Gun[i]._AddPoint = imgui.drag_float("LVL-" .. j .. " Reticle Add Point", AWF_settings.RE2.Weapon_Params[weapon.ID].UserData.Gun[i]._AddPoint, 1.0, -1000.0, 1000.0); wc = wc or changed
-                                --func.tooltip("LOREM IPSUM")
+                                
                                 changed, AWF_settings.RE2.Weapon_Params[weapon.ID].UserData.Gun[i]._KeepPoint = imgui.drag_float("LVL-" .. j .. " Reticle Keep Point", AWF_settings.RE2.Weapon_Params[weapon.ID].UserData.Gun[i]._KeepPoint, 1.0, -1000.0, 1000.0); wc = wc or changed
-                                --func.tooltip("LOREM IPSUM")
+                                
                                 changed, AWF_settings.RE2.Weapon_Params[weapon.ID].UserData.Gun[i]._ShootPoint = imgui.drag_float("LVL-" .. j .. " Reticle Shoot Point", AWF_settings.RE2.Weapon_Params[weapon.ID].UserData.Gun[i]._ShootPoint, 1.0, -1000.0, 1000.0); wc = wc or changed
-                                --func.tooltip("LOREM IPSUM")
+                                
                                 changed, AWF_settings.RE2.Weapon_Params[weapon.ID].UserData.Gun[i]._MovePoint = imgui.drag_float("LVL-" .. j .. " Reticle Move Point", AWF_settings.RE2.Weapon_Params[weapon.ID].UserData.Gun[i]._MovePoint, 1.0, -1000.0, 1000.0); wc = wc or changed
-                                --func.tooltip("LOREM IPSUM")
+                                
                                 changed, AWF_settings.RE2.Weapon_Params[weapon.ID].UserData.Gun[i]._WatchPoint = imgui.drag_float("LVL-" .. j .. " Reticle Watch Point", AWF_settings.RE2.Weapon_Params[weapon.ID].UserData.Gun[i]._WatchPoint, 1.0, -1000.0, 1000.0); wc = wc or changed
-                                --func.tooltip("LOREM IPSUM")
+                                
                                 changed, AWF_settings.RE2.Weapon_Params[weapon.ID].UserData.Gun[i].PointRange.r = imgui.drag_float("LVL-" .. j .. " Reticle Max", AWF_settings.RE2.Weapon_Params[weapon.ID].UserData.Gun[i].PointRange.r, 1.0, -1000.0, 1000.0); wc = wc or changed
-                                --func.tooltip("LOREM IPSUM")
+                                
                                 changed, AWF_settings.RE2.Weapon_Params[weapon.ID].UserData.Gun[i].PointRange.s = imgui.drag_float("LVL-" .. j .. " Reticle Min", AWF_settings.RE2.Weapon_Params[weapon.ID].UserData.Gun[i].PointRange.s, 1.0, -1000.0, 1000.0); wc = wc or changed
-                                --func.tooltip("LOREM IPSUM")
+                                imgui.spacing()
                             end
                             if i:match("^Recoil_LVL_(%d+)$") then
                                 local j = i:match("%d+$")
-
+                                imgui.text_colored(ui.draw_line("=", 95) .. "| [ Level-" .. j .. " Recoil ]" , func.convert_rgba_to_AGBR(textColor))
+                                
                                 imgui.spacing()
 
                                 if imgui.button("Reset Level-" .. j .. " Recoil Parameters") then
@@ -1354,17 +1501,18 @@ local function draw_AWF_RE2Editor_GUI(weaponOrder)
                                     AWF_settings.RE2.Weapon_Params[weapon.ID].UserData.Gun[i] = hk.recurse_def_settings({}, AWFWeapons.RE2.Weapon_Params[weapon.ID].UserData.Gun[i])
                                 end
                                 changed, AWF_settings.RE2.Weapon_Params[weapon.ID].UserData.Gun[i]._RecoilRate = imgui.drag_float("LVL-" .. j .. " Recoil Rate", AWF_settings.RE2.Weapon_Params[weapon.ID].UserData.Gun[i]._RecoilRate, 0.05, 0.0, 100.0); wc = wc or changed
-                                --func.tooltip("LOREM IPSUM")
+                                
                                 changed, AWF_settings.RE2.Weapon_Params[weapon.ID].UserData.Gun[i]._RecoilDampRate = imgui.drag_float("LVL-" .. j .. " Recoil Damp Rate", AWF_settings.RE2.Weapon_Params[weapon.ID].UserData.Gun[i]._RecoilDampRate, 0.01, 0.0, 100.0); wc = wc or changed
-                                --func.tooltip("LOREM IPSUM")
+                                
                                 changed, AWF_settings.RE2.Weapon_Params[weapon.ID].UserData.Gun[i].RecoilRateRange.r = imgui.drag_float("LVL-" .. j .. " Recoil Max", AWF_settings.RE2.Weapon_Params[weapon.ID].UserData.Gun[i].RecoilRateRange.r, 1.0, -1000.0, 1000.0); wc = wc or changed
-                                --func.tooltip("LOREM IPSUM")
+                                
                                 changed, AWF_settings.RE2.Weapon_Params[weapon.ID].UserData.Gun[i].RecoilRateRange.s = imgui.drag_float("LVL-" .. j .. " Recoil Min", AWF_settings.RE2.Weapon_Params[weapon.ID].UserData.Gun[i].RecoilRateRange.s, 1.0, -1000.0, 1000.0); wc = wc or changed
-                                --func.tooltip("LOREM IPSUM")
+                                imgui.spacing()
                             end
                             if i:match("^RapidFire_LVL_(%d+)$") then
                                 local j = i:match("%d+$")
-
+                                imgui.text_colored(ui.draw_line("=", 95) .. "| [ Level-" .. j .. " Rapid Fire ]" , func.convert_rgba_to_AGBR(textColor))
+                                
                                 imgui.spacing()
 
                                 if imgui.button("Reset Level-" .. j .. " Rapid Fire Parameters") then
@@ -1373,14 +1521,15 @@ local function draw_AWF_RE2Editor_GUI(weaponOrder)
                                 end
 
                                 changed, AWF_settings.RE2.Weapon_Params[weapon.ID].UserData.Gun[i]._Number = imgui.drag_int("LVL-" .. j .. " Burst Count", AWF_settings.RE2.Weapon_Params[weapon.ID].UserData.Gun[i]._Number, 1, 0, 1000); wc = wc or changed
-                                --func.tooltip("LOREM IPSUM")
+                                
                                 changed, AWF_settings.RE2.Weapon_Params[weapon.ID].UserData.Gun[i]._Infinity = imgui.checkbox("LVL-" .. j .. "_Infinity", AWF_settings.RE2.Weapon_Params[weapon.ID].UserData.Gun[i]._Infinity); wc = wc or changed
-                                --func.tooltip("LOREM IPSUM")
+                                imgui.spacing()
                             end
 
                             if i:match("^LoopFire_LVL_(%d+)$") then
                                 local j = i:match("%d+$")
-
+                                imgui.text_colored(ui.draw_line("=", 95) .. "| [ Level-" .. j .. " Loop Fire ]" , func.convert_rgba_to_AGBR(textColor))
+                                
                                 imgui.spacing()
 
                                 if imgui.button("Reset Level-" .. j .. " Loop Fire Parameters") then
@@ -1388,14 +1537,14 @@ local function draw_AWF_RE2Editor_GUI(weaponOrder)
                                     AWF_settings.RE2.Weapon_Params[weapon.ID].UserData.Gun[i] = hk.recurse_def_settings({}, AWFWeapons.RE2.Weapon_Params[weapon.ID].UserData.Gun[i])
                                 end
                                 changed, AWF_settings.RE2.Weapon_Params[weapon.ID].UserData.Gun[i]._Interval = imgui.drag_float("LVL-" .. j .. " Loop Fire Rate", AWF_settings.RE2.Weapon_Params[weapon.ID].UserData.Gun[i]._Interval, 0.1, 0.0, 100.0); wc = wc or changed
-                                --func.tooltip("LOREM IPSUM")
+                                
                                 changed, AWF_settings.RE2.Weapon_Params[weapon.ID].UserData.Gun[i]._ReduceNumber = imgui.drag_int("LVL-" .. j .. " Loop Fire Ammo Cost", AWF_settings.RE2.Weapon_Params[weapon.ID].UserData.Gun[i]._ReduceNumber, 1, 0, 1000); wc = wc or changed
-                                --func.tooltip("LOREM IPSUM")
+                                imgui.spacing()
                             end
 
                             if i:match("^Deviate_LVL_(%d+)$") then
                                 local j = i:match("%d+$")
-
+                                imgui.text_colored(ui.draw_line("=", 95) .. "| [ Level-" .. j .. " Deviate ]" , func.convert_rgba_to_AGBR(textColor))
                                 imgui.spacing()
 
                                 if imgui.button("Reset Level-" .. j .. " Deviate Parameters") then
@@ -1403,29 +1552,160 @@ local function draw_AWF_RE2Editor_GUI(weaponOrder)
                                     AWF_settings.RE2.Weapon_Params[weapon.ID].UserData.Gun[i] = hk.recurse_def_settings({}, AWFWeapons.RE2.Weapon_Params[weapon.ID].UserData.Gun[i])
                                 end
                                 changed, AWF_settings.RE2.Weapon_Params[weapon.ID].UserData.Gun[i].DeviateYaw.r = imgui.drag_float("LVL-" .. j .. " Deviate Yaw Max", AWF_settings.RE2.Weapon_Params[weapon.ID].UserData.Gun[i].DeviateYaw.r, 0.01, -100.0, 100.0); wc = wc or changed
-                                --func.tooltip("LOREM IPSUM")
+                                
                                 changed, AWF_settings.RE2.Weapon_Params[weapon.ID].UserData.Gun[i].DeviateYaw.s = imgui.drag_float("LVL-" .. j .. " Deviate Yaw Min", AWF_settings.RE2.Weapon_Params[weapon.ID].UserData.Gun[i].DeviateYaw.s, 0.01, -100.0, 100.0); wc = wc or changed
-                                --func.tooltip("LOREM IPSUM")
+                                
                                 changed, AWF_settings.RE2.Weapon_Params[weapon.ID].UserData.Gun[i].DeviatePitch.r = imgui.drag_float("LVL-" .. j .. " Deviate Pitch Max", AWF_settings.RE2.Weapon_Params[weapon.ID].UserData.Gun[i].DeviatePitch.r, 0.01, -100.0, 100.0); wc = wc or changed
-                                --func.tooltip("LOREM IPSUM")
+                                
                                 changed, AWF_settings.RE2.Weapon_Params[weapon.ID].UserData.Gun[i].DeviatePitch.s = imgui.drag_float("LVL-" .. j .. " Deviate Pitch Min", AWF_settings.RE2.Weapon_Params[weapon.ID].UserData.Gun[i].DeviatePitch.s, 0.01, -100.0, 100.0); wc = wc or changed
-                                --func.tooltip("LOREM IPSUM")
+                                imgui.spacing()
                             end
                         end
                         imgui.tree_pop()
                     end
                 end
-
-                if changed or wc then
-                    weapon.isUpdated = true
-                end
+                
+                imgui.indent(-10)
                 imgui.end_rect(2)
                 imgui.tree_pop()
             end
-            imgui.separator()
+            if changed or wc then
+                weapon.isUpdated = true
+                get_WeaponData_RE2(AWF_settings.RE2.Weapons)
+            end
+            imgui.text_colored("  " .. ui.draw_line("-", 175) .."  ", func.convert_rgba_to_AGBR(textColor))
         end
+        imgui.text_colored("  [ " .. ui.draw_line("=", 50) ..  " | " .. ui.draw_line("=", 50) .. " ] ", func.convert_rgba_to_AGBR(textColor))
         imgui.end_rect(1)
         imgui.end_window()
+    end
+end
+local function draw_AWF_RE2Preset_GUI(weaponOrder)
+    imgui.spacing()
+    local textColor = {255,255,255,255}
+    imgui.text_colored(" " .. ui.draw_line("=", 60), func.convert_rgba_to_AGBR(textColor))
+
+    for _, weaponName in ipairs(weaponOrder) do
+        local weapon = AWF_settings.RE2.Weapons[weaponName]
+        
+        if weapon and AWF_tool_settings.RE2[weapon.ID] then
+            changed, AWF_settings.RE2.Weapon_Params[weapon.ID].current_param_indx = imgui.combo(weapon.Name, AWF_settings.RE2.Weapon_Params[weapon.ID].current_param_indx or 1, AWF_settings.RE2.Weapon_Params[weapon.ID].Weapon_Presets); wc = wc or changed
+            if changed then
+                local selected_preset = AWF_settings.RE2.Weapon_Params[weapon.ID].Weapon_Presets[AWF_settings.RE2.Weapon_Params[weapon.ID].current_param_indx]
+                local json_filepath = [[AWF\\AWF_Weapons\\]] .. weapon.Name .. [[\\]] .. selected_preset .. [[.json]]
+                local temp_params = json.load_file(json_filepath)
+                
+                if AWF_tool_settings.isDebug then
+                    log.info("[AWF] [--------------------- [Manual Preset Loader] Loaded '" .. selected_preset .. "' for " .. weapon.Name .. "]")
+                end
+
+                if AWF_tool_settings.isInheritPresetName then
+                    presetName = selected_preset
+                end
+
+                temp_params.Weapon_Presets = nil
+                temp_params.current_param_indx = nil
+
+                for key, value in pairs(temp_params) do
+                    AWF_settings.RE2.Weapon_Params[weapon.ID][key] = value
+                end
+                cache_AWF_json_files_RE2(AWF_settings.RE2.Weapons)
+                weapon.isUpdated = true
+            end
+            imgui.spacing()
+        end
+    end
+    if changed or wc then
+        json.dump_file("AWF/AWF_Settings.json", AWF_settings)
+        json.dump_file("AWF/AWF_ToolSettings.json", AWF_tool_settings)
+    end
+    imgui.text_colored(ui.draw_line("=", 60), func.convert_rgba_to_AGBR(textColor))
+end
+local function draw_AWF_RE2_GUI()
+    if reframework.get_game_name() == "re2" then
+        if imgui.tree_node("Advanced Weapon Framework") then
+            imgui.begin_rect()
+            imgui.spacing()
+            imgui.indent(5)
+    
+            if imgui.button("Reset to Defaults") then
+                wc = true
+                changed = true
+                AWF_settings.RE2.Weapons = hk.recurse_def_settings({}, AWFWeapons.RE2.Weapons)
+                AWF_settings.RE2.Weapon_Params = hk.recurse_def_settings({}, AWFWeapons.RE2.Weapon_Params)
+                AWF_tool_settings = hk.recurse_def_settings({}, AWF_default_settings)
+                for _, weapon in pairs(AWF_settings.RE2.Weapons) do
+                    weapon.isUpdated = true
+                    get_WeaponData_RE2(AWF_settings.RE2.Weapons)
+                end
+                cache_AWF_json_files_RE2(AWF_settings.RE2.Weapons)
+            end
+            func.tooltip("Reset every parameter.")
+
+            imgui.same_line()
+            changed, show_AWF_editor = imgui.checkbox("Open AWF Weapon Stat Editor", show_AWF_editor)
+            func.tooltip("Show/Hide the AWF Weapon Stat Editor.")
+
+            if not show_AWF_editor or imgui.begin_window("Advanced Weapon Framework: Weapon Stat Editor", true, 0) == false  then
+            show_AWF_editor = false
+            else
+                imgui.spacing()
+                imgui.indent()
+                
+                draw_AWF_RE2Editor_GUI(AWF_settings.RE2.Weapon_Order)
+                
+                imgui.unindent()
+                imgui.end_window()
+            end
+
+            if changed or wc or NowLoading then
+                json.dump_file("AWF/AWF_Settings.json", AWF_settings)
+                json.dump_file("AWF/AWF_ToolSettings.json", AWF_tool_settings)
+                wc = false
+                changed = false
+            end
+            
+            draw_AWF_RE2Preset_GUI(AWF_settings.RE2.Weapon_Order)
+
+            if imgui.tree_node("AWF Settings") then
+                imgui.begin_rect()
+                imgui.spacing()
+                imgui.indent(5)
+    
+                changed, AWF_tool_settings.isDebug = imgui.checkbox("Debug Mode", AWF_tool_settings.isDebug); wc = wc or changed
+                func.tooltip("Enable/Disable debug mode. When enabled, AWF will log significantly more information in the 're2_framework_log.txt' file, located in the game's root folder.\nLeave this on if you don't know what you are doing.")
+                changed, AWF_tool_settings.isInheritPresetName = imgui.checkbox("Inherit Preset Name", AWF_tool_settings.isInheritPresetName); wc = wc or changed
+                func.tooltip("If enabled the '[Enter Preset Name Here]' text in the Weapon Stat Editor will be replaced by the name of the last loaded preset.")
+                
+                if imgui.tree_node("Display Settings") then
+                    for _, weaponName in ipairs(AWF_settings.RE2.Weapon_Order) do
+                        local weapon = AWF_settings.RE2.Weapons[weaponName]
+                        changed, AWF_tool_settings.RE2[weapon.ID] = imgui.checkbox(weapon.Name, AWF_tool_settings.RE2[weapon.ID]); wc = wc or changed
+                        func.tooltip("Show/Hide the " .. weapon.Name .. " in the Preset Manager.")
+                    end
+                    imgui.tree_pop()
+                end
+    
+                if imgui.tree_node("Credits") then
+                    imgui.text(modCredits .. " ")
+                    imgui.tree_pop()
+                end
+                
+                imgui.indent(-5)
+                imgui.spacing()
+                imgui.end_rect(2)
+                imgui.tree_pop()
+            end
+            imgui.spacing()
+            ui.button_n_colored_txt("Current Version:", modVersion .. " | " .. modUpdated, func.convert_rgba_to_AGBR(0, 255, 0, 255))
+            imgui.same_line()
+            imgui.text("| by " .. modAuthor .. " ")
+            
+            imgui.spacing()
+            imgui.indent(-5)
+            imgui.end_rect(1)
+            imgui.tree_pop()
+        end
     end
 end
 --////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2030,8 +2310,8 @@ local function draw_AWF_RE3Editor_GUI(weaponOrder)
                 changed, AWF_settings.RE3.Weapon_Params[weapon.ID].current_param_indx = imgui.combo("Preset", AWF_settings.RE3.Weapon_Params[weapon.ID].current_param_indx or 1, AWF_settings.RE3.Weapon_Params[weapon.ID].Weapon_Presets); wc = wc or changed
                 func.tooltip("Select a file from the dropdown menu to load the weapon stats from that file.")
                 if changed then
-                    local selected_profile = AWF_settings.RE3.Weapon_Params[weapon.ID].Weapon_Presets[AWF_settings.RE3.Weapon_Params[weapon.ID].current_param_indx]
-                    local json_filepath = [[AWF\\AWF_Weapons\\]] .. weapon.Name .. [[\\]] .. selected_profile .. [[.json]]
+                    local selected_preset = AWF_settings.RE3.Weapon_Params[weapon.ID].Weapon_Presets[AWF_settings.RE3.Weapon_Params[weapon.ID].current_param_indx]
+                    local json_filepath = [[AWF\\AWF_Weapons\\]] .. weapon.Name .. [[\\]] .. selected_preset .. [[.json]]
                     local temp_params = json.load_file(json_filepath)
                     
                     temp_params.Weapon_Presets = nil
@@ -2565,19 +2845,19 @@ local function draw_AWF_RE3Editor_GUI(weaponOrder)
                                     AWF_settings.RE3.Weapon_Params[weapon.ID].UserData.Gun[i] = hk.recurse_def_settings({}, AWFWeapons.RE3.Weapon_Params[weapon.ID].UserData.Gun[i])
                                 end
                                 changed, AWF_settings.RE3.Weapon_Params[weapon.ID].UserData.Gun[i]._AddPoint = imgui.drag_float("LVL-" .. j .. " Reticle Add Point", AWF_settings.RE3.Weapon_Params[weapon.ID].UserData.Gun[i]._AddPoint, 1.0, -1000.0, 1000.0); wc = wc or changed
-                                --func.tooltip("LOREM IPSUM")
+                                
                                 changed, AWF_settings.RE3.Weapon_Params[weapon.ID].UserData.Gun[i]._KeepPoint = imgui.drag_float("LVL-" .. j .. " Reticle Keep Point", AWF_settings.RE3.Weapon_Params[weapon.ID].UserData.Gun[i]._KeepPoint, 1.0, -1000.0, 1000.0); wc = wc or changed
-                                --func.tooltip("LOREM IPSUM")
+                                
                                 changed, AWF_settings.RE3.Weapon_Params[weapon.ID].UserData.Gun[i]._ShootPoint = imgui.drag_float("LVL-" .. j .. " Reticle Shoot Point", AWF_settings.RE3.Weapon_Params[weapon.ID].UserData.Gun[i]._ShootPoint, 1.0, -1000.0, 1000.0); wc = wc or changed
-                                --func.tooltip("LOREM IPSUM")
+                                
                                 changed, AWF_settings.RE3.Weapon_Params[weapon.ID].UserData.Gun[i]._MovePoint = imgui.drag_float("LVL-" .. j .. " Reticle Move Point", AWF_settings.RE3.Weapon_Params[weapon.ID].UserData.Gun[i]._MovePoint, 1.0, -1000.0, 1000.0); wc = wc or changed
-                                --func.tooltip("LOREM IPSUM")
+                                
                                 changed, AWF_settings.RE3.Weapon_Params[weapon.ID].UserData.Gun[i]._WatchPoint = imgui.drag_float("LVL-" .. j .. " Reticle Watch Point", AWF_settings.RE3.Weapon_Params[weapon.ID].UserData.Gun[i]._WatchPoint, 1.0, -1000.0, 1000.0); wc = wc or changed
-                                --func.tooltip("LOREM IPSUM")
+                                
                                 changed, AWF_settings.RE3.Weapon_Params[weapon.ID].UserData.Gun[i].PointRange.r = imgui.drag_float("LVL-" .. j .. " Reticle Max", AWF_settings.RE3.Weapon_Params[weapon.ID].UserData.Gun[i].PointRange.r, 1.0, -1000.0, 1000.0); wc = wc or changed
-                                --func.tooltip("LOREM IPSUM")
+                                
                                 changed, AWF_settings.RE3.Weapon_Params[weapon.ID].UserData.Gun[i].PointRange.s = imgui.drag_float("LVL-" .. j .. " Reticle Min", AWF_settings.RE3.Weapon_Params[weapon.ID].UserData.Gun[i].PointRange.s, 1.0, -1000.0, 1000.0); wc = wc or changed
-                                --func.tooltip("LOREM IPSUM")
+                                
                             end
                             if i:match("^Recoil_LVL_(%d+)$") then
                                 local j = i:match("%d+$")
@@ -2589,13 +2869,13 @@ local function draw_AWF_RE3Editor_GUI(weaponOrder)
                                     AWF_settings.RE3.Weapon_Params[weapon.ID].UserData.Gun[i] = hk.recurse_def_settings({}, AWFWeapons.RE3.Weapon_Params[weapon.ID].UserData.Gun[i])
                                 end
                                 changed, AWF_settings.RE3.Weapon_Params[weapon.ID].UserData.Gun[i]._RecoilRate = imgui.drag_float("LVL-" .. j .. " Recoil Rate", AWF_settings.RE3.Weapon_Params[weapon.ID].UserData.Gun[i]._RecoilRate, 0.05, 0.0, 100.0); wc = wc or changed
-                                --func.tooltip("LOREM IPSUM")
+                                
                                 changed, AWF_settings.RE3.Weapon_Params[weapon.ID].UserData.Gun[i]._RecoilDampRate = imgui.drag_float("LVL-" .. j .. " Recoil Damp Rate", AWF_settings.RE3.Weapon_Params[weapon.ID].UserData.Gun[i]._RecoilDampRate, 0.01, 0.0, 100.0); wc = wc or changed
-                                --func.tooltip("LOREM IPSUM")
+                                
                                 changed, AWF_settings.RE3.Weapon_Params[weapon.ID].UserData.Gun[i].RecoilRateRange.r = imgui.drag_float("LVL-" .. j .. " Recoil Max", AWF_settings.RE3.Weapon_Params[weapon.ID].UserData.Gun[i].RecoilRateRange.r, 1.0, -1000.0, 1000.0); wc = wc or changed
-                                --func.tooltip("LOREM IPSUM")
+                                
                                 changed, AWF_settings.RE3.Weapon_Params[weapon.ID].UserData.Gun[i].RecoilRateRange.s = imgui.drag_float("LVL-" .. j .. " Recoil Min", AWF_settings.RE3.Weapon_Params[weapon.ID].UserData.Gun[i].RecoilRateRange.s, 1.0, -1000.0, 1000.0); wc = wc or changed
-                                --func.tooltip("LOREM IPSUM")
+                                
                             end
                             if i:match("^RapidFire_LVL_(%d+)$") then
                                 local j = i:match("%d+$")
@@ -2608,9 +2888,9 @@ local function draw_AWF_RE3Editor_GUI(weaponOrder)
                                 end
 
                                 changed, AWF_settings.RE3.Weapon_Params[weapon.ID].UserData.Gun[i]._Number = imgui.drag_int("LVL-" .. j .. " Burst Count", AWF_settings.RE3.Weapon_Params[weapon.ID].UserData.Gun[i]._Number, 1, 0, 1000); wc = wc or changed
-                                --func.tooltip("LOREM IPSUM")
+                                
                                 changed, AWF_settings.RE3.Weapon_Params[weapon.ID].UserData.Gun[i]._Infinity = imgui.checkbox("LVL-" .. j .. "_Infinity", AWF_settings.RE3.Weapon_Params[weapon.ID].UserData.Gun[i]._Infinity); wc = wc or changed
-                                --func.tooltip("LOREM IPSUM")
+                                
                             end
                             if i:match("^LoopFire_LVL_(%d+)$") then
                                 local j = i:match("%d+$")
@@ -2622,9 +2902,9 @@ local function draw_AWF_RE3Editor_GUI(weaponOrder)
                                     AWF_settings.RE3.Weapon_Params[weapon.ID].UserData.Gun[i] = hk.recurse_def_settings({}, AWFWeapons.RE3.Weapon_Params[weapon.ID].UserData.Gun[i])
                                 end
                                 changed, AWF_settings.RE3.Weapon_Params[weapon.ID].UserData.Gun[i]._Interval = imgui.drag_float("LVL-" .. j .. " Loop Fire Rate", AWF_settings.RE3.Weapon_Params[weapon.ID].UserData.Gun[i]._Interval, 0.1, 0.0, 100.0); wc = wc or changed
-                                --func.tooltip("LOREM IPSUM")
+                                
                                 changed, AWF_settings.RE3.Weapon_Params[weapon.ID].UserData.Gun[i]._ReduceNumber = imgui.drag_int("LVL-" .. j .. " Loop Fire Ammo Cost", AWF_settings.RE3.Weapon_Params[weapon.ID].UserData.Gun[i]._ReduceNumber, 1, 0, 1000); wc = wc or changed
-                                --func.tooltip("LOREM IPSUM")
+                                
                             end
                             if i:match("^Deviate_LVL_(%d+)$") then
                                 local j = i:match("%d+$")
@@ -2636,13 +2916,13 @@ local function draw_AWF_RE3Editor_GUI(weaponOrder)
                                     AWF_settings.RE3.Weapon_Params[weapon.ID].UserData.Gun[i] = hk.recurse_def_settings({}, AWFWeapons.RE3.Weapon_Params[weapon.ID].UserData.Gun[i])
                                 end
                                 changed, AWF_settings.RE3.Weapon_Params[weapon.ID].UserData.Gun[i].DeviateYaw.r = imgui.drag_float("LVL-" .. j .. " Deviate Yaw Max", AWF_settings.RE3.Weapon_Params[weapon.ID].UserData.Gun[i].DeviateYaw.r, 0.01, -100.0, 100.0); wc = wc or changed
-                                --func.tooltip("LOREM IPSUM")
+                                
                                 changed, AWF_settings.RE3.Weapon_Params[weapon.ID].UserData.Gun[i].DeviateYaw.s = imgui.drag_float("LVL-" .. j .. " Deviate Yaw Min", AWF_settings.RE3.Weapon_Params[weapon.ID].UserData.Gun[i].DeviateYaw.s, 0.01, -100.0, 100.0); wc = wc or changed
-                                --func.tooltip("LOREM IPSUM")
+                                
                                 changed, AWF_settings.RE3.Weapon_Params[weapon.ID].UserData.Gun[i].DeviatePitch.r = imgui.drag_float("LVL-" .. j .. " Deviate Pitch Max", AWF_settings.RE3.Weapon_Params[weapon.ID].UserData.Gun[i].DeviatePitch.r, 0.01, -100.0, 100.0); wc = wc or changed
-                                --func.tooltip("LOREM IPSUM")
+                                
                                 changed, AWF_settings.RE3.Weapon_Params[weapon.ID].UserData.Gun[i].DeviatePitch.s = imgui.drag_float("LVL-" .. j .. " Deviate Pitch Min", AWF_settings.RE3.Weapon_Params[weapon.ID].UserData.Gun[i].DeviatePitch.s, 0.01, -100.0, 100.0); wc = wc or changed
-                                --func.tooltip("LOREM IPSUM")
+                                
                             end
                         end
                         imgui.tree_pop()
@@ -2761,7 +3041,9 @@ local function dump_Default_WeaponParam_json_RE4(weaponData)
         
         if weaponParams then
             json.dump_file("AWF/AWF_Weapons/".. weapon.Name .. "/" .. weapon.Name .. " Default".. ".json", weaponParams)
-            log.info("[AWF] [Default Weapon Params dumped.]")
+            if AWF_tool_settings.isDebug then
+                log.info("[AWF] [Default Weapon Params for " .. weapon.Name .. " dumped.]")
+            end
         end
     end
 end
@@ -4297,16 +4579,6 @@ local function get_WeaponData_RE4(weaponData)
         weapon.isInventoryUpdated = false
     end
 end
---Prevents knives to lose durability
-sdk.hook(sdk.find_type_definition("chainsaw.Item"):get_method("reduceDurability(System.Int32)"),
-function(args)
-    if AWF_tool_settings.RE4.isUnbreakable then
-        return sdk.PreHookResult.SKIP_ORIGINAL
-    end
-end,
-function(retval)
-    return retval
-end)
 
 --Clears the cached path for a weapon if a new preset is saved
 local function clear_AWF_json_cache_RE4(weaponData)
@@ -4404,6 +4676,16 @@ end
 
 --Calls 'dump_Default_WeaponParam_json_RE4' and then 'cache_AWF_json_files_RE4' when the script is called for the first time
 if reframework.get_game_name() == "re4" then
+    --Prevents knives to lose durability
+    sdk.hook(sdk.find_type_definition("chainsaw.Item"):get_method("reduceDurability(System.Int32)"),
+    function(args)
+        if AWF_tool_settings.RE4.isUnbreakable then
+            return sdk.PreHookResult.SKIP_ORIGINAL
+        end
+    end,
+    function(retval)
+        return retval
+    end)
     dump_Default_WeaponParam_json_RE4(AWFWeapons.RE4.Weapons)
     cache_AWF_json_files_RE4(AWF_settings.RE4.Weapons)
 end
@@ -4498,12 +4780,12 @@ local function draw_AWF_RE4Editor_GUI(weaponOrder)
                     changed, AWF_settings.RE4.Weapon_Params[weapon.ID].current_param_indx = imgui.combo("Preset", AWF_settings.RE4.Weapon_Params[weapon.ID].current_param_indx or 1, AWF_settings.RE4.Weapon_Params[weapon.ID].Weapon_Presets); wc = wc or changed
                     func.tooltip("Select a file from the dropdown menu to load the weapon stats from that file.")
                     if changed then
-                        local selected_profile = AWF_settings.RE4.Weapon_Params[weapon.ID].Weapon_Presets[AWF_settings.RE4.Weapon_Params[weapon.ID].current_param_indx]
-                        local json_filepath = [[AWF\\AWF_Weapons\\]] .. weapon.Name .. [[\\]] .. selected_profile .. [[.json]]
+                        local selected_preset = AWF_settings.RE4.Weapon_Params[weapon.ID].Weapon_Presets[AWF_settings.RE4.Weapon_Params[weapon.ID].current_param_indx]
+                        local json_filepath = [[AWF\\AWF_Weapons\\]] .. weapon.Name .. [[\\]] .. selected_preset .. [[.json]]
                         local temp_params = json.load_file(json_filepath)
                         
                         if AWF_tool_settings.isInheritPresetName then
-                            presetName = selected_profile
+                            presetName = selected_preset
                         end
 
                         temp_params.Weapon_Presets = nil
@@ -5283,12 +5565,12 @@ local function draw_AWF_RE4Preset_GUI(weaponOrder)
         if weapon and AWF_tool_settings.RE4[weapon.ID] then
             changed, AWF_settings.RE4.Weapon_Params[weapon.ID].current_param_indx = imgui.combo(weapon.Name, AWF_settings.RE4.Weapon_Params[weapon.ID].current_param_indx or 1, AWF_settings.RE4.Weapon_Params[weapon.ID].Weapon_Presets); wc = wc or changed
             if changed then
-                local selected_profile = AWF_settings.RE4.Weapon_Params[weapon.ID].Weapon_Presets[AWF_settings.RE4.Weapon_Params[weapon.ID].current_param_indx]
-                local json_filepath = [[AWF\\AWF_Weapons\\]] .. weapon.Name .. [[\\]] .. selected_profile .. [[.json]]
+                local selected_preset = AWF_settings.RE4.Weapon_Params[weapon.ID].Weapon_Presets[AWF_settings.RE4.Weapon_Params[weapon.ID].current_param_indx]
+                local json_filepath = [[AWF\\AWF_Weapons\\]] .. weapon.Name .. [[\\]] .. selected_preset .. [[.json]]
                 local temp_params = json.load_file(json_filepath)
                 
                 if AWF_tool_settings.isInheritPresetName then
-                    presetName = selected_profile
+                    presetName = selected_preset
                 end
 
                 temp_params.Weapon_Presets = nil
@@ -5322,6 +5604,7 @@ local function draw_AWF_RE4_GUI()
             wc = true
             changed = true
             AWF_settings.RE4 = hk.recurse_def_settings({}, AWFWeapons.RE4)
+            AWF_tool_settings = hk.recurse_def_settings({}, AWF_default_settings)
             for _, weapon in pairs(AWF_settings.RE4.Weapons) do
                 weapon.isUpdated = true
                 weapon.isCatalogUpdated = true
@@ -5331,7 +5614,7 @@ local function draw_AWF_RE4_GUI()
             end
             cache_AWF_json_files_RE4(AWF_settings.RE4.Weapons)
         end
-        func.tooltip("Reset every weapon parameter.")
+        func.tooltip("Reset every parameter.")
         
         imgui.same_line()
         changed, show_AWF_editor = imgui.checkbox("Open AWF Weapon Stat Editor", show_AWF_editor)
@@ -5620,8 +5903,8 @@ local function draw_AWF_RE7Editor_GUI(weaponOrder)
                 changed, AWF_settings.RE7.Weapon_Params[weaponData.ID].current_param_indx = imgui.combo("Preset", AWF_settings.RE7.Weapon_Params[weaponData.ID].current_param_indx or 1, AWF_settings.RE7.Weapon_Params[weaponData.ID].Weapon_Presets); wc = wc or changed
                 func.tooltip("Select a file from the dropdown menu to load the weapon stats from that file.")
                 if changed then
-                    local selected_profile = AWF_settings.RE7.Weapon_Params[weaponData.ID].Weapon_Presets[AWF_settings.RE7.Weapon_Params[weaponData.ID].current_param_indx]
-                    local json_filepath = [[AWF\\AWF_Weapons\\]] .. weaponData.Name .. [[\\]] .. selected_profile .. [[.json]]
+                    local selected_preset = AWF_settings.RE7.Weapon_Params[weaponData.ID].Weapon_Presets[AWF_settings.RE7.Weapon_Params[weaponData.ID].current_param_indx]
+                    local json_filepath = [[AWF\\AWF_Weapons\\]] .. weaponData.Name .. [[\\]] .. selected_preset .. [[.json]]
                     local temp_params = json.load_file(json_filepath)
                     
                     temp_params.Weapon_Presets = nil
@@ -6133,8 +6416,8 @@ local function draw_AWF_RE8Editor_GUI(weaponOrder)
                 changed, AWF_settings.RE8.Weapon_Params[weapon.ID].current_param_indx = imgui.combo("Preset", AWF_settings.RE8.Weapon_Params[weapon.ID].current_param_indx or 1, AWF_settings.RE8.Weapon_Params[weapon.ID].Weapon_Presets); wc = wc or changed
                 func.tooltip("Select a file from the dropdown menu to load the weapon stats from that file.")
                 if changed then
-                    local selected_profile = AWF_settings.RE8.Weapon_Params[weapon.ID].Weapon_Presets[AWF_settings.RE8.Weapon_Params[weapon.ID].current_param_indx]
-                    local json_filepath = [[AWF\\AWF_Weapons\\]] .. weapon.Name .. [[\\]] .. selected_profile .. [[.json]]
+                    local selected_preset = AWF_settings.RE8.Weapon_Params[weapon.ID].Weapon_Presets[AWF_settings.RE8.Weapon_Params[weapon.ID].current_param_indx]
+                    local json_filepath = [[AWF\\AWF_Weapons\\]] .. weapon.Name .. [[\\]] .. selected_preset .. [[.json]]
                     local temp_params = json.load_file(json_filepath)
                     
                     temp_params.Weapon_Presets = nil
@@ -6306,34 +6589,7 @@ end
 --MARK: On Draw UI
 re.on_draw_ui(function()
     if reframework.get_game_name() == "re2" then
-        if imgui.tree_node("Advanced Weapon Framework") then
-            imgui.begin_rect()
-            if imgui.button("Reset to Defaults") then
-                wc = true
-                changed = true
-                AWF_settings.RE2.Weapon_Params = hk.recurse_def_settings({}, AWFWeapons.RE2.Weapon_Params)
-                cache_json_files_RE2(AWF_settings.RE2.Weapons)
-            end
-            func.tooltip("Reset every parameter.")
-            
-            changed, show_AWF_editor = imgui.checkbox("Open AWF Weapon Stat Editor", show_AWF_editor)
-            func.tooltip("Show/Hide the AWF Weapon Stat Editor.")
-
-            if show_AWF_editor then
-                draw_AWF_RE2Editor_GUI(AWF_settings.RE2.Weapon_Order)
-            end
-
-            if changed or wc or NowLoading then
-                json.dump_file("AWF/AWF_Settings.json", AWF_settings)
-            end
-            
-            ui.button_n_colored_txt("Current Version:", "v1.8.1 | 03/12/2024", 0xFF00FF00)
-            imgui.same_line()
-            imgui.text("| by SilverEzredes")
-            
-            imgui.end_rect(2)
-            imgui.tree_pop()
-        end
+        draw_AWF_RE2_GUI()
     end
     if reframework.get_game_name() == "re3" then
         if imgui.tree_node("Advanced Weapon Framework") then
@@ -6437,10 +6693,11 @@ end)
 return {
     AWF_Master = AWFWeapons,
     AWF_settings = AWF_settings,
-    
-    update_cached_weapon_gameobjects_RE2 = update_cached_weapon_gameobjects_RE2,
-    cache_weapon_gameobjects_RE2 = cache_weapon_gameobjects_RE2,
-    get_weapon_gameobject_RE2 = get_weapon_gameobject_RE2,
+
+    get_WeaponData_RE2 = get_WeaponData_RE2,
+    update_WeaponData_RE2 = update_WeaponData_RE2,
+    check_if_WeaponDataIsCached_RE2 = check_if_WeaponDataIsCached_RE2,
+    cache_AWF_json_files_RE2 = cache_AWF_json_files_RE2,
     
     update_cached_weapon_gameobjects_RE3 = update_cached_weapon_gameobjects_RE3,
     cache_weapon_gameobjects_RE3 = cache_weapon_gameobjects_RE3,
