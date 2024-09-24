@@ -2,8 +2,8 @@
 local modName = "Advanced Weapon Framework Core"
 
 local modAuthor = "SilverEzredes"
-local modUpdated = "09/13/2024"
-local modVersion = "v3.4.00"
+local modUpdated = "09/23/2024"
+local modVersion = "v3.4.05"
 local modCredits = "praydog; alphaZomega; MrBoobieBuyer; Lotiuss"
 
 --/////////////////////////////////////--
@@ -173,7 +173,6 @@ local function check_if_playerIsInScene_RE2()
         isPlayerInScene_RE2 = false
     end
 end
-
 local function dump_Default_WeaponParam_json_RE2(weaponData)
     for _, weapon in pairs(weaponData) do
         local weaponParams = AWFWeapons.RE2.Weapon_Params[weapon.ID]

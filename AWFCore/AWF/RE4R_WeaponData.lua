@@ -6468,7 +6468,7 @@ local RE4R_WeaponData = {
                     LVL1_STP =  {_BaseValue = 1.0},
                 },
                 Level_2 = {
-                    LVL2_DMG =  {_BaseValue = 1.50, _Cost = 25000, _Info = "18.0"},
+                    LVL2_DMG =  {_BaseValue = 1.20, _Cost = 25000, _Info = "18.0"},
                     LVL2_AC  =  {_BaseValue = 7,   _Cost = 15000, _Info = "7"},
                     LVL2_RN  =  {_BaseValue = 2,  _Cost = 12000, _Info = "2"},
                     LVL2_ROF =  {_BaseValue = 2.00,  _Cost = 15000, _Info = "0.98"},
@@ -6477,7 +6477,7 @@ local RE4R_WeaponData = {
                     LVL2_STP =  {_BaseValue = 1.20},
                 },
                 Level_3 = {
-                    LVL3_DMG =  {_BaseValue = 2.0, _Cost = 36000, _Info = "21.0"},
+                    LVL3_DMG =  {_BaseValue = 1.4, _Cost = 36000, _Info = "21.0"},
                     LVL3_AC  =  {_BaseValue = 8,   _Cost = 20000, _Info = "8"},
                     LVL3_RN  =  {_BaseValue = 3,  _Cost = 15000, _Info = "3"},
                     LVL3_ROF =  {_BaseValue = 1.90,  _Cost = 20000, _Info = "1.07"},
@@ -6486,7 +6486,7 @@ local RE4R_WeaponData = {
                     LVL3_STP =  {_BaseValue = 1.40},
                 },
                 Level_4 = {
-                    LVL4_DMG =  {_BaseValue = 2.5, _Cost = 47000, _Info = "24.0"},
+                    LVL4_DMG =  {_BaseValue = 1.6, _Cost = 47000, _Info = "24.0"},
                     LVL4_AC  =  {_BaseValue = 9,   _Cost = 25000, _Info = "9"},
                     LVL4_RN  =  {_BaseValue = 4,  _Cost = 18000, _Info = "4"},
                     LVL4_ROF =  {_BaseValue = 1.80,  _Cost = 25000, _Info = "1.19"},
@@ -6495,7 +6495,7 @@ local RE4R_WeaponData = {
                     LVL4_STP =  {_BaseValue = 1.60},
                 },
                 Level_5 = {
-                    LVL5_DMG =  {_BaseValue = 3.0, _Cost = 60000, _Info = "27.0"},
+                    LVL5_DMG =  {_BaseValue = 1.8, _Cost = 60000, _Info = "27.0"},
                     LVL5_AC  =  {_BaseValue = 10,   _Cost = 30000, _Info = "10"},
                     LVL5_RN  =  {_BaseValue = 5,  _Cost = 21000, _Info = "5"},
                     LVL5_ROF =  {_BaseValue = 1.70,  _Cost = 30000, _Info = "1.33"},
@@ -6511,7 +6511,7 @@ local RE4R_WeaponData = {
             Inventory = {
                 _CurrentAmmo = 112801600,
                 Define = {
-                    _AmmoMax = 5,
+                    _AmmoMax = 6,
                     _AmmoCost = 1,
                     DefaultDurabilityMaxValue = 1000,
                     _SliderDurabilityMaxValue = 2000,
@@ -6689,7 +6689,7 @@ local RE4R_WeaponData = {
                     LVL1_STP =  {_BaseValue = 1.0},
                 },
                 Level_2 = {
-                    LVL2_DMG =  {_BaseValue = 1.50, _Cost = 25000, _Info = "18.0"},
+                    LVL2_DMG =  {_BaseValue = 1.20, _Cost = 25000, _Info = "18.0"},
                     LVL2_AC  =  {_BaseValue = 7,   _Cost = 15000, _Info = "7"},
                     LVL2_RN  =  {_BaseValue = 2,  _Cost = 12000, _Info = "2"},
                     LVL2_ROF =  {_BaseValue = 2.00,  _Cost = 15000, _Info = "0.98"},
@@ -6698,7 +6698,7 @@ local RE4R_WeaponData = {
                     LVL2_STP =  {_BaseValue = 1.20},
                 },
                 Level_3 = {
-                    LVL3_DMG =  {_BaseValue = 2.0, _Cost = 36000, _Info = "21.0"},
+                    LVL3_DMG =  {_BaseValue = 1.4, _Cost = 36000, _Info = "21.0"},
                     LVL3_AC  =  {_BaseValue = 8,   _Cost = 20000, _Info = "8"},
                     LVL3_RN  =  {_BaseValue = 3,  _Cost = 15000, _Info = "3"},
                     LVL3_ROF =  {_BaseValue = 1.90,  _Cost = 20000, _Info = "1.07"},
@@ -6707,7 +6707,7 @@ local RE4R_WeaponData = {
                     LVL3_STP =  {_BaseValue = 1.40},
                 },
                 Level_4 = {
-                    LVL4_DMG =  {_BaseValue = 2.5, _Cost = 47000, _Info = "24.0"},
+                    LVL4_DMG =  {_BaseValue = 1.6, _Cost = 47000, _Info = "24.0"},
                     LVL4_AC  =  {_BaseValue = 9,   _Cost = 25000, _Info = "9"},
                     LVL4_RN  =  {_BaseValue = 4,  _Cost = 18000, _Info = "4"},
                     LVL4_ROF =  {_BaseValue = 1.80,  _Cost = 25000, _Info = "1.19"},
@@ -6716,7 +6716,7 @@ local RE4R_WeaponData = {
                     LVL4_STP =  {_BaseValue = 1.60},
                 },
                 Level_5 = {
-                    LVL5_DMG =  {_BaseValue = 3.0, _Cost = 60000, _Info = "27.0"},
+                    LVL5_DMG =  {_BaseValue = 1.8, _Cost = 60000, _Info = "27.0"},
                     LVL5_AC  =  {_BaseValue = 10,   _Cost = 30000, _Info = "10"},
                     LVL5_RN  =  {_BaseValue = 5,  _Cost = 21000, _Info = "5"},
                     LVL5_ROF =  {_BaseValue = 1.70,  _Cost = 30000, _Info = "1.33"},
@@ -6732,7 +6732,7 @@ local RE4R_WeaponData = {
             Inventory = {
                 _CurrentAmmo = 112801600,
                 Define = {
-                    _AmmoMax = 5,
+                    _AmmoMax = 6,
                     _AmmoCost = 1,
                     DefaultDurabilityMaxValue = 1000,
                     _SliderDurabilityMaxValue = 2000,
