@@ -2,8 +2,8 @@
 local modName = "Advanced Weapon Framework"
 
 local modAuthor = "SilverEzredes"
-local modUpdated = "09/13/2024"
-local modVersion = "v3.4.00"
+local modUpdated = "10/12/2024"
+local modVersion = "v3.4.60"
 local modCredits = "praydog; alphaZomega; MrBoobieBuyer; Lotiuss"
 
 --/////////////////////////////////////--

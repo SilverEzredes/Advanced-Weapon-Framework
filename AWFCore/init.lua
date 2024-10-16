@@ -2,8 +2,8 @@
 local modName = "Advanced Weapon Framework Core"
 
 local modAuthor = "SilverEzredes"
-local modUpdated = "09/23/2024"
-local modVersion = "v3.4.05"
+local modUpdated = "10/12/2024"
+local modVersion = "v3.4.60"
 local modCredits = "praydog; alphaZomega; MrBoobieBuyer; Lotiuss"
 
 --/////////////////////////////////////--
@@ -928,6 +928,7 @@ local function draw_AWF_RE2Editor_GUI(weaponOrder)
                     if imgui.menu_item("Reset") then
                         wc = true
                         AWF_settings.RE2.Weapon_Params[weapon.ID] = hk.recurse_def_settings({}, AWFWeapons.RE2.Weapon_Params[weapon.ID])
+                        clear_AWF_json_cache_RE2(AWF_settings.RE2.Weapons)
                         cache_AWF_json_files_RE2(AWF_settings.RE2.Weapons)
                     end
                     func.tooltip("Reset all of the parameters of " .. weapon.Name)
@@ -939,6 +940,7 @@ local function draw_AWF_RE2Editor_GUI(weaponOrder)
                 imgui.indent(10)
 
                 if imgui.button("Update Preset List") then
+                    clear_AWF_json_cache_RE2(AWF_settings.RE2.Weapons)
                     cache_AWF_json_files_RE2(AWF_settings.RE2.Weapons)
                 end
 
@@ -1608,6 +1610,7 @@ local function draw_AWF_RE2Preset_GUI(weaponOrder)
                 for key, value in pairs(temp_params) do
                     AWF_settings.RE2.Weapon_Params[weapon.ID][key] = value
                 end
+                clear_AWF_json_cache_RE2(AWF_settings.RE2.Weapons)
                 cache_AWF_json_files_RE2(AWF_settings.RE2.Weapons)
                 weapon.isUpdated = true
             end
@@ -1637,6 +1640,7 @@ local function draw_AWF_RE2_GUI()
                     weapon.isUpdated = true
                     get_WeaponData_RE2(AWF_settings.RE2.Weapons)
                 end
+                clear_AWF_json_cache_RE2(AWF_settings.RE2.Weapons)
                 cache_AWF_json_files_RE2(AWF_settings.RE2.Weapons)
             end
             func.tooltip("Reset every parameter.")

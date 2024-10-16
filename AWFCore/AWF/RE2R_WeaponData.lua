@@ -3012,4 +3012,9 @@ local RE2R_WeaponData = {
     },
 }
 
+RE2R_WeaponDataCount = 0
+for _ in pairs(RE2R_WeaponData.Weapons) do
+    RE2R_WeaponDataCount = RE2R_WeaponDataCount + 1
+end
+
 return RE2R_WeaponData
