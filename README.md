@@ -34,4 +34,4 @@ Resident Evil Village:
 - [Advanced Weapon Framework - RE8](https://www.nexusmods.com/residentevilvillage/mods/410)
 
 ### Support:
-If you have issues with the mod, create an issue here or join [Modding Haven](https://discord.gg/9Vr2SJ3) and message me on Discord
+If you have issues with the mod, create an issue here or join [Haven's Night](https://discord.gg/9Vr2SJ3) and message me on Discord
